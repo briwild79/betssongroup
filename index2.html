@@ -103,9 +103,9 @@
         
         /* Burger Button */
         .burger-btn {
-            background: none;
-            border: none;
-            width: 35px;
+            background: var(--color-white);
+            border: var(--border);
+            width: auto;
             height: 35px;
             cursor: pointer;
             display: flex;
@@ -113,12 +113,14 @@
             justify-content: center;
             align-items: center;
             gap: 3px;
-            border-radius: 0;
+            border-radius: var(--radius-sm);
             flex-shrink: 0;
+            padding: 0 12px;
+            font-weight: bold;
         }
         
         .burger-line {
-            width: 20px;
+            width: 16px;
             height: 2px;
             background: #000000;
             transition: all 0.2s ease;
