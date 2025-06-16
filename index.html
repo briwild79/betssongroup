@@ -331,9 +331,14 @@
             min-height: calc(100vh - 60px);
         }
         
-        /* Layout Components */
+        /* Layout Components - consistent spacing */
         .section {
             padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
         }
         
         .section-header {
@@ -390,12 +395,57 @@
             padding: var(--space-md);
         }
         
-        /* Grid System */
+        /* Horizontal scroll sections - standardized width */
         .horizontal-scroll {
             display: flex;
             gap: var(--space-lg);
             overflow-x: auto;
-            padding-bottom: var(--space-xs);
+            padding: 0 var(--space-lg) var(--space-xs) var(--space-lg);
+            margin: 0 calc(-1 * var(--space-lg));
+        }
+        
+        /* Standardized card width - all cards same as live casino */
+        .promo-card,
+        .game-card,
+        .live-game-card,
+        .sport-card {
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+        
+        .promo-card {
+            height: var(--height-card-xl);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            background: var(--color-grey-light);
+        }
+        
+        .game-card {
+            height: var(--height-card-sm);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        
+        .live-game-card {
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--color-white);
+        }
+        
+        .sport-card {
+            height: var(--height-card-md);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            background: var(--color-grey-light);
         }
         
         .grid-3 {
@@ -474,16 +524,15 @@
             border-radius: var(--radius-sm);
         }
         
-        /* Payment Methods */
+        /* Payment Methods - better spacing and symmetry */
         .payment-logos {
-            padding: var(--space-lg);
+            padding: var(--space-md) var(--space-lg);
         }
         
         .payment-row {
             display: flex;
-            gap: var(--space-lg);
+            justify-content: space-between;
             margin-bottom: var(--space-md);
-            flex-wrap: wrap;
         }
         
         .payment-logo {
@@ -510,7 +559,7 @@
             display: flex;
             align-items: center;
             gap: var(--space-lg);
-            padding: 0 var(--space-md);
+            padding: 0 var(--space-lg);
             min-width: 600px;
         }
         
@@ -535,33 +584,15 @@
             text-align: center;
         }
         
-        .scroll-indicator {
-            position: absolute;
-            right: var(--space-xs);
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: var(--text-sm);
-            background: var(--color-white);
-            padding: var(--space-xs);
-            border: var(--border);
-        }
+        /* Remove old card definitions that are now standardized */
         
         /* Promotion Cards */
         .promo-cards {
             display: flex;
             gap: var(--space-lg);
             overflow-x: auto;
-            padding-bottom: var(--space-xs);
-        }
-        
-        .promo-card {
-            min-width: 140px;
-            height: var(--height-card-xl);
-            border: var(--border);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            position: relative;
-            background: var(--color-grey-light);
+            padding: 0 var(--space-lg) var(--space-xs) var(--space-lg);
+            margin: 0 calc(-1 * var(--space-lg));
         }
         
         .promo-image {
@@ -658,14 +689,7 @@
             font-size: var(--text-xs);
         }
         
-        /* Game Cards */
-        .game-card {
-            min-width: 120px;
-            height: var(--height-card-sm);
-            border: var(--border);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-        }
+        /* Remove old card definitions */
         
         .game-image {
             width: 100%;
@@ -742,9 +766,13 @@
             font-size: var(--text-sm);
         }
         
-        /* Feature Items */
+        /* Feature Items - consistent spacing */
         .feature-item {
-            margin-bottom: var(--space-2xl);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .feature-item:last-child {
+            margin-bottom: 0;
         }
         
         .feature-title {
