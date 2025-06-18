@@ -146,13 +146,40 @@
         .profile-container {
             flex-shrink: 0;
             display: flex;
-            gap: var(--space-xl);
+            gap: var(--space-lg);
             align-items: center;
         }
         
         /* Post-login state */
         .profile-container.logged-in {
-            gap: var(--space-xl);
+            gap: var(--space-lg);
+        }
+        
+        /* User Account - Improved */
+        .user-account {
+            min-width: 44px;
+            min-height: 44px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: var(--space-xs);
+        }
+        
+        .user-account:hover {
+            background: var(--color-grey-light);
+        }
+        
+        .user-account:focus {
+            outline: 2px solid var(--color-black);
+            outline-offset: 2px;
+        }
+        
+        .user-account:active {
+            background: var(--color-grey-light);
         }
         
         /* Balance Display - Mobile Optimized */
