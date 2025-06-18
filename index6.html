@@ -155,18 +155,21 @@
             gap: var(--space-xl);
         }
         
-        /* Balance Display - Design System Consistent */
+        /* Balance Display - Mobile Optimized */
         .balance-display {
             display: flex;
             align-items: center;
+            justify-content: center;
             background: var(--color-black);
             color: var(--color-white);
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 9999px;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
             min-height: 40px;
+            -webkit-appearance: none;
+            font-family: inherit;
         }
         
         .balance-display:hover {
@@ -186,15 +189,20 @@
             color: var(--color-white);
             font-weight: 600;
             font-size: var(--text-lg);
+            line-height: 1;
+            display: flex;
+            align-items: center;
         }
         
         .deposit-icon {
-            width: 18px;
-            height: 18px;
-            margin-left: 8px;
-            font-size: 18px;
-            font-weight: normal;
+            margin-left: 6px;
+            font-size: 16px;
+            font-weight: 400;
             color: var(--color-white);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .balance-container {
