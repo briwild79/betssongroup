@@ -226,61 +226,6 @@
             background: #f0f0f0;
         }
         
-        /* Profile Menu */
-        .profile-menu {
-            position: fixed;
-            top: 0;
-            right: -280px;
-            width: 280px;
-            height: 100%;
-            background: #ffffff;
-            border-left: 1px solid #000000;
-            transition: transform 0.3s ease;
-            z-index: 300;
-            overflow-y: auto;
-        }
-        
-        .profile-menu.active {
-            transform: translateX(-280px);
-        }
-        
-        .profile-header {
-            border-bottom: 1px solid #000000;
-            padding: 20px;
-            font-weight: 600;
-            font-size: 18px;
-        }
-        
-        .profile-items {
-            list-style: none;
-        }
-        
-        .profile-menu-item {
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .profile-menu-item:last-child {
-            border-bottom: none;
-        }
-        
-        .profile-menu-item a {
-            display: block;
-            padding: 20px;
-            text-decoration: none;
-            color: #000000;
-            font-size: 16px;
-            transition: background-color 0.2s ease;
-            background: transparent;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-        }
-        
-        .profile-menu-item a:active {
-            background: #f0f0f0;
-        }
-        
         /* ==========================================================================
            MAIN CONTENT (BETSSON STYLE)
            ========================================================================== */
@@ -595,8 +540,6 @@
             text-align: center;
         }
         
-        /* Remove old card definitions that are now standardized */
-        
         /* Promotion Cards */
         .promo-cards {
             display: flex;
@@ -700,8 +643,6 @@
             font-size: var(--text-xs);
         }
         
-        /* Remove old card definitions */
-        
         .game-card {
             height: auto;
             border: var(--border);
@@ -720,10 +661,6 @@
             font-size: var(--text-xs);
             border-bottom: var(--border);
         }
-        
-        /* Remove overlay styling for game cards */
-        
-        /* Remove old card definitions */
         
         .live-game-image {
             width: 100%;
@@ -749,8 +686,6 @@
         .game-provider {
             font-size: var(--text-xs);
         }
-        
-        /* Remove old card definitions */
         
         .sport-icon {
             width: 60px;
@@ -1250,6 +1185,12 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
         }
         
         .modal-header {
@@ -1385,6 +1326,11 @@
             font-weight: bold;
             cursor: pointer;
             margin: var(--space-lg) 0;
+            transition: background-color 0.2s ease;
+        }
+        
+        .login-btn:hover {
+            background: #45a049;
         }
         
         .signup-link {
@@ -1442,15 +1388,6 @@
             
             .side-menu.active {
                 transform: translateX(320px);
-            }
-            
-            .profile-menu {
-                width: 320px;
-                right: -320px;
-            }
-            
-            .profile-menu.active {
-                transform: translateX(-320px);
             }
         }
     </style>
@@ -2155,22 +2092,19 @@
             sideMenu.classList.remove('active');
         }
         
-        // Profile functionality - now handles GET STARTED button
-        function toggleProfile() {
-            // No longer needed since we have direct GET STARTED button
-        }
-        
+        // Login Modal functionality
         function showLogin() {
-            console.log('showLogin called'); // Debug log
+            console.log('showLogin called');
             const modal = document.getElementById('loginModal');
-            console.log('Modal element:', modal); // Debug log
+            console.log('Modal element:', modal);
             if (modal) {
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                console.log('Modal should be visible now'); // Debug log
+                console.log('Modal should be visible now');
             } else {
                 console.error('Modal not found!');
             }
+            closeAllMenus(); // Close any open menus
         }
         
         function closeLoginModal() {
@@ -2183,14 +2117,15 @@
         
         function showRegister() {
             alert('Register modal would open here');
+            closeAllMenus();
         }
         
         // Close modal when clicking outside
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded'); // Debug log
+            console.log('DOM loaded');
             const modal = document.getElementById('loginModal');
             if (modal) {
-                console.log('Modal found in DOM'); // Debug log
+                console.log('Modal found in DOM');
                 modal.addEventListener('click', function(e) {
                     if (e.target === modal) {
                         closeLoginModal();
@@ -2201,21 +2136,35 @@
             }
         });
         
-        function showLogin() {
-            alert('Login modal would open here');
+        // Navigation functions
+        function navigateTo(section) {
+            console.log('Navigating to:', section);
             closeAllMenus();
         }
         
-        function showSignup() {
-            alert('Sign up modal would open here');
-            closeAllMenus();
-        }
+        // Password toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordToggle = document.querySelector('.password-toggle');
+            const passwordInput = document.querySelector('input[type="password"]');
+            
+            if (passwordToggle && passwordInput) {
+                passwordToggle.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                });
+            }
+        });
         
-        function showForgotPassword() {
-            alert('Forgot password flow would start here');
-            closeAllMenus();
-        }
-        
-        // Search functionality
-        function performSearch() {
-            const searchInput = document.querySelector('.search-
+        // Form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.querySelector('.login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Login functionality would be implemented here');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
