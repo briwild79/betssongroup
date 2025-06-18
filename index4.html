@@ -506,6 +506,15 @@
             cursor: pointer;
         }
         
+        .login-link:hover {
+            text-decoration: none;
+        }
+        
+        .login-link:focus {
+            outline: 2px solid var(--color-black);
+            outline-offset: 2px;
+        }
+        
         .email-input {
             width: 100%;
             height: var(--height-input);
@@ -1299,7 +1308,7 @@
                 <input type="email" class="email-input" placeholder="Email">
                 <button class="create-btn">CLAIM BONUS</button>
                 <div class="signup-form-footer">
-                    Already a player? <span class="login-link" onclick="showLogin()">Login</span>
+                    Already a customer? <span class="login-link" onclick="showLogin()">Login</span>
                 </div>
             </div>
         </div>
