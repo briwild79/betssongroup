@@ -180,33 +180,50 @@
         .side-menu {
             position: fixed;
             top: 0;
-            left: -280px;
-            width: 280px;
+            left: -320px;
+            width: 320px;
             height: 100%;
             background: #ffffff;
-            border-right: 1px solid #000000;
-            transition: transform 0.3s ease;
+            border-right: var(--border);
+            transition: left 0.3s ease;
             z-index: 300;
             overflow-y: auto;
         }
         
         .side-menu.active {
-            transform: translateX(280px);
+            left: 0;
         }
         
         .menu-header {
-            border-bottom: 1px solid #000000;
-            padding: 20px;
+            border-bottom: var(--border);
+            padding: var(--space-lg);
             font-weight: 600;
-            font-size: 18px;
+            font-size: var(--text-xl);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 60px;
+        }
+        
+        .menu-close {
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            cursor: pointer;
+            padding: var(--space-xs);
+            color: var(--color-black);
+            font-weight: bold;
         }
         
         .menu-items {
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
         
         .menu-item {
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: var(--border-light);
         }
         
         .menu-item:last-child {
@@ -215,15 +232,21 @@
         
         .menu-item a {
             display: block;
-            padding: 20px;
+            padding: var(--space-lg);
             text-decoration: none;
-            color: #000000;
-            font-size: 16px;
+            color: var(--color-black);
+            font-size: var(--text-lg);
+            font-weight: normal;
             transition: background-color 0.2s ease;
+            background: var(--color-white);
+        }
+        
+        .menu-item a:hover {
+            background: var(--color-grey-light);
         }
         
         .menu-item a:active {
-            background: #f0f0f0;
+            background: var(--color-grey-light);
         }
         
         /* ==========================================================================
@@ -1153,7 +1176,7 @@
         }
         
         /* ==========================================================================
-           LOGIN MODAL
+           MODALS (LOGIN & REGISTRATION)
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -1192,6 +1215,279 @@
         .modal-overlay.active .modal-container {
             transform: scale(1);
         }
+        
+        /* Registration Modal Specific Styles */
+        .registration-modal .modal-container {
+            max-width: 480px;
+            background: var(--color-white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        .registration-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            padding: 40px 30px 30px;
+            color: white;
+            position: relative;
+            text-align: left;
+        }
+        
+        .registration-close {
+            position: absolute;
+            right: 25px;
+            top: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .registration-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .registration-title {
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+        
+        .registration-subtitle {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 0;
+            line-height: 1.2;
+        }
+        
+        .lightning-icon {
+            position: absolute;
+            right: 30px;
+            bottom: 25px;
+            font-size: 48px;
+            opacity: 0.15;
+            transform: rotate(-15deg);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            padding: 35px 30px 15px;
+            background: var(--color-white);
+            position: relative;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #e5e7eb;
+            color: #9ca3af;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .step.active .step-icon {
+            background: #ff6b35;
+            color: white;
+            border-color: #ff6b35;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .step.completed .step-icon {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            text-align: center;
+        }
+        
+        .step.active .step-label {
+            color: #ff6b35;
+        }
+        
+        .step.completed .step-label {
+            color: #10b981;
+        }
+        
+        .step-progress {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .step-progress::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 90px;
+            right: 90px;
+            height: 3px;
+            background: #e5e7eb;
+            z-index: 1;
+            border-radius: 2px;
+        }
+        
+        .step-progress::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 90px;
+            width: 33%;
+            height: 3px;
+            background: #ff6b35;
+            z-index: 1;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .registration-content {
+            padding: 20px 40px 50px;
+            background: #fafbfc;
+        }
+        
+        .welcome-section {
+            text-align: left;
+            margin-bottom: 35px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            color: #1f2937;
+        }
+        
+        .welcome-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+        
+        .registration-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-field {
+            position: relative;
+        }
+        
+        .form-field input,
+        .form-field select {
+            width: 100%;
+            height: 60px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px 20px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .form-field input:focus,
+        .form-field select:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+        
+        .form-field input::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+        
+        .country-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 20px center;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            padding-left: 65px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .country-flag {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+        
+        .continue-btn {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+        
+        .continue-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Login Modal Styles */
         
         .modal-header {
             background: var(--color-black);
@@ -1382,12 +1678,8 @@
         /* Responsive adjustments */
         @media (min-width: 768px) {
             .side-menu {
-                width: 320px;
-                left: -320px;
-            }
-            
-            .side-menu.active {
-                transform: translateX(320px);
+                width: 350px;
+                left: -350px;
             }
         }
     </style>
@@ -1436,14 +1728,29 @@
     
     <!-- Side Menu -->
     <nav class="side-menu">
-        <div class="menu-header">Menu</div>
+        <div class="menu-header">
+            <span>Menu</span>
+            <button class="menu-close" onclick="closeAllMenus()" aria-label="Close menu">✕</button>
+        </div>
         <ul class="menu-items">
-            <li class="menu-item"><a href="#" onclick="navigateTo('home')">Home</a></li>
-            <li class="menu-item"><a href="#" onclick="navigateTo('sports')">Sports</a></li>
-            <li class="menu-item"><a href="#" onclick="navigateTo('casino')">Casino</a></li>
-            <li class="menu-item"><a href="#" onclick="navigateTo('live-casino')">Live Casino</a></li>
-            <li class="menu-item"><a href="#" onclick="navigateTo('poker')">Poker</a></li>
-            <li class="menu-item"><a href="#" onclick="navigateTo('promotions')">Promotions</a></li>
+            <li class="menu-item">
+                <a href="#" onclick="navigateTo('home')">Home</a>
+            </li>
+            <li class="menu-item">
+                <a href="#" onclick="navigateTo('sports')">Sports</a>
+            </li>
+            <li class="menu-item">
+                <a href="#" onclick="navigateTo('casino')">Casino</a>
+            </li>
+            <li class="menu-item">
+                <a href="#" onclick="navigateTo('live-casino')">Live Casino</a>
+            </li>
+            <li class="menu-item">
+                <a href="#" onclick="navigateTo('poker')">Poker</a>
+            </li>
+            <li class="menu-item">
+                <a href="#" onclick="navigateTo('promotions')">Promotions</a>
+            </li>
         </ul>
     </nav>
     
@@ -1459,7 +1766,7 @@
             
             <div class="signup-form">
                 <input type="email" class="email-input" placeholder="Email">
-                <button class="create-btn">CLAIM BONUS</button>
+                <button class="create-btn" onclick="claimBonus()">CLAIM BONUS</button>
                 <div class="signup-form-footer">
                     Already a customer? <span class="login-link" onclick="showLogin()">Login</span>
                 </div>
@@ -2004,6 +2311,74 @@
         </div>
     </main>
     
+    <!-- Registration Modal -->
+    <div class="modal-overlay registration-modal" id="registrationModal">
+        <div class="modal-container">
+            <div class="registration-header">
+                <button class="registration-close" onclick="closeRegistrationModal()" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="registration-title">Create your account and enjoy:</div>
+                <div class="registration-subtitle">Instant Deposit and Fast Withdrawal</div>
+                <div class="lightning-icon">⚡</div>
+            </div>
+            
+            <div class="step-indicator">
+                <div class="step-progress">
+                    <div class="step active">
+                        <div class="step-icon">👤</div>
+                        <div class="step-label">About You</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">📍</div>
+                        <div class="step-label">Address</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">➕</div>
+                        <div class="step-label">Additional</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="registration-content">
+                <div class="welcome-section">
+                    <h2 class="welcome-title">Welcome! To get started, tell us about yourself.</h2>
+                    <p class="welcome-subtitle">You are only a few steps away from getting started!</p>
+                </div>
+                
+                <form class="registration-form" id="registrationForm">
+                    <div class="form-field">
+                        <input type="text" placeholder="First name" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <input type="text" placeholder="Last name" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    
+                    <div class="form-field">
+                        <div class="country-flag">🇲🇹</div>
+                        <select class="country-select" required>
+                            <option value="MT" selected>Malta</option>
+                            <option value="GB">United Kingdom</option>
+                            <option value="DE">Germany</option>
+                            <option value="SE">Sweden</option>
+                            <option value="NO">Norway</option>
+                            <option value="FI">Finland</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="continue-btn">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-container">
@@ -2116,23 +2491,55 @@
         }
         
         function showRegister() {
-            alert('Register modal would open here');
+            console.log('showRegister called');
+            const modal = document.getElementById('registrationModal');
+            console.log('Registration Modal element:', modal);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                console.log('Registration modal should be visible now');
+            } else {
+                console.error('Registration modal not found!');
+            }
             closeAllMenus();
+        }
+        
+        function closeRegistrationModal() {
+            const modal = document.getElementById('registrationModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
         }
         
         // Close modal when clicking outside
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded');
-            const modal = document.getElementById('loginModal');
-            if (modal) {
-                console.log('Modal found in DOM');
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
+            
+            // Login modal
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                console.log('Login modal found in DOM');
+                loginModal.addEventListener('click', function(e) {
+                    if (e.target === loginModal) {
                         closeLoginModal();
                     }
                 });
             } else {
-                console.error('Modal not found in DOM!');
+                console.error('Login modal not found in DOM!');
+            }
+            
+            // Registration modal
+            const registrationModal = document.getElementById('registrationModal');
+            if (registrationModal) {
+                console.log('Registration modal found in DOM');
+                registrationModal.addEventListener('click', function(e) {
+                    if (e.target === registrationModal) {
+                        closeRegistrationModal();
+                    }
+                });
+            } else {
+                console.error('Registration modal not found in DOM!');
             }
         });
         
@@ -2157,6 +2564,7 @@
         
         // Form submission
         document.addEventListener('DOMContentLoaded', function() {
+            // Login form
             const loginForm = document.querySelector('.login-form');
             if (loginForm) {
                 loginForm.addEventListener('submit', function(e) {
@@ -2164,7 +2572,21 @@
                     alert('Login functionality would be implemented here');
                 });
             }
+            
+            // Registration form
+            const registrationForm = document.getElementById('registrationForm');
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Registration step 2 would be implemented here');
+                });
+            }
         });
+        
+        // Update CLAIM BONUS button to show registration
+        function claimBonus() {
+            showRegister();
+        }
     </script>
 </body>
 </html>
