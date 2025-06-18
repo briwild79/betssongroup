@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Site Mobile Wireframe</title>
+    <style>
+        /* ==========================================================================
+           BASE RESET & SYSTEM FONTS
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.4;
+            min-height: 100vh;
+        }
+        
+        * {
+            text-decoration: none !important;
+        }
+        
+        a, span, div, p, button, input {
+            color: inherit;
+        }
+        
+        /* ==========================================================================
+           DESIGN TOKENS
+           ========================================================================== */
+        :root {
+            /* Spacing Scale */
+            --space-xs: 8px;
+            --space-sm: 12px;
+            --space-md: 16px;
+            --space-lg: 20px;
+            --space-xl: 24px;
+            --space-2xl: 32px;
+            --space-3xl: 40px;
+            
+            /* Colors */
+            --color-black: #000000;
+            --color-white: #ffffff;
+            --color-grey-light: #f0f0f0;
+            --color-grey-bg: #f5f5f5;
+            --color-grey-border: #e0e0e0;
+            
+            /* Typography Scale */
+            --text-xs: 10px;
+            --text-sm: 12px;
+            --text-md: 14px;
+            --text-lg: 16px;
+            --text-xl: 18px;
+            --text-2xl: 20px;
+            --text-3xl: 24px;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-full: 50%;
+            
+            /* Borders */
+            --border-width: 1px;
+            --border-style: solid;
+            --border-color: var(--color-black);
+            --border: var(--border-width) var(--border-style) var(--border-color);
+            --border-light: var(--border-width) var(--border-style) var(--color-grey-border);
+            
+            /* Component Heights */
+            --height-input: 45px;
+            --height-button-sm: 35px;
+            --height-button-md: 45px;
+            --height-nav: 60px;
+            --height-card-sm: 120px;
+            --height-card-md: 140px;
+            --height-card-lg: 200px;
+            --height-card-xl: 280px;
+        }
+        
+        /* ==========================================================================
+           HEADER SYSTEM (INTERACTIVE)
+           ========================================================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-bottom: 1px solid #000000;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            height: 60px;
+        }
+        
+        /* Burger Button */
+        .burger-btn {
+            background: none;
+            border: none;
+            width: auto;
+            height: auto;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 3px;
+            flex-shrink: 0;
+            padding: 0;
+            font-weight: bold;
+        }
+        
+        .burger-line {
+            width: 16px;
+            height: 2px;
+            background: #000000;
+            transition: all 0.2s ease;
+        }
+        
+        .burger-btn.active .burger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .burger-btn.active .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .burger-btn.active .burger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Header spacer for generous white space */
+        .header-spacer {
+            flex: 1;
+        }
+        
+        /* Profile Container - updated for two buttons */
+        .profile-container {
+            flex-shrink: 0;
+            display: flex;
+            gap: var(--space-lg);
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+            padding-left: 4px;
+        }
+        
+        /* Menu Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #ffffff;
+            border-right: 1px solid #000000;
+            transition: transform 0.3s ease;
+            z-index: 300;
+            overflow-y: auto;
+        }
+        
+        .side-menu.active {
+            transform: translateX(280px);
+        }
+        
+        .menu-header {
+            border-bottom: 1px solid #000000;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .menu-items {
+            list-style: none;
+        }
+        
+        .menu-item {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: #000000;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .menu-item a:active {
+            background: #f0f0f0;
+        }
+        
+        /* Profile Menu */
+        .profile-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background: #ffffff;
+            border-left: 1px solid #000000;
+            transition: transform 0.3s ease;
+            z-index: 300;
+            overflow-y: auto;
+        }
+        
+        .profile-menu.active {
+            transform: translateX(-280px);
+        }
+        
+        .profile-header {
+            border-bottom: 1px solid #000000;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .profile-items {
+            list-style: none;
+        }
+        
+        .profile-menu-item {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .profile-menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-menu-item a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: #000000;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        
+        .profile-menu-item a:active {
+            background: #f0f0f0;
+        }
+        
+        /* ==========================================================================
+           MAIN CONTENT (BETSSON STYLE)
+           ========================================================================== */
+        .main-content {
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* Layout Components - consistent spacing */
+        .section {
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+        
+        .section-title {
+            font-size: var(--text-xl);
+            font-weight: bold;
+        }
+        
+        /* Button System */
+        .btn {
+            border: var(--border);
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+        }
+        
+        .btn-primary {
+            background: var(--color-black);
+            color: var(--color-white);
+        }
+        
+        .btn-secondary {
+            background: var(--color-white);
+            color: var(--color-black);
+        }
+        
+        .btn-text {
+            background: none;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--color-black);
+            padding: 0;
+            height: auto;
+            font-size: var(--text-sm);
+            text-transform: uppercase;
+        }
+        
+        .btn-sm {
+            height: var(--height-button-sm);
+            padding: 0 var(--space-md);
+            font-size: var(--text-sm);
+            text-transform: uppercase;
+        }
+        
+        .btn-md {
+            height: var(--height-button-md);
+            padding: 0 var(--space-lg);
+            font-size: var(--text-md);
+        }
+        
+        /* Card System */
+        .card {
+            border: var(--border);
+            border-radius: var(--radius-md);
+            background: var(--color-white);
+            overflow: hidden;
+        }
+        
+        .card-content {
+            padding: var(--space-md);
+        }
+        
+        /* Horizontal scroll sections - standardized width */
+        .horizontal-scroll {
+            display: flex;
+            gap: var(--space-lg);
+            overflow-x: auto;
+            padding: 0 var(--space-lg) var(--space-xs) var(--space-lg);
+            margin: 0 calc(-1 * var(--space-lg));
+        }
+        
+        /* Standardized card width - all cards same as live casino */
+        .promo-card,
+        .game-card,
+        .live-game-card,
+        .sport-card {
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+        
+        .promo-card {
+            height: var(--height-card-xl);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            background: var(--color-grey-light);
+        }
+        
+        .game-card {
+            height: var(--height-card-sm);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        
+        .live-game-card {
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--color-white);
+        }
+        
+        .sport-card {
+            height: var(--height-card-md);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            background: var(--color-grey-light);
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+        }
+        
+        /* Typography */
+        .text-xs { font-size: var(--text-xs); }
+        .text-sm { font-size: var(--text-sm); }
+        .text-md { font-size: var(--text-md); }
+        .text-lg { font-size: var(--text-lg); }
+        .text-xl { font-size: var(--text-xl); }
+        .text-2xl { font-size: var(--text-2xl); }
+        .text-3xl { font-size: var(--text-3xl); }
+        
+        .font-bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        
+        /* Hero Section */
+        .hero-section {
+            height: 340px;
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--color-grey-bg);
+        }
+        
+        .hero-text {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .hero-title {
+            font-size: var(--text-md);
+            font-weight: normal;
+            margin-bottom: var(--space-sm);
+            color: #666666;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .bonus-text {
+            font-size: var(--text-3xl);
+            font-weight: bold;
+            margin-bottom: var(--space-sm);
+            line-height: 1.1;
+            color: var(--color-black);
+        }
+        
+        .example-text {
+            font-size: var(--text-lg);
+            margin-bottom: var(--space-xs);
+            font-weight: normal;
+            color: var(--color-black);
+            line-height: 1.3;
+        }
+        
+        .minimum-text {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-lg);
+            color: #666666;
+            font-weight: normal;
+            font-style: italic;
+        }
+        
+        .signup-form {
+            background: var(--color-white);
+            border: var(--border);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+        }
+        
+        .signup-form-footer {
+            text-align: center;
+            margin-top: var(--space-md);
+            font-size: var(--text-sm);
+            color: #666666;
+        }
+        
+        .login-link {
+            color: var(--color-black);
+            font-weight: bold;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .email-input {
+            width: 100%;
+            height: var(--height-input);
+            border: var(--border);
+            padding: 0 var(--space-sm);
+            margin-bottom: var(--space-md);
+            font-size: var(--text-md);
+        }
+        
+        .create-btn {
+            width: 100%;
+            height: var(--height-input);
+            background: var(--color-black);
+            color: var(--color-white);
+            border: var(--border);
+            font-weight: bold;
+            font-size: var(--text-md);
+            border-radius: var(--radius-sm);
+        }
+        
+        /* Payment Methods - reduced bottom spacing */
+        .payment-logos {
+            padding: var(--space-md) var(--space-lg) var(--space-xs) var(--space-lg);
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+        
+        .payment-logo {
+            width: 60px;
+            height: 30px;
+            border: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            background: var(--color-white);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            height: var(--height-nav);
+            padding: var(--space-xs) 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
+        }
+        
+        .nav-scroll {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: 0 var(--space-lg);
+            min-width: 600px;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+            min-width: 60px;
+        }
+        
+        .nav-icon {
+            width: var(--space-xl);
+            height: var(--space-xl);
+            border: var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--color-white);
+        }
+        
+        .nav-text {
+            font-size: var(--text-xs);
+            text-align: center;
+        }
+        
+        /* Remove old card definitions that are now standardized */
+        
+        /* Promotion Cards */
+        .promo-cards {
+            display: flex;
+            gap: var(--space-lg);
+            overflow-x: auto;
+            padding: 0 var(--space-lg) var(--space-xs) var(--space-lg);
+            margin: 0 calc(-1 * var(--space-lg));
+        }
+        
+        .promo-image {
+            width: 100%;
+            height: 100%;
+            background: var(--color-grey-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+        }
+        
+        .promo-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            padding: var(--space-md);
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--color-white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .promo-label {
+            font-size: var(--text-xs);
+            font-weight: bold;
+            margin-bottom: var(--space-xs);
+            line-height: 1.1;
+            height: 22px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .promo-text {
+            font-size: 11px;
+            line-height: 1.2;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        /* Partnership Banner */
+        .partnership-banner {
+            height: var(--height-card-lg);
+            display: flex;
+            background: var(--color-grey-light);
+            color: var(--color-black);
+            margin: var(--space-lg);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        
+        .banner-content {
+            flex: 1;
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .banner-title {
+            font-size: var(--text-lg);
+            font-weight: bold;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .banner-subtitle {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .banner-btn {
+            width: 100px;
+            height: var(--height-button-sm);
+            background: var(--color-white);
+            color: var(--color-black);
+            border: var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-sm);
+            font-weight: bold;
+        }
+        
+        .banner-image {
+            width: 120px;
+            background: var(--color-grey-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+        }
+        
+        /* Remove old card definitions */
+        
+        .game-card {
+            height: auto;
+            border: var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--color-white);
+        }
+        
+        .game-image {
+            width: 100%;
+            height: 100px;
+            background: var(--color-grey-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            border-bottom: var(--border);
+        }
+        
+        /* Remove overlay styling for game cards */
+        
+        /* Remove old card definitions */
+        
+        .live-game-image {
+            width: 100%;
+            height: 100px;
+            background: var(--color-grey-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            border-bottom: var(--border);
+        }
+        
+        .live-game-info {
+            padding: var(--space-xs);
+        }
+        
+        .game-name {
+            font-weight: bold;
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .game-provider {
+            font-size: var(--text-xs);
+        }
+        
+        /* Remove old card definitions */
+        
+        .sport-icon {
+            width: 60px;
+            height: 60px;
+            border: var(--border);
+            border-radius: var(--radius-full);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+        }
+        
+        .sport-name {
+            font-weight: bold;
+            font-size: var(--text-sm);
+        }
+        
+        /* Feature Items - consistent spacing */
+        .feature-item {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .feature-title {
+            font-size: var(--text-lg);
+            font-weight: bold;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .feature-description {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
+            line-height: 1.4;
+        }
+        
+        .feature-stats {
+            margin-top: var(--space-lg);
+        }
+        
+        .stat-item {
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-label {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-value {
+            font-size: var(--text-lg);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .info-icon {
+            width: var(--text-xl);
+            height: var(--text-xl);
+            background: var(--color-black);
+            color: var(--color-white);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+            font-weight: bold;
+        }
+        
+        /* Payment Methods */
+        .payment-methods {
+            margin-top: var(--space-md);
+        }
+        
+        .payment-method {
+            padding: var(--space-xs) var(--space-sm);
+            border: var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: bold;
+            background: var(--color-white);
+        }
+        
+        /* Customer Support */
+        .contact-link {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        
+        .customer-support-box {
+            border: var(--border);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            background: var(--color-white);
+            margin-top: var(--space-md);
+        }
+        
+        /* Responsible Gaming */
+        .responsible-gaming-title {
+            font-size: var(--text-xl);
+            font-weight: bold;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .responsible-gaming-text {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
+            line-height: 1.4;
+        }
+        
+        .responsible-gaming-link {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        
+        .licensing-logos {
+            display: flex;
+            gap: var(--space-lg);
+            margin: var(--space-lg) 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .license-logo {
+            height: var(--space-3xl);
+            border: var(--border);
+            padding: var(--space-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            background: var(--color-white);
+        }
+        
+        /* FAQ */
+        .faq-title {
+            font-size: var(--text-xl);
+            font-weight: bold;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .faq-item {
+            border: var(--border);
+            margin-bottom: var(--space-xs);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: var(--space-md);
+            background: var(--color-white);
+            font-size: var(--text-md);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-arrow {
+            font-size: var(--text-xl);
+            font-weight: bold;
+        }
+        
+        /* Brand Section */
+        .brand-image {
+            width: 100%;
+            height: var(--height-card-lg);
+            background: var(--color-grey-light);
+            border: var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .brand-title {
+            font-size: var(--text-xl);
+            font-weight: bold;
+            margin-bottom: var(--space-md);
+            line-height: 1.3;
+        }
+        
+        .brand-text {
+            font-size: var(--text-sm);
+            line-height: 1.4;
+            margin-bottom: var(--space-md);
+        }
+        
+        .casino-link {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        
+        .show-more {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            margin-top: var(--space-lg);
+        }
+        
+        .show-more-text {
+            font-weight: bold;
+            font-size: var(--text-md);
+        }
+        
+        .show-more-arrow {
+            font-size: var(--text-lg);
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .footer-section {
+            background: var(--color-grey-light);
+            padding: var(--space-lg);
+        }
+        
+        .language-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            border: var(--border);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .language-flag {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .flag-icon {
+            width: var(--space-xl);
+            height: var(--space-md);
+            border: var(--border);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+        }
+        
+        .language-text {
+            font-size: var(--text-md);
+        }
+        
+        .dropdown-arrow {
+            font-size: var(--text-lg);
+        }
+        
+        .collaboration-section {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .collaboration-title {
+            font-size: var(--text-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .sponsors-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            justify-content: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .sponsor-item {
+            border: var(--border);
+            padding: var(--space-md);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            border-radius: var(--radius-sm);
+        }
+        
+        .sponsor-logo {
+            width: var(--space-3xl);
+            height: var(--space-3xl);
+            background: var(--color-grey-light);
+            border: var(--border);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+        }
+        
+        .sponsor-text {
+            font-size: var(--text-xs);
+            font-weight: bold;
+        }
+        
+        .payment-item {
+            font-size: var(--text-xs);
+            font-weight: bold;
+            border: var(--border);
+            padding: var(--space-xs);
+            background: var(--color-white);
+            text-align: center;
+        }
+        
+        .footer-navigation {
+            margin: var(--space-2xl) 0;
+        }
+        
+        .footer-nav-item {
+            border-bottom: var(--border);
+            padding: var(--space-md) 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-nav-text {
+            font-size: var(--text-md);
+            font-weight: bold;
+        }
+        
+        .footer-nav-arrow {
+            font-size: var(--text-lg);
+        }
+        
+        .licenses-section {
+            text-align: center;
+            margin: var(--space-2xl) 0;
+        }
+        
+        .mga-logos {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .mga-logo {
+            width: 60px;
+            height: var(--space-3xl);
+            border: var(--border);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: bold;
+        }
+        
+        .licenses-dropdown {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .licenses-text {
+            font-size: var(--text-md);
+        }
+        
+        .licenses-arrow {
+            font-size: var(--text-lg);
+        }
+        
+        .copyright-section {
+            text-align: center;
+            margin: var(--space-2xl) 0;
+        }
+        
+        .copyright-text {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .responsibility-text {
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-lg);
+            line-height: 1.4;
+        }
+        
+        .responsibility-logos {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .responsibility-logo {
+            width: var(--space-3xl);
+            height: var(--space-3xl);
+            border: var(--border);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            border-radius: var(--radius-full);
+        }
+        
+        .egba-logo {
+            text-align: center;
+            margin: var(--space-2xl) 0;
+        }
+        
+        .egba-text {
+            font-size: var(--text-3xl);
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .ecogra-logo {
+            text-align: center;
+            margin: var(--space-2xl) 0;
+        }
+        
+        .ecogra-text {
+            font-size: var(--text-md);
+            font-weight: bold;
+            border: 2px solid var(--color-black);
+            border-radius: 25px;
+            padding: var(--space-sm) var(--space-lg);
+            display: inline-block;
+        }
+        
+        .footer-links {
+            text-align: center;
+            margin: var(--space-2xl) 0;
+        }
+        
+        .footer-link {
+            font-size: var(--text-sm);
+            margin: var(--space-xs) 0;
+            text-decoration: underline;
+        }
+        
+        .cookie-settings {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            margin: var(--space-2xl) 0;
+        }
+        
+        .cookie-icon {
+            width: var(--space-xl);
+            height: var(--space-xl);
+            border: var(--border);
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+        }
+        
+        .cookie-text {
+            font-size: var(--text-md);
+        }
+        
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .side-menu {
+                width: 320px;
+                left: -320px;
+            }
+            
+            .side-menu.active {
+                transform: translateX(320px);
+            }
+            
+            .profile-menu {
+                width: 320px;
+                right: -320px;
+            }
+            
+            .profile-menu.active {
+                transform: translateX(-320px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <button class="burger-btn" onclick="toggleMenu()" aria-label="Open menu">
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+        </button>
+        
+        <div class="logo">
+            <svg width="110" height="18" viewBox="0 0 1206.56 201.59" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .cls-1 {
+                        fill: #000;
+                        stroke-width: 0px;
+                    }
+                </style>
+                <path class="cls-1" d="M659.02,93.73c-.77-9.63-4.3-18.12-10.49-25.25-6.07-6.98-14.66-12.39-25.52-16.06-10.58-3.57-27.11-5.39-41.99-5.39-13.95,0-26.21,1.87-36.42,5.55-10.5,3.78-18.72,9.31-24.44,16.43-5.86,7.29-8.84,16.04-8.84,26v.14c0,8.18,2.01,14.03,5.99,20.08,3.93,5.98,9.78,10.88,17.39,14.55,7.31,3.54,16.56,6.05,27.48,7.46l38.02,4.08c11.71,1.46,17.04,3.75,19.45,5.41,2.9,2,4.25,6.16,4.25,10.16v.14c0,3.42-1.1,6.15-3.46,8.58-2.57,2.65-6.61,4.74-12.01,6.21-5.78,1.57-12.98,2.37-21.42,2.37-14.15,0-21.49-1.77-28.96-5.25-6.87-3.2-10.86-7.65-12.21-13.59l-.77-3.23h-38.44l.57,4.76c1.24,10.06,5.26,16.31,11.94,23.44,6.55,6.99,15.65,12.36,27.06,15.96,9.74,3.08,21.36,4.83,34.61,5.21,1.86.05,3.76.08,5.68.08,1.81,0,7.23-.03,8.98-.09,12.5-.41,23.51-2.26,32.8-5.52,10.88-3.82,19.44-9.46,25.42-16.74,6.14-7.48,9.25-13.9,9.25-23.97v-.14c0-12.63-4.19-21.02-12.47-28.02-7.88-6.67-20.71-11.2-38.12-13.48l-40.73-4.22c-6.11-.68-11.07-1.76-14.75-3.2-3.29-1.29-5.65-2.86-7.03-4.67-1.3-1.7-1.9-5.19-1.9-7.61v-.14c0-3.36,1.03-7.55,3.24-9.89,2.41-2.56,6.17-4.59,11.19-6.05,5.37-1.56,10.92-2.35,18.91-2.35,12.47,0,22.43,1.84,29.61,5.47,6.64,3.35,10.13,9.08,10.97,14.72l.52,3.27h37.02l-.38-5.23Z"/>
+                <path class="cls-1" d="M830,93.73c-.77-9.63-4.3-18.12-10.49-25.25-6.07-6.98-14.66-12.39-25.52-16.06-10.58-3.57-27.11-5.39-41.99-5.39-13.95,0-26.21,1.87-36.42,5.55-10.5,3.78-18.72,9.31-24.44,16.43-5.86,7.29-8.84,16.04-8.84,26v.14c0,8.18,2.01,14.03,5.99,20.08,3.93,5.98,9.78,10.88,17.39,14.55,7.31,3.54,16.56,6.05,27.48,7.46l38.02,4.08c11.71,1.46,17.04,3.75,19.45,5.41,2.9,2,4.25,6.16,4.25,10.16v.14c0,3.42-1.1,6.15-3.46,8.58-2.57,2.65-6.61,4.74-12.01,6.21-5.78,1.57-12.98,2.37-21.42,2.37-14.15,0-21.49-1.77-28.96-5.25-6.87-3.2-10.86-7.65-12.21-13.59l-.77-3.23h-38.44l.57,4.76c1.24,10.06,5.26,16.31,11.94,23.44,6.55,6.99,15.65,12.36,27.06,15.96,9.74,3.08,21.36,4.83,34.61,5.21,1.86.05,3.76.08,5.68.08,1.81,0,7.23-.03,8.98-.09,12.5-.41,23.51-2.26,32.8-5.52,10.88-3.82,19.44-9.46,25.42-16.74,6.14-7.48,9.25-13.9,9.25-23.97v-.14c0-12.63-4.19-21.02-12.47-28.02-7.88-6.67-20.71-11.2-38.12-13.48l-40.73-4.22c-6.11-.68-11.07-1.76-14.75-3.2-3.29-1.29-5.65-2.86-7.03-4.67-1.3-1.7-1.9-5.19-1.9-7.61v-.14c0-3.36,1.03-7.55,3.24-9.89,2.41-2.56,6.17-4.59,11.19-6.05,5.37-1.56,10.92-2.35,18.91-2.35,12.47,0,22.43,1.84,29.61,5.47,6.64,3.35,10.13,9.08,10.97,14.72l.52,3.27h37.02l-.38-5.23Z"/>
+                <path class="cls-1" d="M172.7,124.96v-.03s0-1.88,0-1.88v-2.46h-.09c-.86-20.55-7.88-38.15-20.39-51.04-14.59-15.02-37.52-22.96-64.02-22.96-23.01,0-42.64,9.6-52.39,20.38V0H0v197.69h35.79v-14.13c12.92,11.73,32.19,17.67,53.6,17.67,23.04,0,48.14-5.59,62.82-20.84,12.49-12.97,19.51-30.45,20.38-50.68h.08l.02-2.48v-1.99s0-.13,0-.13v-.11s0-.03,0-.03ZM85.76,173.26c-10.51,0-18.4-1.94-26.62-5.94-15.65-7.6-23.34-24.24-23.34-42.38,0-21.9,12.48-42.89,33.02-47.62,5.6-1.29,10.5-1.94,16.94-1.94,15.07,0,27.76,4.53,36.7,13.1,8.9,8.53,13.63,22.29,13.67,36.67-.08,28.77-20.32,48.11-50.37,48.11Z"/>
+                <path class="cls-1" d="M1022.64,125.08v-.04s0-1.88,0-1.88v-2.46h-.12c-1.03-19.5-8.47-37.31-21.07-50.36-15.18-15.72-39.53-24.02-65.82-24.02s-49.36,8.27-64.49,23.93c-12.67,13.11-20.15,30.95-21.19,50.45h-.1l-.03,2.48v2.02s0,.12,0,.12v.09s0,.03,0,.03v.03s0,1.88,0,1.88v2.46h.13c1.06,19.21,8.55,34.36,21.21,47.38,13.03,13.38,32.28,21.41,53.8,23.54.24.02.47.06.71.08,1.3.12,2.61.21,3.93.29.34.02.67.05,1.01.07,1.66.08,3.33.13,5.02.15,0,0,0,0,.01,0,0,0,0,0,.01,0,.19,0,.37-.01.56-.02,1.49-.02,4.17-.06,5.63-.13.59-.03,1.15-.08,1.73-.12,1.07-.07,2.13-.13,3.18-.23.44-.04.86-.1,1.29-.14,1.21-.13,2.41-.26,3.59-.42.12-.02.24-.04.36-.06,19.56-2.75,37.21-10.57,49.32-23.01,13.19-13.56,20.76-29.64,21.31-49.78l.04-1.87v-.04s0-.04,0-.04v-.24s0-.09,0-.09v-.04ZM986.98,130.86v.03s-.01.07-.01.07c-2.56,24.93-23.19,41.96-51.34,42.39-28.19-.43-47.63-17.48-50.19-42.43-.71-5.71-.46-15.1,1.74-22.35v-.05s.03-.05.03-.05l.12-.41c5.52-20.24,22.34-33.3,48.27-33.3s44.24,13.25,49.62,33.79v.05s.03.05.03.05c2.19,7.19,2.43,16.56,1.73,22.22Z"/>
+                <path class="cls-1" d="M1190.16,64.35c-10.88-11.16-29.8-16.81-49.05-16.81-12.98,0-26.22,1.11-43.98,10.31-5.89,3.05-12.15,8.21-16.37,12.73v-20.27h-36.29v147.57h36.29v-76.28c0-8.33,1.77-16.74,5.26-22.82,3.47-6.04,10.58-12.19,16.9-15.46,11.69-6.05,22.72-7.5,31.35-7.5,12.04,0,19.92,3.16,25.83,9.4,5.94,6.28,10.17,15.81,10.17,28.32v84.33h36.29v-87.21c0-19.57-5.52-35.15-16.4-46.31Z"/>
+                <path class="cls-1" d="M480.03,169.45c-10.51,2.74-19.43,2.9-21.6,2.9h-1.27c-18.28,0-18.2-7.28-18.2-13.63v-78.44h47.82v-29.85h-47.82V0h-35.79v50.44h-38.38v29.85h38.38v81.45c0,13.52,4.74,21.59,14.09,28.86,9.15,7.12,22.34,10.73,39.22,10.73.03,0,.08,0,.15,0,2.17-.03,27.25-.5,39.91-6.55l2.95-1.5-16.18-24.66-3.26.85Z"/>
+                <path class="cls-1" d="M230.04,129.98h130.45v-2.6c-.02-.93-.03-1.8-.05-2.29-.55-18.24-4.08-38.57-21.21-55.59-14.84-14.75-40.54-23.2-64.17-23.2-15.17,0-28.74,2.74-40.32,8.16-4.47,2.09-8.73,4.64-12.66,7.59-1.52,1.14-2.88,2.24-4.14,3.34-3.2,2.81-6.18,5.99-8.87,9.44-.66.85-1.3,1.71-1.9,2.57-2.55,3.61-4.78,7.46-6.61,11.43-4.4,9.5-6.99,20.47-7.56,31.85h-.09l-.03,2.48v2.02s0,.12,0,.12v.09s0,.03,0,.03v.03s0,1.88,0,1.88v2.46h.12c.01.21.03.41.04.62l.07,1.08c.03.5.06,1.01.1,1.51.04.49.1.99.15,1.48l.12,1.1c.04.37.08.75.13,1.13.08.59.17,1.18.26,1.77l.15.98c.04.3.09.62.14.93.13.74.27,1.47.42,2.2l.14.71c.04.23.09.48.14.73.2.93.43,1.86.64,2.67l.08.32c.05.2.09.41.15.61.25.96.54,1.92.81,2.82l.07.25c.04.14.09.31.14.47.34,1.09.7,2.14.98,2.92l.17.51c.35.97.74,1.96,1.2,3.08l.13.34c.43,1.04.88,2.05,1.43,3.22l.05.12c.51,1.06,1.04,2.12,1.61,3.19l.04.08c13.57,25.28,39.77,36.71,73.8,36.71s63.81-10.38,80.58-34.69l1.73-2.51-26.34-16.6-1.73,1.86c-13.5,14.48-24.57,23.97-54.24,23.97-.15,0-.3,0-.45,0h-.1s-.49-.01-.49-.01c-12.22-.18-19.41-3.55-27.69-9.74-.61-.46-1.15-.88-1.7-1.34-.57-.47-1.08-.92-1.61-1.4-.52-.47-.98-.92-1.42-1.37l-.08-.08c-.52-.53-.95-.98-1.36-1.44l-.1-.11c-.5-.56-.88-1.01-1.28-1.5l-.09-.11c-.39-.49-.76-.96-1.12-1.44l-.18-.25c-.35-.48-.68-.95-1.01-1.44l-.2-.32c-.32-.48-.62-.95-.91-1.43l-.22-.39c-.28-.48-.55-.94-.81-1.42l-.25-.48c-.25-.47-.48-.92-.71-1.38l-.3-.64-.05-.11c-.18-.38-.36-.77-.53-1.16l-.34-.83c-.16-.39-.31-.76-.46-1.14-.05-.14-.09-.26-.14-.39l-.22-.63h0s-.02-.06-.02-.06c-.11-.32-.23-.63-.33-.95-.05-.14-.09-.28-.13-.41l-.02-.08-.22-.72-.03-.1c-.08-.25-.15-.5-.23-.75-.05-.19-.1-.39-.15-.59l-.19-.76c-.07-.27-.14-.52-.2-.78-.05-.22-.1-.44-.14-.67l-.18-.84c-.05-.25-.1-.46-.14-.66-.06-.31-.11-.62-.16-.93,0,0-.21-1.57-.21-3.31h.01v-1.2ZM234.55,98.59c1.05-2.24,2.3-4.37,3.7-6.35.37-.52.78-1.07,1.22-1.63.72-.91,1.5-1.8,2.31-2.65.8-.84,1.66-1.65,2.54-2.41.56-.48,1.12-.94,1.67-1.36.24-.19.49-.37.74-.55,2.01-1.47,4.22-2.77,6.58-3.87.66-.31,1.33-.61,2.02-.89,6.62-2.71,10.85-4.09,19.74-4.09,17.08,0,31.23,6.76,39.84,19.05,2.3,3.28,4.37,8.81,5.82,12.85.15.43.31.85.44,1.24h-89.3c.06-.36.15-.79.25-1.24.56-2.55,1.6-6.33,2.43-8.1Z"/>
+            </svg>
+        </div>
+        
+        <div class="header-spacer"></div>
+        
+        <div class="profile-container">
+            <button class="btn-text" onclick="showLogin()" aria-label="Login">
+                LOGIN
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="showRegister()" aria-label="Get Started">
+                GET STARTED
+            </button>
+        </div>
+    </header>
+    
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" onclick="closeAllMenus()"></div>
+    
+    <!-- Side Menu -->
+    <nav class="side-menu">
+        <div class="menu-header">Menu</div>
+        <ul class="menu-items">
+            <li class="menu-item"><a href="#" onclick="navigateTo('home')">Home</a></li>
+            <li class="menu-item"><a href="#" onclick="navigateTo('sports')">Sports</a></li>
+            <li class="menu-item"><a href="#" onclick="navigateTo('casino')">Casino</a></li>
+            <li class="menu-item"><a href="#" onclick="navigateTo('live-casino')">Live Casino</a></li>
+            <li class="menu-item"><a href="#" onclick="navigateTo('poker')">Poker</a></li>
+            <li class="menu-item"><a href="#" onclick="navigateTo('promotions')">Promotions</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-text">
+                <div class="hero-title">Welcome Bonus for New Players</div>
+                <div class="bonus-text">Get 100% extra on your first deposit, up to €100*</div>
+                <div class="example-text">Example: Deposit €20, play with €40</div>
+                <div class="minimum-text">(Starts from just €10)*</div>
+            </div>
+            
+            <div class="signup-form">
+                <input type="email" class="email-input" placeholder="Email">
+                <button class="create-btn">CLAIM BONUS</button>
+            </div>
+        </div>
+        
+        <!-- Payment Logos -->
+        <div class="payment-logos">
+            <div class="payment-row">
+                <div class="payment-logo">VISA</div>
+                <div class="payment-logo">MC</div>
+                <div class="payment-logo">MiFinity</div>
+                <div class="payment-logo">LuxonPay</div>
+            </div>
+            <div class="payment-row">
+                <div class="payment-logo">Blixtpay</div>
+                <div class="payment-logo">Trustly</div>
+                <div class="payment-logo">Paysafe</div>
+                <div class="payment-logo">Skrill</div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-scroll">
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Casino</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Live Casino</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Jackpots</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Sportsbook</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Live Bet</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Poker</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Bingo</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Virtual Sports</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"></div>
+                    <div class="nav-text">Promotions</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Promotions Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Promotions</div>
+                <button class="btn btn-secondary btn-sm">GO TO PROMOTIONS</button>
+            </div>
+            
+            <div class="promo-cards">
+                <div class="promo-card">
+                    <div class="promo-image">[CASINO GAME IMAGE]</div>
+                    <div class="promo-content">
+                        <div class="promo-label">CASINO WELCOME</div>
+                        <div class="promo-text">100% Bonus up to €100</div>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-image">[SPORTS IMAGE]</div>
+                    <div class="promo-content">
+                        <div class="promo-label">SPORTS WELCOME</div>
+                        <div class="promo-text">€100 Bonus + €35 Bets</div>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-image">[LIVE CASINO IMAGE]</div>
+                    <div class="promo-content">
+                        <div class="promo-label">LIVE CASINO</div>
+                        <div class="promo-text">€3,000 Tournament</div>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-image">[JACKPOT IMAGE]</div>
+                    <div class="promo-content">
+                        <div class="promo-label">JACKPOT SPECIAL</div>
+                        <div class="promo-text">Win up to €1M Prize</div>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-image">[FREE SPINS IMAGE]</div>
+                    <div class="promo-content">
+                        <div class="promo-label">FREE SPINS</div>
+                        <div class="promo-text">50 Spins Daily</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Partnership Banner -->
+        <div class="partnership-banner">
+            <div class="banner-content">
+                <div class="banner-title">Official Main Partner of Inter!</div>
+                <div class="banner-subtitle">Read more about our new sponsorship</div>
+                <button class="banner-btn">READ MORE</button>
+            </div>
+            <div class="banner-image">[INTER PLAYERS IMAGE]</div>
+        </div>
+        
+        <!-- Casino Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Casino</div>
+                <button class="btn btn-secondary btn-sm">SHOW ALL</button>
+            </div>
+            
+            <div class="horizontal-scroll">
+                <div class="game-card">
+                    <div class="game-image"></div>
+                    <div class="live-game-info">
+                        <div class="game-name">Pirots 3</div>
+                        <div class="game-provider">Elk Studios</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-image"></div>
+                    <div class="live-game-info">
+                        <div class="game-name">Book of Dead</div>
+                        <div class="game-provider">PlaynGo</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-image"></div>
+                    <div class="live-game-info">
+                        <div class="game-name">Reactoonz</div>
+                        <div class="game-provider">PlaynGo</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-image"></div>
+                    <div class="live-game-info">
+                        <div class="game-name">Trolling 1000</div>
+                        <div class="game-provider">Pragmatic Play</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-image"></div>
+                    <div class="live-game-info">
+                        <div class="game-name">Mafiosa Dead or A Lla...</div>
+                        <div class="game-provider">Pragmatic Play</div>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-image"></div>
+                    <div class="live-game-info">
+                        <div class="game-name">Gonzos Quest</div>
+                        <div class="game-provider">NetEnt</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Live Casino Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Live Casino</div>
+                <button class="btn btn-secondary btn-sm">SHOW ALL</button>
+            </div>
+            
+            <div class="horizontal-scroll">
+                <div class="live-game-card">
+                    <div class="live-game-image">[LIGHTNING STORM IMAGE]</div>
+                    <div class="live-game-info">
+                        <div class="game-name">Lightning Storm</div>
+                        <div class="game-provider">Evolution</div>
+                    </div>
+                </div>
+                <div class="live-game-card">
+                    <div class="live-game-image">[ROULETTE GOLD IMAGE]</div>
+                    <div class="live-game-info">
+                        <div class="game-name">Roulette Gold</div>
+                        <div class="game-provider">Pragmatic Play</div>
+                    </div>
+                </div>
+                <div class="live-game-card">
+                    <div class="live-game-image">[CRAZY TIME IMAGE]</div>
+                    <div class="live-game-info">
+                        <div class="game-name">Crazy Time</div>
+                        <div class="game-provider">Evolution</div>
+                    </div>
+                </div>
+                <div class="live-game-card">
+                    <div class="live-game-image">[BLACKJACK LIVE IMAGE]</div>
+                    <div class="live-game-info">
+                        <div class="game-name">Blackjack Live</div>
+                        <div class="game-provider">Evolution</div>
+                    </div>
+                </div>
+                <div class="live-game-card">
+                    <div class="live-game-image">[BACCARAT LIVE IMAGE]</div>
+                    <div class="live-game-info">
+                        <div class="game-name">Baccarat Live</div>
+                        <div class="game-provider">Pragmatic Play</div>
+                    </div>
+                </div>
+                <div class="live-game-card">
+                    <div class="live-game-image">[DREAM CATCHER IMAGE]</div>
+                    <div class="live-game-info">
+                        <div class="game-name">Dream Catcher</div>
+                        <div class="game-provider">Evolution</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Popular Sports Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Popular Sports</div>
+                <button class="btn btn-secondary btn-sm">SHOW ALL</button>
+            </div>
+            
+            <div class="horizontal-scroll">
+                <div class="sport-card">
+                    <div class="sport-icon">[FOOTBALL ICON]</div>
+                    <div class="sport-name">Football</div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">[BASKETBALL ICON]</div>
+                    <div class="sport-name">Basketball</div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">[TENNIS ICON]</div>
+                    <div class="sport-name">Tennis</div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">[HOCKEY ICON]</div>
+                    <div class="sport-name">Hockey</div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">[BASEBALL ICON]</div>
+                    <div class="sport-name">Baseball</div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-icon">[ESPORTS ICON]</div>
+                    <div class="sport-name">Esports</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Why Play Section -->
+        <div class="section">
+            <div class="section-title">Why play with us?</div>
+            
+            <div class="feature-item">
+                <div class="feature-title">Fast deposit and withdrawal</div>
+                <div class="feature-description">Get hold of your winnings in record time after enjoy our gaming experience.</div>
+                
+                <div class="feature-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Average deposit time:</div>
+                        <div class="stat-value">1 minute <span class="info-icon">!</span></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Average withdrawal handling time:</div>
+                        <div class="stat-value">Swiftly <span class="info-icon">!</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-title">Multiple payment methods</div>
+                <div class="feature-description">Choose from a large variety of deposit and withdrawal methods to find one that suits you to start playing play safely and securely.</div>
+                
+                <div class="payment-methods">
+                    <div class="payment-row">
+                        <div class="payment-method">Mastercard</div>
+                        <div class="payment-method">NETELLER</div>
+                        <div class="payment-method">PayPal</div>
+                    </div>
+                    <div class="payment-row">
+                        <div class="payment-method">Trustly</div>
+                        <div class="payment-method">VISA</div>
+                        <div class="payment-method">Skrill</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="customer-support-box">
+                    <div class="feature-title">24/7 Customer Support</div>
+                    <div class="feature-description">Get answers immediately with our award-winning customer support. Check our FAQs or <span class="contact-link">contact us 24/7</span>.</div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">Average chat response time:</div>
+                        <div class="stat-value">30 seconds</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Safe and Responsible Gaming Section -->
+        <div class="section">
+            <div class="responsible-gaming-title">Safe and Responsible Gaming</div>
+            
+            <div class="responsible-gaming-text">
+                We're trusted by our customers and the main regulators.
+            </div>
+            
+            <div class="responsible-gaming-text">
+                We want you to play safely, which is why we promote responsible gaming, with a number of tools and always ready to support our players.
+            </div>
+            
+            <div class="responsible-gaming-link">Discover more about Responsible Gaming</div>
+            
+            <div class="licensing-logos">
+                <div class="license-logo">MGA</div>
+                <div class="license-logo">eCOGRA Safe & Fair</div>
+                <div class="license-logo">EGBA</div>
+                <div class="license-logo">[ISO LOGO]</div>
+                <div class="license-logo">18+</div>
+                <div class="license-logo">GA</div>
+            </div>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="section">
+            <div class="faq-title">Frequently Asked Questions</div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is there a Welcome Offer for new players?
+                    <span class="faq-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I activate a bonus?
+                    <span class="faq-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    What does cashout mean?
+                    <span class="faq-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    What does wagering requirement in the bonus offer mean?
+                    <span class="faq-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How can I verify my account?
+                    <span class="faq-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    What deposit methods can I use?
+                    <span class="faq-arrow">⌄</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Welcome Brand Section -->
+        <div class="section">
+            <div class="brand-image">[COLORFUL GAMING CHARACTER IMAGE]</div>
+            
+            <div class="brand-title">Welcome to Gaming Site – your multi-product online gaming brand</div>
+            
+            <div class="brand-text">
+                With more than 60 years in the business, we know what you want – entertainment. That's why you have over a thousand slot games to choose from in our <span class="casino-link">Casino</span>, and we are always adding new slots to the collection. You can also bring the casino experience to your home, as our dealers are ready and waiting for you in our <span class="casino-link">Live Casino</span>.
+            </div>
+            
+            <div class="brand-text">
+                We know that a simple bet could turn any game into a wave of emotion. For that reason, we bring you a wide selection of odds in our
+            </div>
+            
+            <div class="show-more">
+                <span class="show-more-text">Show More</span>
+                <span class="show-more-arrow">⌄</span>
+            </div>
+        </div>
+        
+        <!-- Footer Section -->
+        <div class="footer-section">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <div class="language-flag">
+                    <div class="flag-icon">🇬🇧</div>
+                    <span class="language-text">English</span>
+                </div>
+                <span class="dropdown-arrow">⌄</span>
+            </div>
+            
+            <!-- Collaboration Section -->
+            <div class="collaboration-section">
+                <div class="collaboration-title">In collaboration with</div>
+                
+                <div class="sponsors-grid">
+                    <div class="sponsor-item">
+                        <div class="sponsor-logo">INT</div>
+                        <div class="sponsor-text">OFFICIAL SPONSOR</div>
+                    </div>
+                    <div class="sponsor-item">
+                        <div class="sponsor-logo">CAD</div>
+                        <div class="sponsor-text">OFFICIAL SPONSOR</div>
+                    </div>
+                    <div class="sponsor-item">
+                        <div class="sponsor-logo">RAC</div>
+                        <div class="sponsor-text">OFFICIAL SPONSOR</div>
+                    </div>
+                    <div class="sponsor-item">
+                        <div class="sponsor-logo">ATL</div>
+                        <div class="sponsor-text">OFFICIAL SPONSOR</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods Grid -->
+            <div class="grid-3">
+                <div class="payment-item">VISA</div>
+                <div class="payment-item">Mastercard</div>
+                <div class="payment-item">MiFinity</div>
+                <div class="payment-item">LuxonPay</div>
+                <div class="payment-item">Blixtpay</div>
+                <div class="payment-item">Trustly</div>
+                <div class="payment-item">Paysafe</div>
+                <div class="payment-item">Skrill</div>
+                <div class="payment-item">NETELLER</div>
+                <div class="payment-item">Bank Transfer</div>
+                <div class="payment-item">MuchBetter</div>
+                <div class="payment-item">Interac</div>
+                <div class="payment-item">Bitcoin</div>
+                <div class="payment-item"></div>
+                <div class="payment-item"></div>
+            </div>
+            
+            <!-- Footer Navigation -->
+            <div class="footer-navigation">
+                <div class="footer-nav-item">
+                    <span class="footer-nav-text">Sportsbook</span>
+                    <span class="footer-nav-arrow">⌄</span>
+                </div>
+                <div class="footer-nav-item">
+                    <span class="footer-nav-text">Casino</span>
+                    <span class="footer-nav-arrow">⌄</span>
+                </div>
+                <div class="footer-nav-item">
+                    <span class="footer-nav-text">Live Casino</span>
+                    <span class="footer-nav-arrow">⌄</span>
+                </div>
+                <div class="footer-nav-item">
+                    <span class="footer-nav-text">Poker</span>
+                    <span class="footer-nav-arrow">⌄</span>
+                </div>
+                <div class="footer-nav-item">
+                    <span class="footer-nav-text">Popular Odds</span>
+                    <span class="footer-nav-arrow">⌄</span>
+                </div>
+                <div class="footer-nav-item">
+                    <span class="footer-nav-text">About</span>
+                    <span class="footer-nav-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <!-- Licenses Section -->
+            <div class="licenses-section">
+                <div class="mga-logos">
+                    <div class="mga-logo">MGA</div>
+                    <div class="mga-logo">MGA</div>
+                </div>
+                
+                <div class="licenses-dropdown">
+                    <span class="licenses-text">Licenses</span>
+                    <span class="licenses-arrow">⌄</span>
+                </div>
+            </div>
+            
+            <!-- Copyright Section -->
+            <div class="copyright-section">
+                <div class="copyright-text">© Gaming Site 2016-2025</div>
+                
+                <div class="responsibility-text">
+                    Gambling can be addictive.<br>
+                    Please play responsibly.
+                </div>
+                
+                <div class="responsibility-logos">
+                    <div class="responsibility-logo">18+</div>
+                    <div class="responsibility-logo">GA</div>
+                    <div class="responsibility-logo">ISO</div>
+                </div>
+                
+                <div class="egba-logo">
+                    <div class="egba-text">EGBA</div>
+                </div>
+                
+                <div class="ecogra-logo">
+                    <div class="ecogra-text">eCOGRA Safe & Fair</div>
+                </div>
+            </div>
+            
+            <!-- Footer Links -->
+            <div class="footer-links">
+                <div class="footer-link">Terms and Conditions</div>
+                <div class="footer-link">Game Rules</div>
+                <div class="footer-link">Cookie Policy</div>
+                <div class="footer-link">Privacy Policy</div>
+                <div class="footer-link">Responsible Gaming</div>
+                <div class="footer-link">Payment Options</div>
+            </div>
+            
+            <!-- Cookie Settings -->
+            <div class="cookie-settings">
+                <div class="cookie-icon">[⚙]</div>
+                <div class="cookie-text">Cookie Settings</div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Menu functionality
+        function toggleMenu() {
+            const burgerBtn = document.querySelector('.burger-btn');
+            const menuOverlay = document.querySelector('.menu-overlay');
+            const sideMenu = document.querySelector('.side-menu');
+            
+            burgerBtn.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            sideMenu.classList.toggle('active');
+        }
+        
+        function closeAllMenus() {
+            const burgerBtn = document.querySelector('.burger-btn');
+            const menuOverlay = document.querySelector('.menu-overlay');
+            const sideMenu = document.querySelector('.side-menu');
+            
+            burgerBtn.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
+        }
+        
+        // Profile functionality - now handles GET STARTED button
+        function toggleProfile() {
+            // No longer needed since we have direct GET STARTED button
+        }
+        
+        function showLogin() {
+            alert('Login modal would open here');
+        }
+        
+        function showRegister() {
+            alert('Register modal would open here');
+        }
+        
+        function showLogin() {
+            alert('Login modal would open here');
+            closeAllMenus();
+        }
+        
+        function showSignup() {
+            alert('Sign up modal would open here');
+            closeAllMenus();
+        }
+        
+        function showForgotPassword() {
+            alert('Forgot password flow would start here');
+            closeAllMenus();
+        }
+        
+        // Search functionality
+        function performSearch() {
+            const searchInput = document.querySelector('.search-
