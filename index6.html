@@ -146,21 +146,22 @@
         .profile-container {
             flex-shrink: 0;
             display: flex;
-            gap: var(--space-lg);
+            gap: 12px;
             align-items: center;
         }
         
         /* Post-login state */
         .profile-container.logged-in {
-            gap: var(--space-lg);
+            gap: 12px;
         }
         
         /* User Account - Improved */
         .user-account {
             min-width: 44px;
             min-height: 44px;
-            background: transparent;
+            background: #e0e0e0;
             border: none;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -170,7 +171,7 @@
         }
         
         .user-account:hover {
-            background: var(--color-grey-light);
+            background: #d0d0d0;
         }
         
         .user-account:focus {
@@ -179,7 +180,7 @@
         }
         
         .user-account:active {
-            background: var(--color-grey-light);
+            background: #c0c0c0;
         }
         
         /* Balance Display - Mobile Optimized */
@@ -459,8 +460,8 @@
             font-weight: bold;
             cursor: pointer;
             color: var(--color-black);
-            padding: 0;
-            height: auto;
+            padding: var(--space-xs) var(--space-md);
+            height: var(--height-button-sm);
             font-size: var(--text-sm);
             text-transform: uppercase;
         }
@@ -657,6 +658,13 @@
             font-weight: bold;
             font-size: var(--text-md);
             border-radius: var(--radius-sm);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         /* Payment Methods - reduced bottom spacing */
@@ -1934,14 +1942,14 @@
         <!-- Hero Section -->
         <div class="hero-section">
             <div class="hero-text">
-                <div class="hero-title">Welcome Bonus for New Players</div>
+                <div class="hero-title">Our New Player Welcome Bonus</div>
                 <div class="bonus-text">Get 100% bonus on your first deposit, up to €100*</div>
                 <div class="example-text">Example: Deposit €10, play with €20</div>
             </div>
             
             <div class="signup-form">
                 <input type="email" class="email-input" placeholder="Email">
-                <button class="create-btn" onclick="claimBonus()">CLAIM BONUS</button>
+                <button class="create-btn" onclick="claimBonus()">CLAIM YOUR BONUS</button>
                 <div class="signup-form-footer">
                     Already a customer? <span class="login-link" onclick="showLogin()">Login</span>
                 </div>
