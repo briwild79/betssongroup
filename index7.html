@@ -168,13 +168,13 @@
             border: none;
             padding: var(--space-2) var(--space-3);
             height: 36px;
-            font-size: var(--font-size-xs);
+            font-size: var(--font-size-sm);
         }
         
         .btn--sm {
             height: 36px;
             padding: 0 var(--space-3);
-            font-size: var(--font-size-xs);
+            font-size: var(--font-size-sm);
         }
         
         .btn--base {
@@ -258,8 +258,16 @@
         
         .header__profile {
             display: flex;
-            gap: var(--space-5);
+            gap: var(--space-6);
             align-items: center;
+            flex-shrink: 0;
+        }
+        
+        /* Profile Spacer */
+        .profile-spacer {
+            width: 1px;
+            height: 24px;
+            background: var(--color-gray-300);
             flex-shrink: 0;
         }
         
@@ -428,6 +436,24 @@
             left: 0;
         }
         
+        /* User Account Menu */
+        .account-menu {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100%;
+            background: var(--color-white);
+            border-left: 1px solid var(--color-primary);
+            transition: right var(--transition-slow);
+            z-index: var(--z-modal);
+            overflow-y: auto;
+        }
+        
+        .account-menu.is-active {
+            right: 0;
+        }
+        
         .menu__header {
             border-bottom: 1px solid var(--color-primary);
             padding: var(--space-5);
@@ -454,11 +480,7 @@
         }
         
         .menu__item {
-            border-bottom: 1px solid var(--color-gray-300);
-        }
-        
-        .menu__item:last-child {
-            border-bottom: none;
+            /* No borders for cleaner look */
         }
         
         .menu__link {
@@ -511,6 +533,11 @@
             flex-direction: column;
             justify-content: space-between;
             background: var(--color-gray-100);
+        }
+        
+        .hero__text {
+            text-align: center;
+            margin-bottom: var(--space-5);
         }
         
         .hero__title {
@@ -1081,7 +1108,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <button class="burger" onclick="menuController.toggle()" aria-label="Open menu">
+        <button class="burger" onclick="menuController.toggleBurger()" aria-label="Open menu">
             <div class="burger__line"></div>
             <div class="burger__line"></div>
             <div class="burger__line"></div>
@@ -1120,7 +1147,7 @@
                     <span class="balance__icon">+</span>
                     <span class="sr-only">Add funds</span>
                 </button>
-                <button class="user-account" onclick="showUserMenu()" aria-label="My Account menu">
+                <button class="user-account" onclick="menuController.toggleAccount()" aria-label="My Account menu">
                     <div class="user-icon">
                         <span class="sr-only">User profile</span>
                     </div>
@@ -1130,13 +1157,13 @@
     </header>
     
     <!-- Menu Overlay -->
-    <div class="menu-overlay" onclick="menuController.close()"></div>
+    <div class="menu-overlay" onclick="menuController.closeAll()"></div>
     
     <!-- Side Menu -->
     <nav class="side-menu">
         <div class="menu__header">
             <span>Menu</span>
-            <button class="menu__close" onclick="menuController.close()" aria-label="Close menu">✕</button>
+            <button class="menu__close" onclick="menuController.closeAll()" aria-label="Close menu">✕</button>
         </div>
         <ul class="menu__items">
             <li class="menu__item">
@@ -1160,12 +1187,49 @@
         </ul>
     </nav>
     
+    <!-- User Account Menu -->
+    <nav class="account-menu">
+        <div class="menu__header">
+            <span>My Account</span>
+            <button class="menu__close" onclick="menuController.closeAll()" aria-label="Close account menu">✕</button>
+        </div>
+        <ul class="menu__items">
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('profile')">My Profile</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('deposits')">Deposits</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('withdrawals')">Withdrawals</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('transaction-history')">Transaction History</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('bonuses')">My Bonuses</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('settings')">Account Settings</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('responsible-gaming')">Responsible Gaming</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="navigateTo('support')">Contact Support</a>
+            </li>
+            <li class="menu__item">
+                <a href="#" class="menu__link" onclick="authController.logout()" style="color: var(--color-secondary);">Logout</a>
+            </li>
+        </ul>
+    </nav>
+    
     <!-- Main Content -->
     <main class="main">
         <!-- Hero Section -->
         <div class="hero">
             <div class="hero__text">
-                <div class="hero__title">Our New Player Welcome Bonus</div>
+                <div class="hero__title">Welcome Bonus</div>
                 <div class="hero__bonus">Get 100% bonus on your first deposit, up to €100*</div>
                 <div class="hero__example">Example: Deposit €10, play with €20</div>
             </div>
@@ -1890,19 +1954,37 @@
             elements: {
                 burger: document.querySelector('.burger'),
                 overlay: document.querySelector('.menu-overlay'),
-                sideMenu: document.querySelector('.side-menu')
+                sideMenu: document.querySelector('.side-menu'),
+                accountMenu: document.querySelector('.account-menu')
             },
             
-            toggle() {
+            toggleBurger() {
+                this.closeAccount(); // Close account menu if open
                 this.elements.burger?.classList.toggle('is-active');
                 this.elements.overlay?.classList.toggle('is-active');
                 this.elements.sideMenu?.classList.toggle('is-active');
             },
             
-            close() {
+            toggleAccount() {
+                this.closeBurger(); // Close burger menu if open
+                this.elements.overlay?.classList.toggle('is-active');
+                this.elements.accountMenu?.classList.toggle('is-active');
+            },
+            
+            closeBurger() {
                 this.elements.burger?.classList.remove('is-active');
                 this.elements.overlay?.classList.remove('is-active');
                 this.elements.sideMenu?.classList.remove('is-active');
+            },
+            
+            closeAccount() {
+                this.elements.overlay?.classList.remove('is-active');
+                this.elements.accountMenu?.classList.remove('is-active');
+            },
+            
+            closeAll() {
+                this.closeBurger();
+                this.closeAccount();
             }
         };
         
@@ -1964,6 +2046,12 @@
                     modalController.closeLogin();
                     alert('Welcome back! You are now logged in.');
                 }, 1000);
+            },
+            
+            logout() {
+                this.toggleLoginState();
+                menuController.closeAll();
+                alert('You have been logged out successfully.');
             }
         };
         
@@ -1974,7 +2062,7 @@
         // Navigation
         function navigateTo(section) {
             console.log('Navigating to:', section);
-            menuController.close();
+            menuController.closeAll();
         }
         
         // Bonus claim
@@ -1985,10 +2073,6 @@
         // User actions
         function showDeposit() {
             alert('Deposit modal would open here. Current balance: €1,247.50');
-        }
-        
-        function showUserMenu() {
-            alert('User account menu would open here');
         }
         
         // ==========================================================================
