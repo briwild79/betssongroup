@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Sports Betting Platform</title>
+    <style>
+        /* CSS Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f6fa;
+            color: #2c3e50;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .hidden-mobile {
+            display: block;
+        }
+        
+        .hidden-desktop {
+            display: none;
+        }
+        
+        /* Header */
+        .header {
+            background-color: #1a1f2e;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            padding: 0 1rem;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .burger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: -0.5rem;
+        }
+        
+        .burger-icon {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background-color: white;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        
+        .burger-icon::before,
+        .burger-icon::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        
+        .burger-icon::before {
+            top: -8px;
+        }
+        
+        .burger-icon::after {
+            top: 8px;
+        }
+        
+        .burger-btn.active .burger-icon {
+            background-color: transparent;
+        }
+        
+        .burger-btn.active .burger-icon::before {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+        
+        .burger-btn.active .burger-icon::after {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        
+        .desktop-nav {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .nav-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .nav-btn.active {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .balance {
+            font-weight: 600;
+            color: #2ecc71;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 85%;
+            max-width: 320px;
+            height: 100vh;
+            background-color: #1a1f2e;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-menu-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .mobile-menu-nav {
+            padding: 1rem 0;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: rgba(255,255,255,0.9);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-item:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        .mobile-nav-item.active {
+            background-color: rgba(231,76,60,0.2);
+            color: #e74c3c;
+            border-left: 3px solid #e74c3c;
+        }
+        
+        .mobile-menu-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .mobile-balance {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-balance-label {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .mobile-balance-amount {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2ecc71;
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1999;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Local Navigation */
+        .local-nav {
+            background-color: #2c3e50;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .local-nav::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .local-nav-content {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            min-width: max-content;
+        }
+        
+        .local-nav-item {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        
+        .local-nav-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .local-nav-item.active {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+        }
+        
+        /* Sub Navigation */
+        .sub-nav {
+            background-color: #ecf0f1;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .sub-nav::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .sub-nav-content {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            min-width: max-content;
+        }
+        
+        .sub-nav-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            color: #2c3e50;
+            padding: 0.375rem 1rem;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            white-space: nowrap;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        
+        .sub-nav-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .sub-nav-item.active {
+            background-color: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+        
+        /* Filter Bar - Compact Design */
+        .filter-bar {
+            background-color: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 0.75rem 1rem;
+        }
+        
+        .filter-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .filter-groups {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #7f8c8d;
+            margin-right: 0.25rem;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 0.125rem;
+            background-color: #f8f9fa;
+            padding: 0.125rem;
+            border-radius: 20px;
+        }
+        
+        .filter-btn {
+            background-color: transparent;
+            border: none;
+            color: #2c3e50;
+            padding: 0.25rem 0.625rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            border-radius: 16px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .filter-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        .filter-btn.active {
+            background-color: white;
+            color: #e74c3c;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .view-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .sort-dropdown {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #e1e8ed;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 0.75rem;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+        
+        .view-toggle-group {
+            display: flex;
+            background-color: #f8f9fa;
+            padding: 0.125rem;
+            border-radius: 4px;
+        }
+        
+        .view-toggle {
+            padding: 0.25rem 0.5rem;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+        
+        .view-toggle:hover {
+            color: #2c3e50;
+        }
+        
+        .view-toggle.active {
+            background-color: white;
+            color: #e74c3c;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 60px);
+            padding-bottom: 4rem;
+        }
+        
+        /* Promo Banner */
+        .promo-banner {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 1.5rem;
+            margin: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(231,76,60,0.3);
+        }
+        
+        .promo-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .promo-text h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .promo-text p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .promo-cta {
+            background-color: white;
+            color: #e74c3c;
+            border: none;
+            padding: 0.625rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .promo-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Personalization Module */
+        .personalization {
+            background-color: white;
+            margin: 1rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .personalization-header {
+            margin-bottom: 1rem;
+        }
+        
+        .personalization-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .personalization-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e1e8ed;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: #2c3e50;
+        }
+        
+        .tab.active {
+            color: #e74c3c;
+            border-bottom-color: #e74c3c;
+        }
+        
+        .team-cards {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.5rem;
+        }
+        
+        .team-card {
+            min-width: 280px;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .team-card:hover {
+            background-color: #e9ecef;
+            transform: translateY(-1px);
+        }
+        
+        .team-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #e1e8ed;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .team-info {
+            flex: 1;
+        }
+        
+        .team-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .team-details {
+            font-size: 0.8125rem;
+            color: #7f8c8d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .team-odds {
+            font-size: 0.875rem;
+            color: #27ae60;
+            font-weight: 500;
+        }
+        
+        .quick-bet {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .quick-bet:hover {
+            background-color: #229954;
+        }
+        
+        .cross-sell {
+            border: 2px dashed #e74c3c;
+            background-color: #fff5f5;
+        }
+        
+        /* Match Cards */
+        .matches-section {
+            margin: 1rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .match-count {
+            font-size: 0.875rem;
+            color: #7f8c8d;
+        }
+        
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+        
+        .match-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .match-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .match-header {
+            background-color: #f8f9fa;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8125rem;
+            color: #7f8c8d;
+        }
+        
+        .live-indicator {
+            color: #e74c3c;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .match-body {
+            padding: 1rem;
+        }
+        
+        .teams {
+            margin-bottom: 1rem;
+        }
+        
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.375rem 0;
+        }
+        
+        .team-name-full {
+            font-weight: 500;
+        }
+        
+        .team-form {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            letter-spacing: 0.5px;
+        }
+        
+        .markets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .market-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #e1e8ed;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .market-btn:hover {
+            background-color: #e3f2fd;
+            border-color: #90caf9;
+        }
+        
+        .market-label {
+            font-size: 0.6875rem;
+            color: #7f8c8d;
+            display: block;
+        }
+        
+        .market-odds {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .more-markets {
+            width: 100%;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .more-markets:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-top: 1px solid #e1e8ed;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        
+        .bottom-nav-content {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+        }
+        
+        .bottom-nav-item {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.6875rem;
+            transition: color 0.2s;
+        }
+        
+        .bottom-nav-item:hover {
+            color: #2c3e50;
+        }
+        
+        .bottom-nav-item.active {
+            color: #e74c3c;
+        }
+        
+        .bottom-nav-icon {
+            font-size: 1.25rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hidden-mobile {
+                display: none;
+            }
+            
+            .hidden-desktop {
+                display: block;
+            }
+            
+            .burger-btn {
+                display: block;
+            }
+            
+            .desktop-nav {
+                display: none;
+            }
+            
+            .balance {
+                display: none;
+            }
+            
+            .bottom-nav {
+                display: block;
+            }
+            
+            .main-content {
+                padding-bottom: 5rem;
+            }
+            
+            .filter-content {
+                flex-direction: column;
+            }
+            
+            .filter-groups {
+                width: 100%;
+                gap: 0.75rem;
+            }
+            
+            .filter-group {
+                flex-wrap: wrap;
+            }
+            
+            .promo-content {
+                text-align: center;
+            }
+            
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-cards {
+                gap: 0.75rem;
+            }
+            
+            .team-card {
+                min-width: 260px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            
+            .logo {
+                font-size: 1.25rem;
+            }
+            
+            .filter-label {
+                width: 100%;
+                margin-bottom: 0.25rem;
+            }
+            
+            .personalization {
+                margin: 0.75rem;
+                padding: 1rem;
+            }
+            
+            .matches-section {
+                margin: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="burger-btn" onclick="toggleMenu()" aria-label="Menu">
+                    <span class="burger-icon"></span>
+                </button>
+                <a href="#" class="logo">SPORTSBOOK</a>
+                <nav class="desktop-nav">
+                    <button class="nav-btn active" onclick="showPage('sports')">Sports</button>
+                    <button class="nav-btn" onclick="showPage('casino')">Casino</button>
+                    <button class="nav-btn" onclick="showPage('live-casino')">Live Casino</button>
+                    <button class="nav-btn">Poker</button>
+                    <button class="nav-btn">Promotions</button>
+                </nav>
+            </div>
+            <div class="header-right">
+                <button class="search-toggle hidden-desktop" aria-label="Search">🔍</button>
+                <div class="balance hidden-mobile">$1,250.00</div>
+                <div class="user-avatar">JD</div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">SPORTSBOOK</div>
+        </div>
+        <nav class="mobile-menu-nav">
+            <div class="mobile-nav-item active" onclick="navigateTo('sports')">
+                <span>⚽</span>
+                <span>Sports</span>
+            </div>
+            <div class="mobile-nav-item" onclick="navigateTo('casino')">
+                <span>🎰</span>
+                <span>Casino</span>
+            </div>
+            <div class="mobile-nav-item" onclick="navigateTo('live-casino')">
+                <span>🎲</span>
+                <span>Live Casino</span>
+            </div>
+            <div class="mobile-nav-item">
+                <span>♠️</span>
+                <span>Poker</span>
+            </div>
+            <div class="mobile-nav-item">
+                <span>🎁</span>
+                <span>Promotions</span>
+            </div>
+            <div class="mobile-nav-item">
+                <span>💬</span>
+                <span>Support</span>
+            </div>
+        </nav>
+        <div class="mobile-menu-footer">
+            <div class="mobile-balance">
+                <div class="mobile-balance-label">Balance</div>
+                <div class="mobile-balance-amount">$1,250.00</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Sports Page -->
+        <div id="sports-page" class="page-content" style="display: block;">
+            <!-- Local Navigation -->
+            <nav class="local-nav">
+                <div class="local-nav-content">
+                    <button class="local-nav-item">⚡ Live & Upcoming</button>
+                    <button class="local-nav-item active">⚽ Soccer</button>
+                    <button class="local-nav-item">🏀 Basketball</button>
+                    <button class="local-nav-item">🎾 Tennis</button>
+                    <button class="local-nav-item">🏈 American Football</button>
+                    <button class="local-nav-item">⚾ Baseball</button>
+                    <button class="local-nav-item">🏒 Ice Hockey</button>
+                    <button class="local-nav-item">🎯 My Bets</button>
+                </div>
+            </nav>
+            
+            <!-- Sub Navigation -->
+            <nav class="sub-nav">
+                <div class="sub-nav-content">
+                    <button class="sub-nav-item active">All Soccer</button>
+                    <button class="sub-nav-item">⭐ Featured</button>
+                    <button class="sub-nav-item">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</button>
+                    <button class="sub-nav-item">🇪🇸 La Liga</button>
+                    <button class="sub-nav-item">🇩🇪 Bundesliga</button>
+                    <button class="sub-nav-item">🇮🇹 Serie A</button>
+                    <button class="sub-nav-item">🏆 Champions League</button>
+                    <button class="sub-nav-item">🌍 International</button>
+                </div>
+            </nav>
+            
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-content">
+                    <div class="filter-groups">
+                        <div class="filter-group">
+                            <span class="filter-label">View:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn active">Matches</button>
+                                <button class="filter-btn">Outrights</button>
+                                <button class="filter-btn">Specials</button>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Time:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">Live</button>
+                                <button class="filter-btn">Today</button>
+                                <button class="filter-btn">Tomorrow</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-controls">
+                        <select class="sort-dropdown">
+                            <option>Sort: Time</option>
+                            <option>Sort: Popular</option>
+                            <option>Sort: League</option>
+                        </select>
+                        <div class="view-toggle-group">
+                            <button class="view-toggle active">⊞</button>
+                            <button class="view-toggle">☰</button>
+                            <button class="view-toggle">🌏</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Promo Banner -->
+            <div class="promo-banner">
+                <div class="promo-content">
+                    <div class="promo-text">
+                        <h3>⚽ Champions League Special!</h3>
+                        <p>Get 10% boost on all CL accumulators</p>
+                    </div>
+                    <button class="promo-cta">Build Acca</button>
+                </div>
+            </div>
+            
+            <!-- Personalization Module -->
+            <div class="personalization">
+                <div class="personalization-header">
+                    <h2 class="personalization-title">⚽ Your Soccer Hub</h2>
+                </div>
+                <div class="personalization-tabs">
+                    <button class="tab active">My Teams</button>
+                    <button class="tab">Live Tracker</button>
+                    <button class="tab">Bet Builder</button>
+                    <button class="tab">Stats</button>
+                </div>
+                <div class="team-cards">
+                    <div class="team-card">
+                        <div class="team-icon">🔴</div>
+                        <div class="team-info">
+                            <div class="team-name">Man United</div>
+                            <div class="team-details">vs Liverpool • Sun 16:30</div>
+                            <div class="team-odds">Draw No Bet @ 2.10</div>
+                        </div>
+                        <button class="quick-bet">Bet</button>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-icon">🔵</div>
+                        <div class="team-info">
+                            <div class="team-name">Chelsea</div>
+                            <div class="team-details">vs Arsenal • Mon 20:00</div>
+                            <div class="team-odds">BTTS @ 1.72</div>
+                        </div>
+                        <button class="quick-bet">Bet</button>
+                    </div>
+                    <div class="team-card cross-sell">
+                        <div class="team-icon">🎰</div>
+                        <div class="team-info">
+                            <div class="team-name">Halftime Break?</div>
+                            <div class="team-details">Quick Casino Games</div>
+                            <div class="team-odds">5-min Slots Available</div>
+                        </div>
+                        <button class="quick-bet" onclick="showPage('casino')">Play</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Matches Section -->
+            <div class="matches-section">
+                <div class="section-header">
+                    <h3 class="section-title">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</h3>
+                    <span class="match-count">12 matches</span>
+                </div>
+                <div class="matches-grid">
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="live-indicator">
+                                <span class="live-dot"></span>
+                                LIVE 67'
+                            </span>
+                            <span>2 - 1</span>
+                        </div>
+                        <div class="match-body">
+                            <div class="teams">
+                                <div class="team-row">
+                                    <span class="team-name-full">Liverpool</span>
+                                    <span class="team-form">WWDWW</span>
+                                </div>
+                                <div class="team-row">
+                                    <span class="team-name-full">Manchester City</span>
+                                    <span class="team-form">DWWWL</span>
+                                </div>
+                            </div>
+                            <div class="markets">
+                                <button class="market-btn">
+                                    <span class="market-label">Home</span>
+                                    <span class="market-odds">2.10</span>
+                                </button>
+                                <button class="market-btn">
+                                    <span class="market-label">Draw</span>
+                                    <span class="market-odds">3.40</span>
+                                </button>
+                                <button class="market-btn">
+                                    <span class="market-label">Away</span>
+                                    <span class="market-odds">3.80</span>
+                                </button>
+                            </div>
+                            <button class="more-markets">+247 Markets</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Casino Page (Hidden) -->
+        <div id="casino-page" class="page-content" style="display: none;">
+            <!-- Casino Local Navigation -->
+            <nav class="local-nav">
+                <div class="local-nav-content">
+                    <button class="local-nav-item active">🆕 New Games</button>
+                    <button class="local-nav-item">🎰 Slots</button>
+                    <button class="local-nav-item">🎲 Table Games</button>
+                    <button class="local-nav-item">💰 Jackpots</button>
+                    <button class="local-nav-item">⭐ Popular</button>
+                    <button class="local-nav-item">🎮 Instant Win</button>
+                    <button class="local-nav-item">🕒 Recently Played</button>
+                    <button class="local-nav-item">🎁 Promotions</button>
+                </div>
+            </nav>
+            
+            <!-- Casino Sub Navigation -->
+            <nav class="sub-nav">
+                <div class="sub-nav-content">
+                    <button class="sub-nav-item active">All Providers</button>
+                    <button class="sub-nav-item">Pragmatic Play</button>
+                    <button class="sub-nav-item">NetEnt</button>
+                    <button class="sub-nav-item">Evolution</button>
+                    <button class="sub-nav-item">Play'n GO</button>
+                    <button class="sub-nav-item">Microgaming</button>
+                    <button class="sub-nav-item">Red Tiger</button>
+                    <button class="sub-nav-item">Big Time Gaming</button>
+                </div>
+            </nav>
+            
+            <!-- Casino Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-content">
+                    <div class="filter-groups">
+                        <div class="filter-group">
+                            <span class="filter-label">Type:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">Video Slots</button>
+                                <button class="filter-btn">Classic</button>
+                                <button class="filter-btn">Megaways</button>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Features:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn">Bonus Buy</button>
+                                <button class="filter-btn">Free Spins</button>
+                                <button class="filter-btn">Multipliers</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-controls">
+                        <select class="sort-dropdown">
+                            <option>Sort: Popular</option>
+                            <option>Sort: New</option>
+                            <option>Sort: A-Z</option>
+                            <option>Sort: RTP</option>
+                        </select>
+                        <div class="view-toggle-group">
+                            <button class="view-toggle active">⊞</button>
+                            <button class="view-toggle">☰</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Casino Promo Banner -->
+            <div class="promo-banner" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
+                <div class="promo-content">
+                    <div class="promo-text">
+                        <h3>🎰 Weekend Slots Race!</h3>
+                        <p>$50,000 prize pool - Top 100 players win</p>
+                    </div>
+                    <button class="promo-cta">Join Tournament</button>
+                </div>
+            </div>
+            
+            <!-- Casino Personalization Module -->
+            <div class="personalization">
+                <div class="personalization-header">
+                    <h2 class="personalization-title">🎮 Your Casino Dashboard</h2>
+                </div>
+                <div class="personalization-tabs">
+                    <button class="tab active">Continue Playing</button>
+                    <button class="tab">Favorites</button>
+                    <button class="tab">Tournaments</button>
+                    <button class="tab">History</button>
+                </div>
+                <div class="team-cards">
+                    <div class="team-card">
+                        <div class="team-icon">🍭</div>
+                        <div class="team-info">
+                            <div class="team-name">Sweet Bonanza</div>
+                            <div class="team-details">Last played: 2 hours ago</div>
+                            <div class="team-odds">Last win: $125</div>
+                        </div>
+                        <button class="quick-bet">Play</button>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-icon">💎</div>
+                        <div class="team-info">
+                            <div class="team-name">Mega Fortune</div>
+                            <div class="team-details">Progressive Jackpot</div>
+                            <div class="team-odds" style="color: #e74c3c;">$2,456,789</div>
+                        </div>
+                        <button class="quick-bet">Play</button>
+                    </div>
+                    <div class="team-card cross-sell">
+                        <div class="team-icon">⚽</div>
+                        <div class="team-info">
+                            <div class="team-name">Live Football Now!</div>
+                            <div class="team-details">5 matches in-play</div>
+                            <div class="team-odds">Enhanced odds available</div>
+                        </div>
+                        <button class="quick-bet" onclick="showPage('sports')">View</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Casino Games Grid -->
+            <div class="matches-section">
+                <div class="section-header">
+                    <h3 class="section-title">🎰 Popular Slots</h3>
+                    <span class="match-count">124 games</span>
+                </div>
+                <div class="matches-grid">
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span>Pragmatic Play</span>
+                            <span style="color: #27ae60;">RTP: 96.5%</span>
+                        </div>
+                        <div class="match-body" style="text-align: center;">
+                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                🍭
+                            </div>
+                            <h4 style="margin-bottom: 0.5rem;">Sweet Bonanza</h4>
+                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">6x5 • Tumble • Multipliers</p>
+                            <div class="markets" style="grid-template-columns: 1fr 1fr;">
+                                <button class="market-btn">
+                                    <span class="market-label">Demo</span>
+                                </button>
+                                <button class="market-btn" style="background-color: #27ae60; color: white;">
+                                    <span class="market-label">Play Now</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span>NetEnt</span>
+                            <span style="color: #e74c3c;">🔥 HOT</span>
+                        </div>
+                        <div class="match-body" style="text-align: center;">
+                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                💎
+                            </div>
+                            <h4 style="margin-bottom: 0.5rem;">Starburst</h4>
+                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">5x3 • Both Ways • Wilds</p>
+                            <div class="markets" style="grid-template-columns: 1fr 1fr;">
+                                <button class="market-btn">
+                                    <span class="market-label">Demo</span>
+                                </button>
+                                <button class="market-btn" style="background-color: #27ae60; color: white;">
+                                    <span class="market-label">Play Now</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Live Casino Page (Hidden) -->
+        <div id="live-casino-page" class="page-content" style="display: none;">
+            <!-- Live Casino Local Navigation -->
+            <nav class="local-nav">
+                <div class="local-nav-content">
+                    <button class="local-nav-item active">🎯 All Tables</button>
+                    <button class="local-nav-item">🎲 Roulette</button>
+                    <button class="local-nav-item">🃏 Blackjack</button>
+                    <button class="local-nav-item">💰 Baccarat</button>
+                    <button class="local-nav-item">🎴 Poker</button>
+                    <button class="local-nav-item">🎪 Game Shows</button>
+                    <button class="local-nav-item">👑 VIP Tables</button>
+                    <button class="local-nav-item">⭐ Favorites</button>
+                </div>
+            </nav>
+            
+            <!-- Live Casino Sub Navigation -->
+            <nav class="sub-nav">
+                <div class="sub-nav-content">
+                    <button class="sub-nav-item active">All Studios</button>
+                    <button class="sub-nav-item">Evolution</button>
+                    <button class="sub-nav-item">Pragmatic Live</button>
+                    <button class="sub-nav-item">Playtech</button>
+                    <button class="sub-nav-item">Ezugi</button>
+                    <button class="sub-nav-item">Authentic Gaming</button>
+                </div>
+            </nav>
+            
+            <!-- Live Casino Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-content">
+                    <div class="filter-groups">
+                        <div class="filter-group">
+                            <span class="filter-label">Limits:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">$1-$100</button>
+                                <button class="filter-btn">$5-$500</button>
+                                <button class="filter-btn">$100+</button>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Language:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">English</button>
+                                <button class="filter-btn">Spanish</button>
+                                <button class="filter-btn">German</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-controls">
+                        <select class="sort-dropdown">
+                            <option>Sort: Popular</option>
+                            <option>Sort: Limits</option>
+                            <option>Sort: Game Type</option>
+                        </select>
+                        <div class="view-toggle-group">
+                            <button class="view-toggle active">⊞</button>
+                            <button class="view-toggle">☰</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Live Casino Promo Banner -->
+            <div class="promo-banner" style="background: linear-gradient(135deg, #00BCD4, #0097A7);">
+                <div class="promo-content">
+                    <div class="promo-text">
+                        <h3>🎲 Live Casino Cashback!</h3>
+                        <p>Get 10% cashback on all live games today</p>
+                    </div>
+                    <button class="promo-cta">Play Live</button>
+                </div>
+            </div>
+            
+            <!-- Live Casino Personalization Module -->
+            <div class="personalization">
+                <div class="personalization-header">
+                    <h2 class="personalization-title">🎲 Your Live Casino</h2>
+                </div>
+                <div class="personalization-tabs">
+                    <button class="tab active">Favorite Tables</button>
+                    <button class="tab">Your Dealers</button>
+                    <button class="tab">VIP Status</button>
+                    <button class="tab">History</button>
+                </div>
+                <div class="team-cards">
+                    <div class="team-card">
+                        <div class="team-icon">⚡</div>
+                        <div class="team-info">
+                            <div class="team-name">Lightning Roulette</div>
+                            <div class="team-details">Table #1 • Dealer: Emma</div>
+                            <div class="team-odds">12 players • $1-$5000</div>
+                        </div>
+                        <button class="quick-bet">Join</button>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-icon">🃏</div>
+                        <div class="team-info">
+                            <div class="team-name">VIP Blackjack</div>
+                            <div class="team-details">Private Table • Dealer: James</div>
+                            <div class="team-odds" style="color: #9C27B0;">2 seats left</div>
+                        </div>
+                        <button class="quick-bet">Join</button>
+                    </div>
+                    <div class="team-card cross-sell">
+                        <div class="team-icon">🎰</div>
+                        <div class="team-info">
+                            <div class="team-name">Quick Slots Break?</div>
+                            <div class="team-details">While waiting for seat</div>
+                            <div class="team-odds">Instant play slots</div>
+                        </div>
+                        <button class="quick-bet" onclick="showPage('casino')">Play</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Live Tables Grid -->
+            <div class="matches-section">
+                <div class="section-header">
+                    <h3 class="section-title">🎲 Roulette Tables</h3>
+                    <span class="match-count">8 tables</span>
+                </div>
+                <div class="matches-grid">
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="live-indicator">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </span>
+                            <span>$1 - $5,000</span>
+                        </div>
+                        <div class="match-body" style="text-align: center;">
+                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                ⚡
+                            </div>
+                            <h4 style="margin-bottom: 0.5rem;">Lightning Roulette</h4>
+                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">500x Multipliers • English</p>
+                            <button class="more-markets">Join Table</button>
+                        </div>
+                    </div>
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="live-indicator">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </span>
+                            <span>$5 - $10,000</span>
+                        </div>
+                        <div class="match-body" style="text-align: center;">
+                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                💎
+                            </div>
+                            <h4 style="margin-bottom: 0.5rem;">Immersive Roulette</h4>
+                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">HD Stream • Multiple Angles</p>
+                            <button class="more-markets">Join Table</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-content">
+            <button class="bottom-nav-item active" onclick="showPage('sports')">
+                <span class="bottom-nav-icon">⚽</span>
+                <span>Sports</span>
+            </button>
+            <button class="bottom-nav-item" onclick="showPage('casino')">
+                <span class="bottom-nav-icon">🎰</span>
+                <span>Casino</span>
+            </button>
+            <button class="bottom-nav-item" onclick="showPage('live-casino')">
+                <span class="bottom-nav-icon">🎲</span>
+                <span>Live</span>
+            </button>
+            <button class="bottom-nav-item">
+                <span class="bottom-nav-icon">🎯</span>
+                <span>My Bets</span>
+            </button>
+            <button class="bottom-nav-item">
+                <span class="bottom-nav-icon">👤</span>
+                <span>Account</span>
+            </button>
+        </div>
+    </nav>
+    
+    <script>
+        // Menu Toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('overlay');
+            const burger = document.querySelector('.burger-btn');
+            
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            burger.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+        
+        function closeMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('overlay');
+            const burger = document.querySelector('.burger-btn');
+            
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            burger.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function navigateTo(page) {
+            closeMenu();
+            showPage(page);
+        }
+        
+        // Page Navigation
+        function showPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => {
+                p.style.display = 'none';
+            });
+            
+            // Show selected page
+            const selectedPage = document.getElementById(page + '-page');
+            if (selectedPage) {
+                selectedPage.style.display = 'block';
+            }
+            
+            // Update nav states
+            updateNavStates(page);
+        }
+        
+        function updateNavStates(page) {
+            // Desktop nav
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mobile nav
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Bottom nav
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Set active states
+            const pageIndex = page === 'sports' ? 0 : page === 'casino' ? 1 : page === 'live-casino' ? 2 : -1;
+            
+            if (pageIndex >= 0) {
+                const desktopBtns = document.querySelectorAll('.nav-btn');
+                const mobileBtns = document.querySelectorAll('.mobile-nav-item');
+                const bottomBtns = document.querySelectorAll('.bottom-nav-item');
+                
+                if (desktopBtns[pageIndex]) desktopBtns[pageIndex].classList.add('active');
+                if (mobileBtns[pageIndex]) mobileBtns[pageIndex].classList.add('active');
+                if (bottomBtns[pageIndex]) bottomBtns[pageIndex].classList.add('active');
+            }
+        }
+        
+        // Handle resize events
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 768) {
+                    closeMenu();
+                }
+            }, 250);
+        });
+        
+        // Touch events for better mobile experience
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const menu = document.getElementById('mobileMenu');
+            
+            if (touchEndX < touchStartX - swipeThreshold && menu.classList.contains('active')) {
+                closeMenu();
+            }
+        }
+    </script>
+</body>
+</html>
