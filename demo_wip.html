@@ -1153,6 +1153,173 @@
             <!-- End of blurred content -->
         </div>
         
+        <!-- Live Casino Page -->
+        <div id="live-casino-page" class="page-content" style="display: none;">
+            <!-- Live Casino Local Navigation -->
+            <nav class="local-nav">
+                <div class="local-nav-content">
+                    <button class="local-nav-item active">🎯 All Tables</button>
+                    <button class="local-nav-item">🎲 Roulette</button>
+                    <button class="local-nav-item">🃏 Blackjack</button>
+                    <button class="local-nav-item">💰 Baccarat</button>
+                    <button class="local-nav-item">🎴 Poker</button>
+                    <button class="local-nav-item">🎪 Game Shows</button>
+                    <button class="local-nav-item">👑 VIP Tables</button>
+                    <button class="local-nav-item">⭐ Favorites</button>
+                </div>
+            </nav>
+            
+            <!-- Live Casino Sub Navigation -->
+            <nav class="sub-nav">
+                <div class="sub-nav-content">
+                    <button class="sub-nav-item active">All Studios</button>
+                    <button class="sub-nav-item">Evolution</button>
+                    <button class="sub-nav-item">Pragmatic Live</button>
+                    <button class="sub-nav-item">Playtech</button>
+                    <button class="sub-nav-item">Ezugi</button>
+                    <button class="sub-nav-item">Authentic Gaming</button>
+                </div>
+            </nav>
+            
+            <!-- Content below sub-nav - BLURRED -->
+            <div class="content-below-subnav blurred-content">
+                <!-- Live Casino Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-content">
+                        <div class="filter-groups">
+                            <div class="filter-group">
+                                <span class="filter-label">Limits:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">$1-$100</button>
+                                    <button class="filter-btn">$5-$500</button>
+                                    <button class="filter-btn">$100+</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">Language:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">English</button>
+                                    <button class="filter-btn">Spanish</button>
+                                    <button class="filter-btn">German</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view-controls">
+                            <select class="sort-dropdown">
+                                <option>Sort: Popular</option>
+                                <option>Sort: Limits</option>
+                                <option>Sort: Game Type</option>
+                            </select>
+                            <div class="view-toggle-group">
+                                <button class="view-toggle active">⊞</button>
+                                <button class="view-toggle">☰</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Live Casino Promo Banner -->
+                <div class="promo-banner" style="background: linear-gradient(135deg, #00BCD4, #0097A7);">
+                    <div class="promo-content">
+                        <div class="promo-text">
+                            <h3>🎲 Live Casino Cashback!</h3>
+                            <p>Get 10% cashback on all live games today</p>
+                        </div>
+                        <button class="promo-cta">Play Live</button>
+                    </div>
+                </div>
+                
+                <!-- Live Casino Personalization Module -->
+                <div class="personalization">
+                    <div class="personalization-header">
+                        <h2 class="personalization-title">🎲 Your Live Casino</h2>
+                    </div>
+                    <div class="personalization-tabs">
+                        <button class="tab active">Favorite Tables</button>
+                        <button class="tab">Your Dealers</button>
+                        <button class="tab">VIP Status</button>
+                        <button class="tab">History</button>
+                    </div>
+                    <div class="team-cards">
+                        <div class="team-card">
+                            <div class="team-icon">⚡</div>
+                            <div class="team-info">
+                                <div class="team-name">Lightning Roulette</div>
+                                <div class="team-details">Table #1 • Dealer: Emma</div>
+                                <div class="team-odds">12 players • $1-$5000</div>
+                            </div>
+                            <button class="quick-bet">Join</button>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-icon">🃏</div>
+                            <div class="team-info">
+                                <div class="team-name">VIP Blackjack</div>
+                                <div class="team-details">Private Table • Dealer: James</div>
+                                <div class="team-odds" style="color: #9C27B0;">2 seats left</div>
+                            </div>
+                            <button class="quick-bet">Join</button>
+                        </div>
+                        <div class="team-card cross-sell">
+                            <div class="team-icon">🎰</div>
+                            <div class="team-info">
+                                <div class="team-name">Quick Slots Break?</div>
+                                <div class="team-details">While waiting for seat</div>
+                                <div class="team-odds">Instant play slots</div>
+                            </div>
+                            <button class="quick-bet" onclick="showPage('casino')">Play</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Live Tables Grid -->
+                <div class="matches-section">
+                    <div class="section-header">
+                        <h3 class="section-title">🎲 Roulette Tables</h3>
+                        <span class="match-count">8 tables</span>
+                    </div>
+                    <div class="matches-grid">
+                        <div class="match-card">
+                            <div class="match-header">
+                                <span class="live-indicator">
+                                    <span class="live-dot"></span>
+                                    LIVE
+                                </span>
+                                <span>$1 - $5,000</span>
+                            </div>
+                            <div class="match-body" style="text-align: center;">
+                                <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                    ⚡
+                                </div>
+                                <h4 style="margin-bottom: 0.5rem;">Lightning Roulette</h4>
+                                <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">500x Multipliers • English</p>
+                                <button class="more-markets">Join Table</button>
+                            </div>
+                        </div>
+                        <div class="match-card">
+                            <div class="match-header">
+                                <span class="live-indicator">
+                                    <span class="live-dot"></span>
+                                    LIVE
+                                </span>
+                                <span>$5 - $10,000</span>
+                            </div>
+                            <div class="match-body" style="text-align: center;">
+                                <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                    💎
+                                </div>
+                                <h4 style="margin-bottom: 0.5rem;">Immersive Roulette</h4>
+                                <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">HD Stream • Multiple Angles</p>
+                                <button class="more-markets">Join Table</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of blurred content -->
+        </div>
+        
         <!-- Casino Page (Hidden) -->
         <div id="casino-page" class="page-content" style="display: none;">
             <!-- Casino Local Navigation -->
