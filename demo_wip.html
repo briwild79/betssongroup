@@ -807,6 +807,18 @@
             z-index: 1000;
         }
         
+        .bottom-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: var(--stroke-position, 10%);
+            width: 40px;
+            height: 3px;
+            background-color: #ff6600;
+            transform: translateX(-50%);
+            transition: left 0.3s ease;
+        }
+        
         .bottom-nav-content {
             display: flex;
             justify-content: space-around;
@@ -1668,6 +1680,13 @@
                 if (desktopBtns[pageIndex]) desktopBtns[pageIndex].classList.add('active');
                 if (mobileBtns[pageIndex]) mobileBtns[pageIndex].classList.add('active');
                 if (bottomBtns[pageIndex]) bottomBtns[pageIndex].classList.add('active');
+                
+                // Update bottom nav stroke position
+                const bottomNav = document.querySelector('.bottom-nav');
+                if (bottomNav) {
+                    const strokePosition = (pageIndex * 20) + 10; // Center of each 20% section
+                    bottomNav.style.setProperty('--stroke-position', strokePosition + '%');
+                }
             }
         }
         
