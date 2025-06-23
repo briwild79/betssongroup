@@ -162,14 +162,52 @@
             height: 36px;
             cursor: pointer;
             border-radius: 50%;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
         
         .search-toggle:hover {
             background-color: rgba(255,255,255,0.3);
+        }
+        
+        .search-toggle.expanded {
+            width: 200px;
+            border-radius: 18px;
+            background-color: rgba(255,255,255,0.15);
+        }
+        
+        .search-input {
+            position: absolute;
+            left: 12px;
+            right: 45px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 0.875rem;
+            outline: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .search-toggle.expanded .search-input {
+            opacity: 1;
+        }
+        
+        .search-icon {
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .search-toggle.expanded .search-icon {
+            transform: translateX(68px);
         }
         
         .balance {
@@ -1607,6 +1645,51 @@
     </nav>
     
     <script>
+        // Search Toggle
+        function toggleSearch() {
+            const searchToggle = document.querySelector('.search-toggle');
+            const searchInput = document.querySelector('.search-input');
+            
+            searchToggle.classList.toggle('expanded');
+            
+            if (searchToggle.classList.contains('expanded')) {
+                // Focus the input when expanded
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 300);
+            } else {
+                // Clear input when collapsed
+                searchInput.value = '';
+                searchInput.blur();
+            }
+        }
+        
+        // Initialize search functionality when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close search when clicking outside
+            document.addEventListener('click', (e) => {
+                const searchToggle = document.querySelector('.search-toggle');
+                if (searchToggle && !searchToggle.contains(e.target) && searchToggle.classList.contains('expanded')) {
+                    toggleSearch();
+                }
+            });
+            
+            // Handle search input
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const query = e.target.value;
+                        if (query.trim()) {
+                            console.log('Searching for:', query);
+                            // Here you would implement actual search functionality
+                            toggleSearch(); // Close search after searching
+                        }
+                    }
+                });
+            }
+        });
+        
         // Menu Toggle
         function toggleMenu() {
             const menu = document.getElementById('mobileMenu');
