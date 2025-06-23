@@ -828,6 +828,13 @@
             font-size: 1.25rem;
         }
         
+        /* Blurred Content */
+        .blurred-content {
+            filter: blur(3px);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .hidden-mobile {
@@ -1013,19 +1020,11 @@
             </nav>
             
             <!-- Content below sub-nav - BLURRED -->
-            <div class="content-below-subnav blurred-content">
+            <div class="blurred-content">
                 <!-- Filter Bar -->
                 <div class="filter-bar">
                     <div class="filter-content">
                         <div class="filter-groups">
-                            <div class="filter-group">
-                                <span class="filter-label">View:</span>
-                                <div class="filter-options">
-                                    <button class="filter-btn active">Matches</button>
-                                    <button class="filter-btn">Outrights</button>
-                                    <button class="filter-btn">Specials</button>
-                                </div>
-                            </div>
                             <div class="filter-group">
                                 <span class="filter-label">Time:</span>
                                 <div class="filter-options">
@@ -1033,6 +1032,14 @@
                                     <button class="filter-btn">Live</button>
                                     <button class="filter-btn">Today</button>
                                     <button class="filter-btn">Tomorrow</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">Markets:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn">1X2</button>
+                                    <button class="filter-btn">Over/Under</button>
+                                    <button class="filter-btn">Both Teams</button>
                                 </div>
                             </div>
                         </div>
@@ -1045,7 +1052,6 @@
                             <div class="view-toggle-group">
                                 <button class="view-toggle active">⊞</button>
                                 <button class="view-toggle">☰</button>
-                                <button class="view-toggle">🌏</button>
                             </div>
                         </div>
                     </div>
@@ -1055,51 +1061,51 @@
                 <div class="promo-banner">
                     <div class="promo-content">
                         <div class="promo-text">
-                            <h3>⚽ Champions League Special!</h3>
-                            <p>Get 10% boost on all CL accumulators</p>
+                            <h3>⚽ Premier League Special!</h3>
+                            <p>Enhanced odds on all weekend matches</p>
                         </div>
-                        <button class="promo-cta">Build Acca</button>
+                        <button class="promo-cta">View Offers</button>
                     </div>
                 </div>
                 
                 <!-- Personalization Module -->
                 <div class="personalization">
                     <div class="personalization-header">
-                        <h2 class="personalization-title">⚽ Your Soccer Hub</h2>
+                        <h2 class="personalization-title">⚽ Your Sports Dashboard</h2>
                     </div>
                     <div class="personalization-tabs">
-                        <button class="tab active">My Teams</button>
-                        <button class="tab">Live Tracker</button>
-                        <button class="tab">Bet Builder</button>
-                        <button class="tab">Stats</button>
+                        <button class="tab active">Favorite Teams</button>
+                        <button class="tab">Following</button>
+                        <button class="tab">Bet History</button>
+                        <button class="tab">Recommendations</button>
                     </div>
                     <div class="team-cards">
                         <div class="team-card">
                             <div class="team-icon">🔴</div>
                             <div class="team-info">
-                                <div class="team-name">Man United</div>
-                                <div class="team-details">vs Liverpool • Sun 16:30</div>
-                                <div class="team-odds">Draw No Bet @ 2.10</div>
+                                <div class="team-name">Manchester United</div>
+                                <div class="team-details">vs Chelsea • Today 15:00</div>
+                                <div class="team-odds">Win: 2.45</div>
                             </div>
                             <button class="quick-bet">Bet</button>
                         </div>
                         <div class="team-card">
-                            <div class="team-icon">🔵</div>
+                            <div class="team-icon">⚪</div>
                             <div class="team-info">
-                                <div class="team-name">Chelsea</div>
-                                <div class="team-details">vs Arsenal • Mon 20:00</div>
-                                <div class="team-odds">BTTS @ 1.72</div>
+                                <div class="team-name">Real Madrid</div>
+                                <div class="team-details">vs Barcelona • Tomorrow 20:00</div>
+                                <div class="team-odds">Win: 1.95</div>
                             </div>
                             <button class="quick-bet">Bet</button>
                         </div>
                         <div class="team-card cross-sell">
                             <div class="team-icon">🎰</div>
                             <div class="team-info">
-                                <div class="team-name">Halftime Break?</div>
-                                <div class="team-details">Quick Casino Games</div>
-                                <div class="team-odds">5-min Slots Available</div>
+                                <div class="team-name">Live Casino Break?</div>
+                                <div class="team-details">Between matches</div>
+                                <div class="team-odds">100+ live tables</div>
                             </div>
-                            <button class="quick-bet" onclick="showPage('casino')">Play</button>
+                            <button class="quick-bet" onclick="showPage('live-casino')">Play</button>
                         </div>
                     </div>
                 </div>
@@ -1107,8 +1113,8 @@
                 <!-- Matches Section -->
                 <div class="matches-section">
                     <div class="section-header">
-                        <h3 class="section-title">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</h3>
-                        <span class="match-count">12 matches</span>
+                        <h3 class="section-title">⚽ Premier League</h3>
+                        <span class="match-count">8 matches</span>
                     </div>
                     <div class="matches-grid">
                         <div class="match-card">
@@ -1117,210 +1123,75 @@
                                     <span class="live-dot"></span>
                                     LIVE 67'
                                 </span>
-                                <span>2 - 1</span>
+                                <span>Premier League</span>
                             </div>
                             <div class="match-body">
                                 <div class="teams">
                                     <div class="team-row">
-                                        <span class="team-name-full">Liverpool</span>
-                                        <span class="team-form">WWDWW</span>
+                                        <span class="team-name-full">Manchester City</span>
+                                        <span class="team-form">WWWDW</span>
                                     </div>
                                     <div class="team-row">
-                                        <span class="team-name-full">Manchester City</span>
-                                        <span class="team-form">DWWWL</span>
+                                        <span class="team-name-full">Liverpool</span>
+                                        <span class="team-form">WDWWL</span>
                                     </div>
                                 </div>
                                 <div class="markets">
                                     <button class="market-btn">
-                                        <span class="market-label">Home</span>
-                                        <span class="market-odds">2.10</span>
+                                        <span class="market-label">1</span>
+                                        <div class="market-odds">2.45</div>
                                     </button>
                                     <button class="market-btn">
-                                        <span class="market-label">Draw</span>
-                                        <span class="market-odds">3.40</span>
+                                        <span class="market-label">X</span>
+                                        <div class="market-odds">3.20</div>
                                     </button>
                                     <button class="market-btn">
-                                        <span class="market-label">Away</span>
-                                        <span class="market-odds">3.80</span>
+                                        <span class="market-label">2</span>
+                                        <div class="market-odds">2.90</div>
                                     </button>
                                 </div>
-                                <button class="more-markets">+247 Markets</button>
+                                <button class="more-markets">+47 Markets</button>
+                            </div>
+                        </div>
+                        <div class="match-card">
+                            <div class="match-header">
+                                <span>Today 15:00</span>
+                                <span>Premier League</span>
+                            </div>
+                            <div class="match-body">
+                                <div class="teams">
+                                    <div class="team-row">
+                                        <span class="team-name-full">Arsenal</span>
+                                        <span class="team-form">WWLWW</span>
+                                    </div>
+                                    <div class="team-row">
+                                        <span class="team-name-full">Tottenham</span>
+                                        <span class="team-form">WDLWW</span>
+                                    </div>
+                                </div>
+                                <div class="markets">
+                                    <button class="market-btn">
+                                        <span class="market-label">1</span>
+                                        <div class="market-odds">1.85</div>
+                                    </button>
+                                    <button class="market-btn">
+                                        <span class="market-label">X</span>
+                                        <div class="market-odds">3.40</div>
+                                    </button>
+                                    <button class="market-btn">
+                                        <span class="market-label">2</span>
+                                        <div class="market-odds">4.20</div>
+                                    </button>
+                                </div>
+                                <button class="more-markets">+52 Markets</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End of blurred content -->
         </div>
         
-        <!-- Live Casino Page -->
-        <div id="live-casino-page" class="page-content" style="display: none;">
-            <!-- Live Casino Local Navigation -->
-            <nav class="local-nav">
-                <div class="local-nav-content">
-                    <button class="local-nav-item active">🎯 All Tables</button>
-                    <button class="local-nav-item">🎲 Roulette</button>
-                    <button class="local-nav-item">🃏 Blackjack</button>
-                    <button class="local-nav-item">💰 Baccarat</button>
-                    <button class="local-nav-item">🎴 Poker</button>
-                    <button class="local-nav-item">🎪 Game Shows</button>
-                    <button class="local-nav-item">👑 VIP Tables</button>
-                    <button class="local-nav-item">⭐ Favorites</button>
-                </div>
-            </nav>
-            
-            <!-- Live Casino Sub Navigation -->
-            <nav class="sub-nav">
-                <div class="sub-nav-content">
-                    <button class="sub-nav-item active">All Studios</button>
-                    <button class="sub-nav-item">Evolution</button>
-                    <button class="sub-nav-item">Pragmatic Live</button>
-                    <button class="sub-nav-item">Playtech</button>
-                    <button class="sub-nav-item">Ezugi</button>
-                    <button class="sub-nav-item">Authentic Gaming</button>
-                </div>
-            </nav>
-            
-            <!-- Content below sub-nav - BLURRED -->
-            <div class="content-below-subnav blurred-content">
-                <!-- Live Casino Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-content">
-                        <div class="filter-groups">
-                            <div class="filter-group">
-                                <span class="filter-label">Limits:</span>
-                                <div class="filter-options">
-                                    <button class="filter-btn active">All</button>
-                                    <button class="filter-btn">$1-$100</button>
-                                    <button class="filter-btn">$5-$500</button>
-                                    <button class="filter-btn">$100+</button>
-                                </div>
-                            </div>
-                            <div class="filter-group">
-                                <span class="filter-label">Language:</span>
-                                <div class="filter-options">
-                                    <button class="filter-btn active">All</button>
-                                    <button class="filter-btn">English</button>
-                                    <button class="filter-btn">Spanish</button>
-                                    <button class="filter-btn">German</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="view-controls">
-                            <select class="sort-dropdown">
-                                <option>Sort: Popular</option>
-                                <option>Sort: Limits</option>
-                                <option>Sort: Game Type</option>
-                            </select>
-                            <div class="view-toggle-group">
-                                <button class="view-toggle active">⊞</button>
-                                <button class="view-toggle">☰</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Live Casino Promo Banner -->
-                <div class="promo-banner" style="background: linear-gradient(135deg, #00BCD4, #0097A7);">
-                    <div class="promo-content">
-                        <div class="promo-text">
-                            <h3>🎲 Live Casino Cashback!</h3>
-                            <p>Get 10% cashback on all live games today</p>
-                        </div>
-                        <button class="promo-cta">Play Live</button>
-                    </div>
-                </div>
-                
-                <!-- Live Casino Personalization Module -->
-                <div class="personalization">
-                    <div class="personalization-header">
-                        <h2 class="personalization-title">🎲 Your Live Casino</h2>
-                    </div>
-                    <div class="personalization-tabs">
-                        <button class="tab active">Favorite Tables</button>
-                        <button class="tab">Your Dealers</button>
-                        <button class="tab">VIP Status</button>
-                        <button class="tab">History</button>
-                    </div>
-                    <div class="team-cards">
-                        <div class="team-card">
-                            <div class="team-icon">⚡</div>
-                            <div class="team-info">
-                                <div class="team-name">Lightning Roulette</div>
-                                <div class="team-details">Table #1 • Dealer: Emma</div>
-                                <div class="team-odds">12 players • $1-$5000</div>
-                            </div>
-                            <button class="quick-bet">Join</button>
-                        </div>
-                        <div class="team-card">
-                            <div class="team-icon">🃏</div>
-                            <div class="team-info">
-                                <div class="team-name">VIP Blackjack</div>
-                                <div class="team-details">Private Table • Dealer: James</div>
-                                <div class="team-odds" style="color: #9C27B0;">2 seats left</div>
-                            </div>
-                            <button class="quick-bet">Join</button>
-                        </div>
-                        <div class="team-card cross-sell">
-                            <div class="team-icon">🎰</div>
-                            <div class="team-info">
-                                <div class="team-name">Quick Slots Break?</div>
-                                <div class="team-details">While waiting for seat</div>
-                                <div class="team-odds">Instant play slots</div>
-                            </div>
-                            <button class="quick-bet" onclick="showPage('casino')">Play</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Live Tables Grid -->
-                <div class="matches-section">
-                    <div class="section-header">
-                        <h3 class="section-title">🎲 Roulette Tables</h3>
-                        <span class="match-count">8 tables</span>
-                    </div>
-                    <div class="matches-grid">
-                        <div class="match-card">
-                            <div class="match-header">
-                                <span class="live-indicator">
-                                    <span class="live-dot"></span>
-                                    LIVE
-                                </span>
-                                <span>$1 - $5,000</span>
-                            </div>
-                            <div class="match-body" style="text-align: center;">
-                                <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
-                                    ⚡
-                                </div>
-                                <h4 style="margin-bottom: 0.5rem;">Lightning Roulette</h4>
-                                <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">500x Multipliers • English</p>
-                                <button class="more-markets">Join Table</button>
-                            </div>
-                        </div>
-                        <div class="match-card">
-                            <div class="match-header">
-                                <span class="live-indicator">
-                                    <span class="live-dot"></span>
-                                    LIVE
-                                </span>
-                                <span>$5 - $10,000</span>
-                            </div>
-                            <div class="match-body" style="text-align: center;">
-                                <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
-                                    💎
-                                </div>
-                                <h4 style="margin-bottom: 0.5rem;">Immersive Roulette</h4>
-                                <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">HD Stream • Multiple Angles</p>
-                                <button class="more-markets">Join Table</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End of blurred content -->
-        </div>
-        
-        <!-- Casino Page (Hidden) -->
+        <!-- Casino Page -->
         <div id="casino-page" class="page-content" style="display: none;">
             <!-- Casino Local Navigation -->
             <nav class="local-nav">
@@ -1351,149 +1222,149 @@
             </nav>
             
             <!-- Content below sub-nav - BLURRED -->
-            <div class="content-below-subnav blurred-content">
+            <div class="blurred-content">
                 <!-- Casino Filter Bar -->
                 <div class="filter-bar">
-                <div class="filter-content">
-                    <div class="filter-groups">
-                        <div class="filter-group">
-                            <span class="filter-label">Type:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">Video Slots</button>
-                                <button class="filter-btn">Classic</button>
-                                <button class="filter-btn">Megaways</button>
+                    <div class="filter-content">
+                        <div class="filter-groups">
+                            <div class="filter-group">
+                                <span class="filter-label">Type:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">Video Slots</button>
+                                    <button class="filter-btn">Classic</button>
+                                    <button class="filter-btn">Megaways</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">Features:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn">Bonus Buy</button>
+                                    <button class="filter-btn">Free Spins</button>
+                                    <button class="filter-btn">Multipliers</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="filter-group">
-                            <span class="filter-label">Features:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn">Bonus Buy</button>
-                                <button class="filter-btn">Free Spins</button>
-                                <button class="filter-btn">Multipliers</button>
+                        <div class="view-controls">
+                            <select class="sort-dropdown">
+                                <option>Sort: Popular</option>
+                                <option>Sort: New</option>
+                                <option>Sort: A-Z</option>
+                                <option>Sort: RTP</option>
+                            </select>
+                            <div class="view-toggle-group">
+                                <button class="view-toggle active">⊞</button>
+                                <button class="view-toggle">☰</button>
                             </div>
                         </div>
                     </div>
-                    <div class="view-controls">
-                        <select class="sort-dropdown">
-                            <option>Sort: Popular</option>
-                            <option>Sort: New</option>
-                            <option>Sort: A-Z</option>
-                            <option>Sort: RTP</option>
-                        </select>
-                        <div class="view-toggle-group">
-                            <button class="view-toggle active">⊞</button>
-                            <button class="view-toggle">☰</button>
+                </div>
+                
+                <!-- Casino Promo Banner -->
+                <div class="promo-banner" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
+                    <div class="promo-content">
+                        <div class="promo-text">
+                            <h3>🎰 Weekend Slots Race!</h3>
+                            <p>$50,000 prize pool - Top 100 players win</p>
+                        </div>
+                        <button class="promo-cta">Join Tournament</button>
+                    </div>
+                </div>
+                
+                <!-- Casino Personalization Module -->
+                <div class="personalization">
+                    <div class="personalization-header">
+                        <h2 class="personalization-title">🎮 Your Casino Dashboard</h2>
+                    </div>
+                    <div class="personalization-tabs">
+                        <button class="tab active">Continue Playing</button>
+                        <button class="tab">Favorites</button>
+                        <button class="tab">Tournaments</button>
+                        <button class="tab">History</button>
+                    </div>
+                    <div class="team-cards">
+                        <div class="team-card">
+                            <div class="team-icon">🍭</div>
+                            <div class="team-info">
+                                <div class="team-name">Sweet Bonanza</div>
+                                <div class="team-details">Last played: 2 hours ago</div>
+                                <div class="team-odds">Last win: $125</div>
+                            </div>
+                            <button class="quick-bet">Play</button>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-icon">💎</div>
+                            <div class="team-info">
+                                <div class="team-name">Mega Fortune</div>
+                                <div class="team-details">Progressive Jackpot</div>
+                                <div class="team-odds" style="color: #e74c3c;">$2,456,789</div>
+                            </div>
+                            <button class="quick-bet">Play</button>
+                        </div>
+                        <div class="team-card cross-sell">
+                            <div class="team-icon">⚽</div>
+                            <div class="team-info">
+                                <div class="team-name">Live Football Now!</div>
+                                <div class="team-details">5 matches in-play</div>
+                                <div class="team-odds">Enhanced odds available</div>
+                            </div>
+                            <button class="quick-bet" onclick="showPage('sports')">View</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Casino Games Grid -->
+                <div class="matches-section">
+                    <div class="section-header">
+                        <h3 class="section-title">🎰 Popular Slots</h3>
+                        <span class="match-count">124 games</span>
+                    </div>
+                    <div class="matches-grid">
+                        <div class="match-card">
+                            <div class="match-header">
+                                <span>Pragmatic Play</span>
+                                <span style="color: #27ae60;">RTP: 96.5%</span>
+                            </div>
+                            <div class="match-body" style="text-align: center;">
+                                <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                    🍭
+                                </div>
+                                <h4 style="margin-bottom: 0.5rem;">Sweet Bonanza</h4>
+                                <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">6x5 • Tumble • Multipliers</p>
+                                <div class="markets" style="grid-template-columns: 1fr 1fr;">
+                                    <button class="market-btn">
+                                        <span class="market-label">Demo</span>
+                                    </button>
+                                    <button class="market-btn" style="background-color: #27ae60; color: white;">
+                                        <span class="market-label">Play Now</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-card">
+                            <div class="match-header">
+                                <span>NetEnt</span>
+                                <span style="color: #e74c3c;">🔥 HOT</span>
+                            </div>
+                            <div class="match-body" style="text-align: center;">
+                                <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
+                                    💎
+                                </div>
+                                <h4 style="margin-bottom: 0.5rem;">Starburst</h4>
+                                <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">5x3 • Both Ways • Wilds</p>
+                                <div class="markets" style="grid-template-columns: 1fr 1fr;">
+                                    <button class="market-btn">
+                                        <span class="market-label">Demo</span>
+                                    </button>
+                                    <button class="market-btn" style="background-color: #27ae60; color: white;">
+                                        <span class="market-label">Play Now</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Casino Promo Banner -->
-            <div class="promo-banner" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
-                <div class="promo-content">
-                    <div class="promo-text">
-                        <h3>🎰 Weekend Slots Race!</h3>
-                        <p>$50,000 prize pool - Top 100 players win</p>
-                    </div>
-                    <button class="promo-cta">Join Tournament</button>
-                </div>
-            </div>
-            
-            <!-- Casino Personalization Module -->
-            <div class="personalization">
-                <div class="personalization-header">
-                    <h2 class="personalization-title">🎮 Your Casino Dashboard</h2>
-                </div>
-                <div class="personalization-tabs">
-                    <button class="tab active">Continue Playing</button>
-                    <button class="tab">Favorites</button>
-                    <button class="tab">Tournaments</button>
-                    <button class="tab">History</button>
-                </div>
-                <div class="team-cards">
-                    <div class="team-card">
-                        <div class="team-icon">🍭</div>
-                        <div class="team-info">
-                            <div class="team-name">Sweet Bonanza</div>
-                            <div class="team-details">Last played: 2 hours ago</div>
-                            <div class="team-odds">Last win: $125</div>
-                        </div>
-                        <button class="quick-bet">Play</button>
-                    </div>
-                    <div class="team-card">
-                        <div class="team-icon">💎</div>
-                        <div class="team-info">
-                            <div class="team-name">Mega Fortune</div>
-                            <div class="team-details">Progressive Jackpot</div>
-                            <div class="team-odds" style="color: #e74c3c;">$2,456,789</div>
-                        </div>
-                        <button class="quick-bet">Play</button>
-                    </div>
-                    <div class="team-card cross-sell">
-                        <div class="team-icon">⚽</div>
-                        <div class="team-info">
-                            <div class="team-name">Live Football Now!</div>
-                            <div class="team-details">5 matches in-play</div>
-                            <div class="team-odds">Enhanced odds available</div>
-                        </div>
-                        <button class="quick-bet" onclick="showPage('sports')">View</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Casino Games Grid -->
-            <div class="matches-section">
-                <div class="section-header">
-                    <h3 class="section-title">🎰 Popular Slots</h3>
-                    <span class="match-count">124 games</span>
-                </div>
-                <div class="matches-grid">
-                    <div class="match-card">
-                        <div class="match-header">
-                            <span>Pragmatic Play</span>
-                            <span style="color: #27ae60;">RTP: 96.5%</span>
-                        </div>
-                        <div class="match-body" style="text-align: center;">
-                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
-                                🍭
-                            </div>
-                            <h4 style="margin-bottom: 0.5rem;">Sweet Bonanza</h4>
-                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">6x5 • Tumble • Multipliers</p>
-                            <div class="markets" style="grid-template-columns: 1fr 1fr;">
-                                <button class="market-btn">
-                                    <span class="market-label">Demo</span>
-                                </button>
-                                <button class="market-btn" style="background-color: #27ae60; color: white;">
-                                    <span class="market-label">Play Now</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="match-card">
-                        <div class="match-header">
-                            <span>NetEnt</span>
-                            <span style="color: #e74c3c;">🔥 HOT</span>
-                        </div>
-                        <div class="match-body" style="text-align: center;">
-                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
-                                💎
-                            </div>
-                            <h4 style="margin-bottom: 0.5rem;">Starburst</h4>
-                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">5x3 • Both Ways • Wilds</p>
-                            <div class="markets" style="grid-template-columns: 1fr 1fr;">
-                                <button class="market-btn">
-                                    <span class="market-label">Demo</span>
-                                </button>
-                                <button class="market-btn" style="background-color: #27ae60; color: white;">
-                                    <span class="market-label">Play Now</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End of blurred content -->
         </div>
         
         <!-- Live Casino Page -->
@@ -1525,7 +1396,7 @@
             </nav>
             
             <!-- Content below sub-nav - BLURRED -->
-            <div class="content-below-subnav blurred-content">
+            <div class="blurred-content">
                 <!-- Live Casino Filter Bar -->
                 <div class="filter-bar">
                     <div class="filter-content">
@@ -1660,141 +1531,6 @@
                     </div>
                 </div>
             </div>
-            <!-- End of blurred content -->
-        </div>
-            <div class="filter-bar">
-                <div class="filter-content">
-                    <div class="filter-groups">
-                        <div class="filter-group">
-                            <span class="filter-label">Limits:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">$1-$100</button>
-                                <button class="filter-btn">$5-$500</button>
-                                <button class="filter-btn">$100+</button>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <span class="filter-label">Language:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">English</button>
-                                <button class="filter-btn">Spanish</button>
-                                <button class="filter-btn">German</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="view-controls">
-                        <select class="sort-dropdown">
-                            <option>Sort: Popular</option>
-                            <option>Sort: Limits</option>
-                            <option>Sort: Game Type</option>
-                        </select>
-                        <div class="view-toggle-group">
-                            <button class="view-toggle active">⊞</button>
-                            <button class="view-toggle">☰</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Live Casino Promo Banner -->
-            <div class="promo-banner" style="background: linear-gradient(135deg, #00BCD4, #0097A7);">
-                <div class="promo-content">
-                    <div class="promo-text">
-                        <h3>🎲 Live Casino Cashback!</h3>
-                        <p>Get 10% cashback on all live games today</p>
-                    </div>
-                    <button class="promo-cta">Play Live</button>
-                </div>
-            </div>
-            
-            <!-- Live Casino Personalization Module -->
-            <div class="personalization">
-                <div class="personalization-header">
-                    <h2 class="personalization-title">🎲 Your Live Casino</h2>
-                </div>
-                <div class="personalization-tabs">
-                    <button class="tab active">Favorite Tables</button>
-                    <button class="tab">Your Dealers</button>
-                    <button class="tab">VIP Status</button>
-                    <button class="tab">History</button>
-                </div>
-                <div class="team-cards">
-                    <div class="team-card">
-                        <div class="team-icon">⚡</div>
-                        <div class="team-info">
-                            <div class="team-name">Lightning Roulette</div>
-                            <div class="team-details">Table #1 • Dealer: Emma</div>
-                            <div class="team-odds">12 players • $1-$5000</div>
-                        </div>
-                        <button class="quick-bet">Join</button>
-                    </div>
-                    <div class="team-card">
-                        <div class="team-icon">🃏</div>
-                        <div class="team-info">
-                            <div class="team-name">VIP Blackjack</div>
-                            <div class="team-details">Private Table • Dealer: James</div>
-                            <div class="team-odds" style="color: #9C27B0;">2 seats left</div>
-                        </div>
-                        <button class="quick-bet">Join</button>
-                    </div>
-                    <div class="team-card cross-sell">
-                        <div class="team-icon">🎰</div>
-                        <div class="team-info">
-                            <div class="team-name">Quick Slots Break?</div>
-                            <div class="team-details">While waiting for seat</div>
-                            <div class="team-odds">Instant play slots</div>
-                        </div>
-                        <button class="quick-bet" onclick="showPage('casino')">Play</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Live Tables Grid -->
-            <div class="matches-section">
-                <div class="section-header">
-                    <h3 class="section-title">🎲 Roulette Tables</h3>
-                    <span class="match-count">8 tables</span>
-                </div>
-                <div class="matches-grid">
-                    <div class="match-card">
-                        <div class="match-header">
-                            <span class="live-indicator">
-                                <span class="live-dot"></span>
-                                LIVE
-                            </span>
-                            <span>$1 - $5,000</span>
-                        </div>
-                        <div class="match-body" style="text-align: center;">
-                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
-                                ⚡
-                            </div>
-                            <h4 style="margin-bottom: 0.5rem;">Lightning Roulette</h4>
-                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">500x Multipliers • English</p>
-                            <button class="more-markets">Join Table</button>
-                        </div>
-                    </div>
-                    <div class="match-card">
-                        <div class="match-header">
-                            <span class="live-indicator">
-                                <span class="live-dot"></span>
-                                LIVE
-                            </span>
-                            <span>$5 - $10,000</span>
-                        </div>
-                        <div class="match-body" style="text-align: center;">
-                            <div style="height: 120px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">
-                                💎
-                            </div>
-                            <h4 style="margin-bottom: 0.5rem;">Immersive Roulette</h4>
-                            <p style="font-size: 0.875rem; color: #7f8c8d; margin-bottom: 1rem;">HD Stream • Multiple Angles</p>
-                            <button class="more-markets">Join Table</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End of blurred content -->
         </div>
     </main>
     
