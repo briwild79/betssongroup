@@ -807,22 +807,9 @@
             z-index: 1000;
         }
         
-        .bottom-nav::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: var(--stroke-position, 10%);
-            width: 40px;
-            height: 5px;
-            background-color: #ff6600;
-            transform: translateX(-50%);
-            transition: left 0.3s ease;
-        }
-        
         .bottom-nav-content {
             display: flex;
-            justify-content: space-around;
-            padding: 0.5rem 0;
+            padding: 0.25rem;
         }
         
         .bottom-nav-item {
@@ -836,7 +823,16 @@
             align-items: center;
             gap: 0.25rem;
             font-size: 0.6875rem;
-            transition: color 0.2s;
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin: 0.25rem;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .bottom-nav-item.active {
+            background-color: rgba(255, 102, 0, 0.08);
+            color: #ff6600;
         }
         
         .bottom-nav-item:hover {
@@ -1680,13 +1676,6 @@
                 if (desktopBtns[pageIndex]) desktopBtns[pageIndex].classList.add('active');
                 if (mobileBtns[pageIndex]) mobileBtns[pageIndex].classList.add('active');
                 if (bottomBtns[pageIndex]) bottomBtns[pageIndex].classList.add('active');
-                
-                // Update bottom nav stroke position
-                const bottomNav = document.querySelector('.bottom-nav');
-                if (bottomNav) {
-                    const strokePosition = (pageIndex * 20) + 10; // Center of each 20% section
-                    bottomNav.style.setProperty('--stroke-position', strokePosition + '%');
-                }
             }
         }
         
