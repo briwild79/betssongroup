@@ -412,10 +412,14 @@
             color: rgba(255,255,255,0.8);
             padding: 0.5rem 1rem;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             white-space: nowrap;
             border-radius: 20px;
             transition: all 0.2s;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
         }
         
         .local-nav-item:hover {
@@ -458,6 +462,10 @@
             white-space: nowrap;
             border-radius: 20px;
             transition: all 0.2s;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
         }
         
         .sub-nav-item:hover {
@@ -1119,7 +1127,7 @@
             border: 1px solid #e1e8ed;
             padding: 0.625rem 1rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-weight: 500;
             color: #2c3e50;
             cursor: pointer;
@@ -1132,8 +1140,15 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             position: relative;
             z-index: 1;
-            height: 44px;
+            height: 48px;
             box-sizing: border-box;
+        }
+        
+        .mobile-filter-toggle > span:first-child {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1;
         }
         
         .mobile-filter-toggle svg {
@@ -1151,7 +1166,7 @@
             color: white;
             padding: 0.125rem 0.375rem;
             border-radius: 10px;
-            font-size: 0.75rem;
+            font-size: 0.8125rem;
             font-weight: 600;
             min-width: 20px;
             text-align: center;
@@ -1164,7 +1179,7 @@
             background: none;
             border: none;
             color: #e74c3c;
-            font-size: 0.75rem;
+            font-size: 0.875rem;
             cursor: pointer;
             padding: 0.375rem 0.75rem;
             border-radius: 4px;
@@ -1223,16 +1238,27 @@
         
         .mobile-filter-title {
             font-weight: 600;
-            font-size: 1.125rem;
+            font-size: 1.25rem;
         }
         
         .mobile-filter-close {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             cursor: pointer;
             padding: 0.5rem;
             color: #7f8c8d;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .mobile-filter-close:hover {
+            background-color: rgba(0,0,0,0.05);
         }
         
         .mobile-filter-content {
@@ -1249,6 +1275,7 @@
             font-weight: 600;
             margin-bottom: 0.75rem;
             color: #2c3e50;
+            font-size: 1rem;
         }
         
         .mobile-filter-options {
@@ -1265,7 +1292,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             line-height: 1.2;
             min-height: 44px;
             display: flex;
@@ -1304,7 +1331,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
             min-height: 44px;
-            font-size: 0.875rem;
+            font-size: 1rem;
         }
         
         .mobile-filter-apply:hover {
@@ -1321,7 +1348,7 @@
             cursor: pointer;
             transition: all 0.2s;
             min-height: 44px;
-            font-size: 0.875rem;
+            font-size: 1rem;
         }
         
         .mobile-filter-reset:hover {
@@ -1944,11 +1971,11 @@
             <!-- === FILTER BAR IMPROVEMENTS START === -->
             <!-- Mobile Filter Toggle Button -->
             <button class="mobile-filter-toggle" onclick="toggleMobileFilters('casino')">
-                <span style="display: flex; align-items: center; gap: 0.5rem; line-height: 1;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 4h18M3 12h18M3 20h18M7 8v8M17 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    <span>Filters</span>
+                    Filters
                 </span>
                 <span class="filter-count" id="casino-filter-count" style="display: none;">0</span>
             </button>
@@ -2177,11 +2204,11 @@
             <!-- === FILTER BAR IMPROVEMENTS START === -->
             <!-- Mobile Filter Toggle Button -->
             <button class="mobile-filter-toggle" onclick="toggleMobileFilters('live-casino')">
-                <span style="display: flex; align-items: center; gap: 0.5rem; line-height: 1;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 4h18M3 12h18M3 20h18M7 8v8M17 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    <span>Filters</span>
+                    Filters
                 </span>
                 <span class="filter-count" id="live-casino-filter-count" style="display: none;">0</span>
             </button>
