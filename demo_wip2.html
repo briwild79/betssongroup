@@ -393,6 +393,8 @@
             min-height: 52px;
             display: flex;
             align-items: center;
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .local-nav::-webkit-scrollbar {
@@ -439,6 +441,8 @@
             scrollbar-width: none;
             width: 100%;
             position: relative;
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .sub-nav::-webkit-scrollbar {
@@ -478,9 +482,47 @@
             border-color: #2c3e50;
         }
         
+        /* Sticky Navigation Behavior */
+        .page-content {
+            position: relative;
+        }
+        
+        .nav-wrapper {
+            position: sticky;
+            top: 60px;
+            z-index: 997;
+            background-color: #f5f6fa;
+            transition: margin-top 0.3s ease;
+            will-change: margin-top;
+            margin-top: 0;
+        }
+        
+        .nav-wrapper.compact {
+            margin-top: -104px; /* Height of local-nav (52px) + sub-nav (52px) */
+        }
+        
+        .nav-wrapper.compact .local-nav,
+        .nav-wrapper.compact .sub-nav {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+        }
+        
+        .nav-wrapper.compact .filter-bar {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-top: 1px solid #e1e8ed;
+            background-color: #ffffff;
+        }
+        
+        /* Smooth transitions */
+        .local-nav,
+        .sub-nav {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
         /* Filter Bar - Compact Design */
         .filter-bar {
-            background-color: white;
+            background-color: #ffffff;
             border-bottom: 1px solid #e1e8ed;
             padding: 0.75rem 1rem;
             position: relative;
@@ -488,6 +530,7 @@
             min-height: 54px;
             display: flex;
             align-items: center;
+            transition: all 0.3s ease;
         }
         
         .filter-content {
@@ -1355,17 +1398,6 @@
             background-color: #e9ecef;
         }
         
-        /* Sticky Filter Bar on Scroll (Desktop) */
-        .filter-bar.sticky {
-            position: sticky;
-            top: 60px;
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: 998;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
         /* Desktop Filter Bar Alignment Fix */
         .filter-bar .filter-content {
             max-width: 100%;
@@ -1399,7 +1431,25 @@
         
         /* Responsive Changes */
         @media (max-width: 768px) {
-            /* Hide original filter bar on mobile */
+            /* Reset nav wrapper on mobile */
+            .nav-wrapper {
+                position: static;
+                top: auto;
+                margin-top: 0 !important;
+            }
+            
+            .nav-wrapper.compact {
+                margin-top: 0 !important;
+            }
+            
+            .nav-wrapper .local-nav,
+            .nav-wrapper .sub-nav {
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                transform: none !important;
+            }
+            
+            /* Hide desktop filter bar on mobile */
             .filter-bar {
                 display: none;
             }
@@ -1678,33 +1728,79 @@
     <main class="main-content">
         <!-- Sports Page -->
         <section id="sports-page" class="page-content" style="display: block;">
-            <!-- Local Navigation -->
-            <nav class="local-nav" aria-label="Sports categories">
-                <div class="local-nav-content">
-                    <button class="local-nav-item">⚡ Live & Upcoming</button>
-                    <button class="local-nav-item active">⚽ Soccer</button>
-                    <button class="local-nav-item">🏀 Basketball</button>
-                    <button class="local-nav-item">🎾 Tennis</button>
-                    <button class="local-nav-item">🏈 American Football</button>
-                    <button class="local-nav-item">⚾ Baseball</button>
-                    <button class="local-nav-item">🏒 Ice Hockey</button>
-                    <button class="local-nav-item">🎯 My Bets</button>
+            <div class="nav-wrapper">
+                <!-- Local Navigation -->
+                <nav class="local-nav" aria-label="Sports categories">
+                    <div class="local-nav-content">
+                        <button class="local-nav-item">⚡ Live & Upcoming</button>
+                        <button class="local-nav-item active">⚽ Soccer</button>
+                        <button class="local-nav-item">🏀 Basketball</button>
+                        <button class="local-nav-item">🎾 Tennis</button>
+                        <button class="local-nav-item">🏈 American Football</button>
+                        <button class="local-nav-item">⚾ Baseball</button>
+                        <button class="local-nav-item">🏒 Ice Hockey</button>
+                        <button class="local-nav-item">🎯 My Bets</button>
+                    </div>
+                </nav>
+                
+                <!-- Sub Navigation -->
+                <nav class="sub-nav" aria-label="Soccer leagues">
+                    <div class="sub-nav-content">
+                        <button class="sub-nav-item active">All Soccer</button>
+                        <button class="sub-nav-item">⭐ Featured</button>
+                        <button class="sub-nav-item">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</button>
+                        <button class="sub-nav-item">🇪🇸 La Liga</button>
+                        <button class="sub-nav-item">🇩🇪 Bundesliga</button>
+                        <button class="sub-nav-item">🇮🇹 Serie A</button>
+                        <button class="sub-nav-item">🏆 Champions League</button>
+                        <button class="sub-nav-item">🌍 International</button>
+                    </div>
+                </nav>
+                
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-content">
+                        <div class="filter-groups">
+                            <div class="filter-group">
+                                <span class="filter-label">Time:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">Live</button>
+                                    <button class="filter-btn">Today</button>
+                                    <button class="filter-btn">Tomorrow</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">Markets:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn">1X2</button>
+                                    <button class="filter-btn">Over/Under</button>
+                                    <button class="filter-btn">Both Teams</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view-controls">
+                            <!-- === FILTER BAR IMPROVEMENTS START === -->
+                            <button class="filter-clear" onclick="clearAllFilters()">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Clear
+                            </button>
+                            <!-- === FILTER BAR IMPROVEMENTS END === -->
+                            <select class="sort-dropdown" aria-label="Sort matches">
+                                <option>Sort: Time</option>
+                                <option>Sort: Popular</option>
+                                <option>Sort: League</option>
+                            </select>
+                            <div class="view-toggle-group" role="group" aria-label="View options">
+                                <button class="view-toggle active" aria-label="Grid view">⊞</button>
+                                <button class="view-toggle" aria-label="List view">☰</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </nav>
-            
-            <!-- Sub Navigation -->
-            <nav class="sub-nav" aria-label="Soccer leagues">
-                <div class="sub-nav-content">
-                    <button class="sub-nav-item active">All Soccer</button>
-                    <button class="sub-nav-item">⭐ Featured</button>
-                    <button class="sub-nav-item">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</button>
-                    <button class="sub-nav-item">🇪🇸 La Liga</button>
-                    <button class="sub-nav-item">🇩🇪 Bundesliga</button>
-                    <button class="sub-nav-item">🇮🇹 Serie A</button>
-                    <button class="sub-nav-item">🏆 Champions League</button>
-                    <button class="sub-nav-item">🌍 International</button>
-                </div>
-            </nav>
+            </div>
             
             <!-- === FILTER BAR IMPROVEMENTS START === -->
             <!-- Mobile Filter Toggle Button -->
@@ -1760,50 +1856,6 @@
                 </div>
             </div>
             <!-- === FILTER BAR IMPROVEMENTS END === -->
-            
-            <!-- Filter Bar -->
-            <div class="filter-bar">
-                <div class="filter-content">
-                    <div class="filter-groups">
-                        <div class="filter-group">
-                            <span class="filter-label">Time:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">Live</button>
-                                <button class="filter-btn">Today</button>
-                                <button class="filter-btn">Tomorrow</button>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <span class="filter-label">Markets:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn">1X2</button>
-                                <button class="filter-btn">Over/Under</button>
-                                <button class="filter-btn">Both Teams</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="view-controls">
-                        <!-- === FILTER BAR IMPROVEMENTS START === -->
-                        <button class="filter-clear" onclick="clearAllFilters()">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            Clear
-                        </button>
-                        <!-- === FILTER BAR IMPROVEMENTS END === -->
-                        <select class="sort-dropdown" aria-label="Sort matches">
-                            <option>Sort: Time</option>
-                            <option>Sort: Popular</option>
-                            <option>Sort: League</option>
-                        </select>
-                        <div class="view-toggle-group" role="group" aria-label="View options">
-                            <button class="view-toggle active" aria-label="Grid view">⊞</button>
-                            <button class="view-toggle" aria-label="List view">☰</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Promo Banner -->
             <div class="promo-banner">
@@ -1940,33 +1992,80 @@
         
         <!-- Casino Page -->
         <section id="casino-page" class="page-content" style="display: none;">
-            <!-- Casino Local Navigation -->
-            <nav class="local-nav" aria-label="Casino categories">
-                <div class="local-nav-content">
-                    <button class="local-nav-item active">🆕 New Games</button>
-                    <button class="local-nav-item">🎰 Slots</button>
-                    <button class="local-nav-item">🎲 Table Games</button>
-                    <button class="local-nav-item">💰 Jackpots</button>
-                    <button class="local-nav-item">⭐ Popular</button>
-                    <button class="local-nav-item">🎮 Instant Win</button>
-                    <button class="local-nav-item">🕒 Recently Played</button>
-                    <button class="local-nav-item">🎁 Promotions</button>
+            <div class="nav-wrapper">
+                <!-- Casino Local Navigation -->
+                <nav class="local-nav" aria-label="Casino categories">
+                    <div class="local-nav-content">
+                        <button class="local-nav-item active">🆕 New Games</button>
+                        <button class="local-nav-item">🎰 Slots</button>
+                        <button class="local-nav-item">🎲 Table Games</button>
+                        <button class="local-nav-item">💰 Jackpots</button>
+                        <button class="local-nav-item">⭐ Popular</button>
+                        <button class="local-nav-item">🎮 Instant Win</button>
+                        <button class="local-nav-item">🕒 Recently Played</button>
+                        <button class="local-nav-item">🎁 Promotions</button>
+                    </div>
+                </nav>
+                
+                <!-- Casino Sub Navigation -->
+                <nav class="sub-nav" aria-label="Game providers">
+                    <div class="sub-nav-content">
+                        <button class="sub-nav-item active">All Providers</button>
+                        <button class="sub-nav-item">Pragmatic Play</button>
+                        <button class="sub-nav-item">NetEnt</button>
+                        <button class="sub-nav-item">Evolution</button>
+                        <button class="sub-nav-item">Play'n GO</button>
+                        <button class="sub-nav-item">Microgaming</button>
+                        <button class="sub-nav-item">Red Tiger</button>
+                        <button class="sub-nav-item">Big Time Gaming</button>
+                    </div>
+                </nav>
+                
+                <!-- Casino Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-content">
+                        <div class="filter-groups">
+                            <div class="filter-group">
+                                <span class="filter-label">Type:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">Video Slots</button>
+                                    <button class="filter-btn">Classic</button>
+                                    <button class="filter-btn">Megaways</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">Features:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn">Bonus Buy</button>
+                                    <button class="filter-btn">Free Spins</button>
+                                    <button class="filter-btn">Multipliers</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view-controls">
+                            <!-- === FILTER BAR IMPROVEMENTS START === -->
+                            <button class="filter-clear" onclick="clearAllFilters()">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Clear
+                            </button>
+                            <!-- === FILTER BAR IMPROVEMENTS END === -->
+                            <select class="sort-dropdown" aria-label="Sort games">
+                                <option>Sort: Popular</option>
+                                <option>Sort: New</option>
+                                <option>Sort: A-Z</option>
+                                <option>Sort: RTP</option>
+                            </select>
+                            <div class="view-toggle-group" role="group" aria-label="View options">
+                                <button class="view-toggle active" aria-label="Grid view">⊞</button>
+                                <button class="view-toggle" aria-label="List view">☰</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </nav>
-            
-            <!-- Casino Sub Navigation -->
-            <nav class="sub-nav" aria-label="Game providers">
-                <div class="sub-nav-content">
-                    <button class="sub-nav-item active">All Providers</button>
-                    <button class="sub-nav-item">Pragmatic Play</button>
-                    <button class="sub-nav-item">NetEnt</button>
-                    <button class="sub-nav-item">Evolution</button>
-                    <button class="sub-nav-item">Play'n GO</button>
-                    <button class="sub-nav-item">Microgaming</button>
-                    <button class="sub-nav-item">Red Tiger</button>
-                    <button class="sub-nav-item">Big Time Gaming</button>
-                </div>
-            </nav>
+            </div>
             
             <!-- === FILTER BAR IMPROVEMENTS START === -->
             <!-- Mobile Filter Toggle Button -->
@@ -2021,51 +2120,6 @@
                 </div>
             </div>
             <!-- === FILTER BAR IMPROVEMENTS END === -->
-            
-            <!-- Casino Filter Bar -->
-            <div class="filter-bar">
-                <div class="filter-content">
-                    <div class="filter-groups">
-                        <div class="filter-group">
-                            <span class="filter-label">Type:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">Video Slots</button>
-                                <button class="filter-btn">Classic</button>
-                                <button class="filter-btn">Megaways</button>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <span class="filter-label">Features:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn">Bonus Buy</button>
-                                <button class="filter-btn">Free Spins</button>
-                                <button class="filter-btn">Multipliers</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="view-controls">
-                        <!-- === FILTER BAR IMPROVEMENTS START === -->
-                        <button class="filter-clear" onclick="clearAllFilters()">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            Clear
-                        </button>
-                        <!-- === FILTER BAR IMPROVEMENTS END === -->
-                        <select class="sort-dropdown" aria-label="Sort games">
-                            <option>Sort: Popular</option>
-                            <option>Sort: New</option>
-                            <option>Sort: A-Z</option>
-                            <option>Sort: RTP</option>
-                        </select>
-                        <div class="view-toggle-group" role="group" aria-label="View options">
-                            <button class="view-toggle active" aria-label="Grid view">⊞</button>
-                            <button class="view-toggle" aria-label="List view">☰</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Casino Promo Banner -->
             <div class="promo-banner" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
@@ -2175,31 +2229,78 @@
         
         <!-- Live Casino Page -->
         <section id="live-casino-page" class="page-content" style="display: none;">
-            <!-- Live Casino Local Navigation -->
-            <nav class="local-nav" aria-label="Live casino categories">
-                <div class="local-nav-content">
-                    <button class="local-nav-item active">🎯 All Tables</button>
-                    <button class="local-nav-item">🎲 Roulette</button>
-                    <button class="local-nav-item">🃏 Blackjack</button>
-                    <button class="local-nav-item">💰 Baccarat</button>
-                    <button class="local-nav-item">🎴 Poker</button>
-                    <button class="local-nav-item">🎪 Game Shows</button>
-                    <button class="local-nav-item">👑 VIP Tables</button>
-                    <button class="local-nav-item">⭐ Favorites</button>
+            <div class="nav-wrapper">
+                <!-- Live Casino Local Navigation -->
+                <nav class="local-nav" aria-label="Live casino categories">
+                    <div class="local-nav-content">
+                        <button class="local-nav-item active">🎯 All Tables</button>
+                        <button class="local-nav-item">🎲 Roulette</button>
+                        <button class="local-nav-item">🃏 Blackjack</button>
+                        <button class="local-nav-item">💰 Baccarat</button>
+                        <button class="local-nav-item">🎴 Poker</button>
+                        <button class="local-nav-item">🎪 Game Shows</button>
+                        <button class="local-nav-item">👑 VIP Tables</button>
+                        <button class="local-nav-item">⭐ Favorites</button>
+                    </div>
+                </nav>
+                
+                <!-- Live Casino Sub Navigation -->
+                <nav class="sub-nav" aria-label="Live casino studios">
+                    <div class="sub-nav-content">
+                        <button class="sub-nav-item active">All Studios</button>
+                        <button class="sub-nav-item">Evolution</button>
+                        <button class="sub-nav-item">Pragmatic Live</button>
+                        <button class="sub-nav-item">Playtech</button>
+                        <button class="sub-nav-item">Ezugi</button>
+                        <button class="sub-nav-item">Authentic Gaming</button>
+                    </div>
+                </nav>
+                
+                <!-- Live Casino Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-content">
+                        <div class="filter-groups">
+                            <div class="filter-group">
+                                <span class="filter-label">Limits:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">€1-€100</button>
+                                    <button class="filter-btn">€5-€500</button>
+                                    <button class="filter-btn">€100+</button>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">Language:</span>
+                                <div class="filter-options">
+                                    <button class="filter-btn active">All</button>
+                                    <button class="filter-btn">English</button>
+                                    <button class="filter-btn">Spanish</button>
+                                    <button class="filter-btn">German</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view-controls">
+                            <!-- === FILTER BAR IMPROVEMENTS START === -->
+                            <button class="filter-clear" onclick="clearAllFilters()">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Clear
+                            </button>
+                            <!-- === FILTER BAR IMPROVEMENTS END === -->
+                            <select class="sort-dropdown" aria-label="Sort tables">
+                                <option>Sort: Popular</option>
+                                <option>Sort: Limits</option>
+                                <option>Sort: Game Type</option>
+                            </select>
+                            <div class="view-toggle-group" role="group" aria-label="View options">
+                                <button class="view-toggle active" aria-label="Grid view">⊞</button>
+                                <button class="view-toggle" aria-label="List view">☰</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </nav>
-            
-            <!-- Live Casino Sub Navigation -->
-            <nav class="sub-nav" aria-label="Live casino studios">
-                <div class="sub-nav-content">
-                    <button class="sub-nav-item active">All Studios</button>
-                    <button class="sub-nav-item">Evolution</button>
-                    <button class="sub-nav-item">Pragmatic Live</button>
-                    <button class="sub-nav-item">Playtech</button>
-                    <button class="sub-nav-item">Ezugi</button>
-                    <button class="sub-nav-item">Authentic Gaming</button>
-                </div>
-            </nav>
+            </div>
             
             <!-- === FILTER BAR IMPROVEMENTS START === -->
             <!-- Mobile Filter Toggle Button -->
@@ -2254,51 +2355,6 @@
                 </div>
             </div>
             <!-- === FILTER BAR IMPROVEMENTS END === -->
-            
-            <!-- Live Casino Filter Bar -->
-            <div class="filter-bar">
-                <div class="filter-content">
-                    <div class="filter-groups">
-                        <div class="filter-group">
-                            <span class="filter-label">Limits:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">€1-€100</button>
-                                <button class="filter-btn">€5-€500</button>
-                                <button class="filter-btn">€100+</button>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <span class="filter-label">Language:</span>
-                            <div class="filter-options">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">English</button>
-                                <button class="filter-btn">Spanish</button>
-                                <button class="filter-btn">German</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="view-controls">
-                        <!-- === FILTER BAR IMPROVEMENTS START === -->
-                        <button class="filter-clear" onclick="clearAllFilters()">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            Clear
-                        </button>
-                        <!-- === FILTER BAR IMPROVEMENTS END === -->
-                        <select class="sort-dropdown" aria-label="Sort tables">
-                            <option>Sort: Popular</option>
-                            <option>Sort: Limits</option>
-                            <option>Sort: Game Type</option>
-                        </select>
-                        <div class="view-toggle-group" role="group" aria-label="View options">
-                            <button class="view-toggle active" aria-label="Grid view">⊞</button>
-                            <button class="view-toggle" aria-label="List view">☰</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Live Casino Promo Banner -->
             <div class="promo-banner" style="background: linear-gradient(135deg, #00BCD4, #0097A7);">
@@ -2529,6 +2585,20 @@
             
             // Close bet slip when changing pages
             hideBetSlip();
+            
+            // Reset scroll position and nav state
+            window.scrollTo(0, 0);
+            
+            // Reset nav scroll state for new page
+            if (window.handleNavScroll) {
+                // Remove compact class immediately
+                document.querySelectorAll('.nav-wrapper').forEach(wrapper => {
+                    wrapper.classList.remove('compact');
+                });
+                
+                // Check scroll state after a brief delay
+                setTimeout(window.handleNavScroll, 100);
+            }
         }
         
         function updateNavStates(page) {
@@ -2664,6 +2734,15 @@
                 if (window.innerWidth > 768) {
                     closeMenu();
                     hideBetSlip();
+                    // Re-initialize nav scroll behavior
+                    if (window.handleNavScroll) {
+                        window.handleNavScroll();
+                    }
+                } else {
+                    // Remove compact class on mobile
+                    document.querySelectorAll('.nav-wrapper').forEach(wrapper => {
+                        wrapper.classList.remove('compact');
+                    });
                 }
             }, 250);
         });
@@ -2899,19 +2978,39 @@
                 }
             });
             
-            // Make filter bar sticky on scroll (desktop)
+            // Smart sticky navigation behavior
             if (window.innerWidth > 768) {
-                const filterBars = document.querySelectorAll('.filter-bar');
-                filterBars.forEach(filterBar => {
-                    const prevElement = filterBar.previousElementSibling;
-                    if (prevElement && prevElement.classList.contains('sub-nav')) {
-                        const observer = new IntersectionObserver(
-                            ([e]) => filterBar.classList.toggle('sticky', e.intersectionRatio < 1),
-                            { threshold: [1], rootMargin: '-60px 0px 0px 0px' }
-                        );
-                        observer.observe(prevElement);
+                let scrollThreshold = 100; // Collapses nav after scrolling 100px
+                
+                window.handleNavScroll = function() {
+                    const navWrappers = document.querySelectorAll('.nav-wrapper');
+                    const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    navWrappers.forEach(wrapper => {
+                        // Check if this wrapper is in the active page
+                        if (wrapper.closest('.page-content[style*="display: block"]')) {
+                            if (currentScrollPos > scrollThreshold) {
+                                // Scrolled down past threshold - collapse nav
+                                wrapper.classList.add('compact');
+                            } else {
+                                // Near top - show full nav
+                                wrapper.classList.remove('compact');
+                            }
+                        }
+                    });
+                }
+                
+                // Throttle scroll events for performance
+                let scrollTimer;
+                window.addEventListener('scroll', function() {
+                    if (scrollTimer) {
+                        clearTimeout(scrollTimer);
                     }
+                    scrollTimer = setTimeout(window.handleNavScroll, 10);
                 });
+                
+                // Initial check after DOM is ready
+                setTimeout(window.handleNavScroll, 100);
             }
             
             // Enhanced filter button functionality
