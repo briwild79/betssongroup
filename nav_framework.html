@@ -3,39 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navigation Framework</title>
-    <!-- 
-    Navigation Hierarchy:
-    - Header: Site-level navigation (fixed top bar)
-    - Local Nav: Section-level navigation (Sports types)
-    - Sub Nav: Category-level navigation (Competitions/providers)
-    - Filter Bar: Page-level controls and filters
-    - Burger Menu: Product Navigation
-    
-    Design System Principles:
-    - No sharp corners: All interactive elements have rounded corners
-    - Border radius hierarchy: 4px (small) → 8px (standard) → 12px (panels) → 16px (large)
-    - Consistent spacing: 4px → 8px → 16px → 24px → 32px → 48px
-    - Touch targets: Minimum 48px for accessibility
-    - Visual softness: Even functional elements like scrollbars are rounded
-    -->
+    <title>Navigation Framework - Refactored</title>
     <style>
+        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            font-size: 16px; /* Base font size for accessibility */
-            line-height: 1.5;
-            background: #ffffff;
-            color: #1a1a1a; /* Slightly softer than pure black */
-            overflow-x: hidden;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         :root {
@@ -52,10 +26,10 @@
             --local-nav-height: 56px;
             --sub-nav-height: 48px;
             --filter-height: 56px;
-            --touch-target: 48px; /* Increased from 44px for better accessibility */
+            --touch-target: 48px;
             --panel-width: 320px;
             
-            /* Colors with better contrast */
+            /* Colors */
             --color-primary: #1a1a1a;
             --color-primary-hover: #333333;
             --color-secondary: #666666;
@@ -71,7 +45,7 @@
             --color-text-muted: #666666;
             --color-text-inverse: #ffffff;
             
-            /* Shadows for depth */
+            /* Shadows */
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -82,7 +56,62 @@
             --transition-slow: 300ms ease;
         }
 
-        /* Focus visible for keyboard navigation */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            background: var(--color-bg-base);
+            color: var(--color-text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Consolidated interactive element styles */
+        .interactive-base {
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .interactive-base:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .interactive-base:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .interactive-base.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        /* ===== FOCUS & ACCESSIBILITY ===== */
         *:focus {
             outline: none;
         }
@@ -90,33 +119,33 @@
         *:focus-visible {
             outline: 2px solid var(--color-border-focus);
             outline-offset: 2px;
-            border-radius: var(--radius-sm);
+            border-radius: 4px;
         }
 
-        /* Skip to content link for screen readers */
         .skip-link {
             position: absolute;
             top: -40px;
-            left: var(--space-sm);
+            left: 0;
             background: var(--color-primary);
             color: var(--color-text-inverse);
             padding: var(--space-sm) var(--space-md);
             text-decoration: none;
-            border-radius: var(--radius-sm);
+            border-radius: 0 0 4px 0;
             z-index: 2000;
         }
 
         .skip-link:focus {
-            top: var(--space-sm);
+            top: 0;
         }
 
+        /* ===== HEADER ===== */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: var(--color-bg-base);
+            background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid var(--color-border);
             display: flex;
             align-items: center;
@@ -124,68 +153,6 @@
             padding: 0 var(--space-md);
             z-index: 1000;
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            /* No border-radius: Headers spanning edge-to-edge maintain sharp corners */
-        }
-
-        /* Improved touch targets */
-        .touch-target {
-            min-width: var(--touch-target);
-            height: var(--touch-target);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-base);
-            transition: all var(--transition-base);
-            border-radius: var(--radius-sm);
-            position: relative;
-        }
-
-        .touch-target:hover {
-            background: var(--color-bg-subtle);
-            border-color: var(--color-border-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .touch-target:active {
-            transform: translateY(0);
-            box-shadow: none;
-        }
-
-        .touch-target.active {
-            background: var(--color-bg-active);
-            color: var(--color-text-inverse);
-            border-color: var(--color-bg-active);
-        }
-
-        /* Accessible burger menu */
-        .burger-menu {
-            flex-direction: column;
-            gap: 5px;
-            padding: 0;
-        }
-
-        .burger-line {
-            width: 20px;
-            height: 2px;
-            background: currentColor;
-            transition: all var(--transition-base);
-            border-radius: 1px; /* Subtle rounding even on functional elements */
-        }
-
-        .burger-menu.active .burger-line:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .burger-menu.active .burger-line:nth-child(2) {
-            opacity: 0;
-        }
-
-        .burger-menu.active .burger-line:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
         }
 
         .logo {
@@ -201,48 +168,157 @@
             gap: var(--space-sm);
         }
 
-        /* Icons with better size */
+        /* ===== TOUCH TARGETS ===== */
+        .touch-target {
+            min-width: var(--touch-target);
+            height: var(--touch-target);
+        }
+
+        .touch-target.burger-menu {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .burger-line {
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            transition: all var(--transition-base);
+            border-radius: 1px;
+        }
+
+        .burger-menu.active .burger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger-menu.active .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu.active .burger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .balance {
+            height: var(--touch-target);
+            padding: 0 var(--space-lg);
+            font-weight: 600;
+            font-size: 16px;
+            gap: var(--space-sm);
+        }
+
         .icon {
             width: 20px;
             height: 20px;
             fill: currentColor;
         }
 
-        .balance {
-            height: var(--touch-target);
-            padding: 0 var(--space-lg);
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-base);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            display: flex;
-            align-items: center;
-            border-radius: var(--radius-sm);
-            gap: var(--space-sm);
-        }
-
-        .balance:hover {
-            background: var(--color-bg-subtle);
-            border-color: var(--color-border-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .balance.active {
-            background: var(--color-bg-active);
-            color: var(--color-text-inverse);
-            border-color: var(--color-bg-active);
-        }
-
-        /* Content wrapper */
+        /* ===== NAVIGATION ===== */
         .content-wrapper {
             margin-top: var(--header-height);
             position: relative;
         }
 
-        /* Panel improvements */
+        .horizontal-nav {
+            border-bottom: 1px solid var(--color-border);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-border) transparent;
+        }
+
+        .horizontal-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .horizontal-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .horizontal-nav::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 2px;
+        }
+
+        .local-nav {
+            height: var(--local-nav-height);
+            background: var(--color-bg-subtle);
+        }
+
+        .sub-nav {
+            height: var(--sub-nav-height);
+            background: var(--color-bg-muted);
+        }
+
+        .nav-list {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 var(--space-lg);
+            gap: var(--space-sm);
+            min-width: max-content;
+        }
+
+        .nav-item {
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--color-bg-base);
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 16px;
+            min-height: 40px;
+            border: 1px solid transparent;
+        }
+
+        .nav-item.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        /* ===== FILTER BAR ===== */
+        .filter-nav {
+            position: relative;
+            height: var(--filter-height);
+            background: var(--color-bg-subtle);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-lg);
+            transition: all var(--transition-base);
+        }
+
+        .filter-nav.sticky {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            z-index: 999;
+            box-shadow: var(--shadow-md);
+            background: rgba(248, 249, 250, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-button {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 44px;
+            font-weight: 500;
+            font-size: 16px;
+            gap: var(--space-sm);
+        }
+
+        .filter-placeholder {
+            height: var(--filter-height);
+            display: none;
+        }
+
+        .filter-placeholder.active {
+            display: block;
+        }
+
+        /* ===== PANELS ===== */
         .panel {
             position: fixed;
             background: var(--color-bg-base);
@@ -261,23 +337,6 @@
             background: var(--color-bg-subtle);
         }
 
-        /* Match header radius to panel radius */
-        .panel-left .panel-header {
-            border-radius: 0 var(--radius-md) 0 0;
-        }
-
-        .panel-right .panel-header {
-            border-radius: var(--radius-md) 0 0 0;
-        }
-
-        .panel-top .panel-header {
-            border-radius: 0;
-        }
-
-        .panel-bottom .panel-header {
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        }
-
         .panel-title {
             font-weight: 600;
             font-size: 18px;
@@ -287,20 +346,7 @@
         .panel-close {
             width: 40px;
             height: 40px;
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-base);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 24px;
-            transition: all var(--transition-base);
-            border-radius: var(--radius-sm);
-        }
-
-        .panel-close:hover {
-            background: var(--color-bg-muted);
-            border-color: var(--color-border-hover);
         }
 
         .panel-content {
@@ -309,13 +355,12 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Panel navigation without padding for cleaner separators */
         .panel-content nav {
             margin: 0 calc(-1 * var(--space-lg));
             padding: 0;
         }
 
-        /* Side panels */
+        /* Panel positioning */
         .panel-side {
             top: var(--header-height);
             width: var(--panel-width);
@@ -329,7 +374,7 @@
 
         .panel-left {
             left: calc(-1 * var(--panel-width) - 20px);
-            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            border-radius: 0 12px 12px 0;
             border-left: none;
         }
 
@@ -339,7 +384,7 @@
 
         .panel-right {
             right: calc(-1 * var(--panel-width) - 20px);
-            border-radius: var(--radius-md) 0 0 var(--radius-md);
+            border-radius: 12px 0 0 12px;
             border-right: none;
         }
 
@@ -347,13 +392,12 @@
             right: 0;
         }
 
-        /* Top panels */
         .panel-top {
-            top: -420px;
+            top: calc(-420px);
             left: 0;
             right: 0;
             height: 400px;
-            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            border-radius: 0 0 12px 12px;
             border-top: none;
         }
 
@@ -365,7 +409,6 @@
             top: calc(var(--header-height) + var(--filter-height));
         }
 
-        /* Bottom panels */
         .panel-bottom {
             bottom: -520px;
             left: 0;
@@ -375,7 +418,7 @@
             border-left: none;
             border-right: none;
             border-bottom: none;
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            border-radius: 16px 16px 0 0;
         }
 
         .panel-bottom.active {
@@ -386,7 +429,7 @@
             height: 400px;
         }
 
-        /* List items with better touch targets */
+        /* ===== LIST ITEMS ===== */
         .list-item {
             padding: var(--space-md) var(--space-lg);
             margin: 0;
@@ -401,35 +444,15 @@
             text-align: left;
             border: none;
             background: transparent;
-            position: relative;
-        }
-
-        /* Subtle rounded corners on hover for visual softness */
-        .list-item::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 8px;
-            right: 8px;
-            bottom: 4px;
-            background: var(--color-bg-subtle);
-            border-radius: var(--radius-sm);
-            opacity: 0;
-            transition: opacity var(--transition-base);
-            z-index: -1;
-        }
-
-        .list-item:hover::before {
-            opacity: 1;
         }
 
         .list-item:hover {
+            background: var(--color-bg-subtle);
             padding-left: calc(var(--space-lg) + var(--space-sm));
         }
 
-        .list-item:active::before {
+        .list-item:active {
             background: var(--color-bg-muted);
-            opacity: 1;
         }
 
         .list-separator {
@@ -438,7 +461,7 @@
             margin: 0;
         }
 
-        /* Filter panel with improved accessibility */
+        /* ===== FILTER COMPONENTS ===== */
         .filter-section {
             margin-bottom: var(--space-xl);
         }
@@ -458,34 +481,9 @@
 
         .filter-option {
             padding: var(--space-md);
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-base);
-            cursor: pointer;
-            transition: all var(--transition-base);
             text-align: center;
             font-size: 16px;
-            border-radius: var(--radius-sm);
             min-height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .filter-option:hover {
-            background: var(--color-bg-subtle);
-            border-color: var(--color-border-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-option:active {
-            transform: translateY(0);
-        }
-
-        .filter-option.active {
-            background: var(--color-bg-active);
-            color: var(--color-text-inverse);
-            border-color: var(--color-bg-active);
         }
 
         .filter-actions {
@@ -499,22 +497,10 @@
 
         .filter-action {
             padding: var(--space-md) var(--space-lg);
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-base);
-            cursor: pointer;
-            transition: all var(--transition-base);
             text-align: center;
             font-weight: 600;
             font-size: 16px;
-            border-radius: var(--radius-sm);
             min-height: 48px;
-        }
-
-        .filter-action:hover {
-            background: var(--color-bg-subtle);
-            border-color: var(--color-border-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
         }
 
         .filter-action.primary {
@@ -528,7 +514,7 @@
             border-color: var(--color-primary-hover);
         }
 
-        /* Search input */
+        /* ===== SEARCH ===== */
         .search-input {
             width: 100%;
             padding: var(--space-md);
@@ -536,7 +522,7 @@
             background: var(--color-bg-base);
             font-size: 16px;
             margin-bottom: var(--space-lg);
-            border-radius: var(--radius-sm);
+            border-radius: 8px;
             transition: all var(--transition-base);
         }
 
@@ -545,17 +531,16 @@
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
 
-        /* Special case for search panel nav */
         #searchPanel nav {
             margin-top: var(--space-md);
         }
 
-        /* Balance display */
+        /* ===== BALANCE COMPONENTS ===== */
         .balance-display {
             text-align: center;
             padding: var(--space-xl);
             background: var(--color-bg-subtle);
-            border-radius: var(--radius-md);
+            border-radius: 12px;
             margin-bottom: var(--space-lg);
         }
 
@@ -586,7 +571,7 @@
             text-align: center;
             cursor: pointer;
             transition: all var(--transition-base);
-            border-radius: var(--radius-md);
+            border-radius: 12px;
         }
 
         .balance-action:hover {
@@ -609,7 +594,7 @@
             color: var(--color-text-primary);
         }
 
-        /* Overlay */
+        /* ===== OVERLAY ===== */
         .overlay {
             position: fixed;
             top: 0;
@@ -629,7 +614,7 @@
             visibility: visible;
         }
 
-        /* Quick deposit button */
+        /* ===== QUICK DEPOSIT ===== */
         .quick-deposit {
             position: fixed;
             bottom: var(--space-lg);
@@ -647,7 +632,7 @@
             font-weight: 300;
             z-index: 1001;
             transition: all var(--transition-base);
-            border-radius: var(--radius-full);
+            border-radius: 50%;
             box-shadow: var(--shadow-lg);
         }
 
@@ -660,7 +645,7 @@
             transform: scale(1.05);
         }
 
-        /* Main content */
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             padding: var(--space-lg);
             min-height: calc(100vh - var(--header-height));
@@ -670,7 +655,7 @@
             padding: var(--space-xl);
             background: var(--color-bg-subtle);
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
+            border-radius: 12px;
             margin-bottom: var(--space-lg);
         }
 
@@ -687,152 +672,7 @@
             color: var(--color-text-secondary);
         }
 
-        /* HORIZONTAL NAVIGATION HIERARCHY
-           Header → Site-level navigation (fixed)
-           Local Nav → Section-level navigation (Sports types)
-           Sub Nav → Category-level navigation (Competitions/providers)
-           Filter Bar → Page-level controls and filters 
-           Note: Horizontal navs maintain sharp corners as they span edge-to-edge */
-        .horizontal-nav {
-            position: relative;
-            left: 0;
-            right: 0;
-            border-bottom: 1px solid var(--color-border);
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: var(--color-border) transparent;
-        }
-
-        .horizontal-nav::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .horizontal-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .horizontal-nav::-webkit-scrollbar-thumb {
-            background: var(--color-border);
-            border-radius: var(--radius-xs);
-        }
-
-        .horizontal-nav::-webkit-scrollbar-thumb:hover {
-            background: var(--color-border-hover);
-        }
-
-        .local-nav {
-            height: var(--local-nav-height);
-            background: var(--color-bg-subtle);
-        }
-
-        .sub-nav {
-            height: var(--sub-nav-height);
-            background: var(--color-bg-muted);
-        }
-
-        .nav-list {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            padding: 0 var(--space-lg);
-            gap: var(--space-sm);
-            min-width: max-content;
-        }
-
-        .nav-item {
-            padding: var(--space-sm) var(--space-lg);
-            border: 1px solid transparent;
-            background: var(--color-bg-base);
-            cursor: pointer;
-            transition: all var(--transition-base);
-            white-space: nowrap;
-            font-weight: 500;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-item:hover {
-            background: var(--color-bg-subtle);
-            border-color: var(--color-border);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .nav-item.active {
-            background: var(--color-bg-active);
-            color: var(--color-text-inverse);
-            border-color: var(--color-bg-active);
-        }
-
-        /* FILTER BAR - Initially in flow, becomes sticky */
-        .filter-nav {
-            position: relative;
-            left: 0;
-            right: 0;
-            height: var(--filter-height);
-            background: var(--color-bg-subtle);
-            border-bottom: 1px solid var(--color-border);
-            display: flex;
-            align-items: center;
-            padding: 0 var(--space-lg);
-            transition: all var(--transition-base);
-        }
-
-        .filter-nav.sticky {
-            position: fixed;
-            top: var(--header-height);
-            z-index: 999;
-            box-shadow: var(--shadow-md);
-            background: rgba(248, 249, 250, 0.95);
-            backdrop-filter: blur(10px);
-        }
-
-        .filter-button {
-            flex: 1;
-            max-width: 600px;
-            margin: 0 auto;
-            height: 44px;
-            border: 1px solid var(--color-border);
-            background: var(--color-bg-base);
-            cursor: pointer;
-            transition: all var(--transition-base);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-            font-size: 16px;
-            border-radius: var(--radius-sm);
-            gap: var(--space-sm);
-        }
-
-        .filter-button:hover {
-            background: var(--color-bg-subtle);
-            border-color: var(--color-border-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-button.active {
-            background: var(--color-bg-active);
-            color: var(--color-text-inverse);
-            border-color: var(--color-bg-active);
-        }
-
-        .filter-placeholder {
-            height: var(--filter-height);
-            display: none;
-        }
-
-        .filter-placeholder.active {
-            display: block;
-        }
-
-        /* Responsive adjustments */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             :root {
                 --panel-width: 280px;
@@ -873,17 +713,67 @@
             }
         }
 
-        /* Screen reader only content */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+        /* Apply interactive base styles to all interactive elements */
+        .touch-target,
+        .balance,
+        .nav-item,
+        .filter-button,
+        .filter-option,
+        .filter-action,
+        .panel-close {
+            @extend .interactive-base;
+        }
+
+        /* Since CSS doesn't support @extend, we apply the class directly in HTML */
+        .touch-target,
+        .balance,
+        .nav-item,
+        .filter-button,
+        .filter-option,
+        .filter-action,
+        .panel-close {
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .touch-target:hover,
+        .balance:hover,
+        .nav-item:hover,
+        .filter-button:hover,
+        .filter-option:hover,
+        .filter-action:hover,
+        .panel-close:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .touch-target:active,
+        .balance:active,
+        .nav-item:active,
+        .filter-button:active,
+        .filter-option:active,
+        .filter-action:active,
+        .panel-close:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .touch-target.active,
+        .balance.active,
+        .nav-item.active,
+        .filter-button.active,
+        .filter-option.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
         }
     </style>
 </head>
@@ -891,7 +781,7 @@
     <a href="#main" class="skip-link">Skip to main content</a>
     
     <header class="header" role="banner">
-        <button class="touch-target burger-menu" id="burgerMenu" aria-label="Open product navigation menu" aria-expanded="false" aria-controls="menuPanel">
+        <button class="touch-target burger-menu" data-panel="menuPanel" aria-label="Open product navigation menu" aria-expanded="false" aria-controls="menuPanel">
             <span class="burger-line" aria-hidden="true"></span>
             <span class="burger-line" aria-hidden="true"></span>
             <span class="burger-line" aria-hidden="true"></span>
@@ -900,18 +790,18 @@
         <div class="logo">Logo</div>
         
         <div class="header-actions">
-            <button class="touch-target" id="searchIcon" aria-label="Open search" aria-expanded="false" aria-controls="searchPanel">
+            <button class="touch-target" data-panel="searchPanel" aria-label="Open search" aria-expanded="false" aria-controls="searchPanel">
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
             </button>
 
-            <button class="balance" id="balance" aria-label="Account balance: $1,247. Click to view details" aria-expanded="false" aria-controls="balancePanel">
+            <button class="balance" data-panel="balancePanel" aria-label="Account balance: $1,247. Click to view details" aria-expanded="false" aria-controls="balancePanel">
                 <span aria-hidden="true">$</span>
                 <span>1,247</span>
             </button>
             
-            <button class="touch-target" id="accountIcon" aria-label="Open account menu" aria-expanded="false" aria-controls="accountPanel">
+            <button class="touch-target" data-panel="accountPanel" aria-label="Open account menu" aria-expanded="false" aria-controls="accountPanel">
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
@@ -948,16 +838,16 @@
             </div>
         </nav>
 
-        <nav class="filter-nav" id="filterNav" role="navigation" aria-label="Page-level controls and filters">
-            <button class="filter-button" id="filterButton" aria-label="Open filter options" aria-expanded="false" aria-controls="filterPanel">
+        <nav class="filter-nav" role="navigation" aria-label="Page-level controls and filters">
+            <button class="filter-button" data-panel="filterPanel" aria-label="Open filter options" aria-expanded="false" aria-controls="filterPanel">
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
                 </svg>
-                <span id="filterText">Filter Options</span>
+                <span>Filter Options</span>
             </button>
         </nav>
 
-        <div class="filter-placeholder" id="filterPlaceholder" aria-hidden="true"></div>
+        <div class="filter-placeholder" aria-hidden="true"></div>
 
         <main class="main-content" id="main" role="main">
             <div class="content-card">
@@ -965,7 +855,7 @@
                 <p>Main content area</p>
             </div>
             
-            <div style="height: 1500px; padding: var(--space-xl); background: var(--color-bg-subtle); border-radius: var(--radius-md);">
+            <div style="height: 1500px; padding: var(--space-xl); background: var(--color-bg-subtle); border-radius: 12px;">
                 <p>Additional content for scrolling demonstration</p>
             </div>
         </main>
@@ -975,56 +865,40 @@
     <aside class="panel panel-side panel-left" id="menuPanel" role="dialog" aria-labelledby="menuTitle" aria-hidden="true">
         <div class="panel-header">
             <h2 class="panel-title" id="menuTitle">Product Navigation</h2>
-            <button class="panel-close" data-close="menuPanel" aria-label="Close menu">×</button>
+            <button class="panel-close" data-action="close" aria-label="Close menu">×</button>
         </div>
         <nav class="panel-content" role="navigation">
-            <button class="list-item" role="menuitem">
-                <span>Product Navigation 01</span>
-            </button>
+            <button class="list-item" role="menuitem">Product Navigation 01</button>
             <div class="list-separator"></div>
-            <button class="list-item" role="menuitem">
-                <span>Product Navigation 02</span>
-            </button>
+            <button class="list-item" role="menuitem">Product Navigation 02</button>
             <div class="list-separator"></div>
-            <button class="list-item" role="menuitem">
-                <span>Product Navigation 03</span>
-            </button>
+            <button class="list-item" role="menuitem">Product Navigation 03</button>
             <div class="list-separator"></div>
-            <button class="list-item" role="menuitem">
-                <span>Product Navigation 04</span>
-            </button>
+            <button class="list-item" role="menuitem">Product Navigation 04</button>
         </nav>
     </aside>
 
     <aside class="panel panel-side panel-right" id="accountPanel" role="dialog" aria-labelledby="accountTitle" aria-hidden="true">
         <div class="panel-header">
-            <h2 class="panel-title" id="accountTitle">Panel 02</h2>
-            <button class="panel-close" data-close="accountPanel" aria-label="Close account menu">×</button>
+            <h2 class="panel-title" id="accountTitle">Account Menu</h2>
+            <button class="panel-close" data-action="close" aria-label="Close account menu">×</button>
         </div>
         <nav class="panel-content" role="navigation">
-            <button class="list-item" role="menuitem">
-                <span>Account 01</span>
-            </button>
+            <button class="list-item" role="menuitem">Account 01</button>
             <div class="list-separator"></div>
-            <button class="list-item" role="menuitem">
-                <span>Account 02</span>
-            </button>
+            <button class="list-item" role="menuitem">Account 02</button>
             <div class="list-separator"></div>
-            <button class="list-item" role="menuitem">
-                <span>Account 03</span>
-            </button>
+            <button class="list-item" role="menuitem">Account 03</button>
             <div class="list-separator"></div>
-            <button class="list-item" role="menuitem">
-                <span>Account 04</span>
-            </button>
+            <button class="list-item" role="menuitem">Account 04</button>
         </nav>
     </aside>
 
     <!-- Bottom Panel (Filters) -->
     <aside class="panel panel-bottom" id="filterPanel" role="dialog" aria-labelledby="filterTitle" aria-hidden="true">
         <div class="panel-header">
-            <h2 class="panel-title" id="filterTitle">Panel 05</h2>
-            <button class="panel-close" data-close="filterPanel" aria-label="Close filters">×</button>
+            <h2 class="panel-title" id="filterTitle">Filter Options</h2>
+            <button class="panel-close" data-action="close" aria-label="Close filters">×</button>
         </div>
         <div class="panel-content">
             <div class="filter-section">
@@ -1055,13 +929,13 @@
                     <button class="filter-option" role="checkbox" aria-checked="false">Range 01</button>
                     <button class="filter-option" role="checkbox" aria-checked="false">Range 02</button>
                     <button class="filter-option" role="checkbox" aria-checked="false">Range 03</button>
-                    <button class="filter-option" role="checkbox" aria-checked="false">Range 04</button>
+                    <button class="filter-option" role="checkbox" aria-changed="false">Range 04</button>
                 </div>
             </div>
 
             <div class="filter-actions">
-                <button class="filter-action" id="clearFilters">Clear All</button>
-                <button class="filter-action primary" id="applyFilters">Apply Filters</button>
+                <button class="filter-action" data-action="clear">Clear All</button>
+                <button class="filter-action primary" data-action="apply">Apply Filters</button>
             </div>
         </div>
     </aside>
@@ -1069,202 +943,190 @@
     <!-- Top Panels -->
     <aside class="panel panel-top" id="searchPanel" role="dialog" aria-labelledby="searchTitle" aria-hidden="true">
         <div class="panel-header">
-            <h2 class="panel-title" id="searchTitle">Panel 03</h2>
-            <button class="panel-close" data-close="searchPanel" aria-label="Close search">×</button>
+            <h2 class="panel-title" id="searchTitle">Search</h2>
+            <button class="panel-close" data-action="close" aria-label="Close search">×</button>
         </div>
         <div class="panel-content">
             <label for="searchInput" class="sr-only">Search</label>
             <input type="search" id="searchInput" class="search-input" placeholder="Search..." autofocus>
             
             <nav role="navigation" aria-label="Search results">
-                <button class="list-item">
-                    <span>Result 01</span>
-                </button>
+                <button class="list-item">Result 01</button>
                 <div class="list-separator"></div>
-                <button class="list-item">
-                    <span>Result 02</span>
-                </button>
+                <button class="list-item">Result 02</button>
                 <div class="list-separator"></div>
-                <button class="list-item">
-                    <span>Result 03</span>
-                </button>
+                <button class="list-item">Result 03</button>
             </nav>
         </div>
     </aside>
 
     <aside class="panel panel-top" id="balancePanel" role="dialog" aria-labelledby="balanceTitle" aria-hidden="true">
         <div class="panel-header">
-            <h2 class="panel-title" id="balanceTitle">Panel 04</h2>
-            <button class="panel-close" data-close="balancePanel" aria-label="Close balance panel">×</button>
+            <h2 class="panel-title" id="balanceTitle">Account Balance</h2>
+            <button class="panel-close" data-action="close" aria-label="Close balance panel">×</button>
         </div>
         <div class="panel-content">
             <div class="balance-display">
-                <div class="balance-label">Balance</div>
-                <div class="balance-amount" id="balanceAmount">$1,247</div>
+                <div class="balance-label">Current Balance</div>
+                <div class="balance-amount">$1,247</div>
             </div>
             
             <div class="balance-actions">
                 <button class="balance-action">
-                    <div class="balance-action-icon" aria-hidden="true">01</div>
-                    <div class="balance-action-label">Action 01</div>
+                    <div class="balance-action-icon" aria-hidden="true">+</div>
+                    <div class="balance-action-label">Add Funds</div>
                 </button>
                 <button class="balance-action">
-                    <div class="balance-action-icon" aria-hidden="true">02</div>
-                    <div class="balance-action-label">Action 02</div>
+                    <div class="balance-action-icon" aria-hidden="true">↓</div>
+                    <div class="balance-action-label">Withdraw</div>
                 </button>
             </div>
         </div>
     </aside>
 
-    <div class="overlay" id="overlay" aria-hidden="true"></div>
+    <div class="overlay" aria-hidden="true"></div>
     
-    <button class="quick-deposit" id="quickDeposit" aria-label="Quick deposit $100">
+    <button class="quick-deposit" aria-label="Quick deposit $100">
         <span aria-hidden="true">+</span>
     </button>
 
     <script>
-        class PanelManager {
+        // Consolidated Navigation Framework
+        class NavigationFramework {
             constructor() {
-                this.panels = {
-                    'burgerMenu': 'menuPanel',
-                    'searchIcon': 'searchPanel', 
-                    'accountIcon': 'accountPanel',
-                    'balance': 'balancePanel',
-                    'filterButton': 'filterPanel'
-                };
-                this.overlay = document.getElementById('overlay');
+                this.panels = new Map();
+                this.overlay = document.querySelector('.overlay');
                 this.activePanel = null;
+                this.stickyFilter = null;
                 this.init();
             }
 
             init() {
-                // Initialize triggers
-                Object.keys(this.panels).forEach(triggerId => {
-                    const trigger = document.getElementById(triggerId);
-                    trigger.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.toggle(triggerId);
-                    });
-                });
+                this.initializePanels();
+                this.initializeNavigation();
+                this.initializeStickyFilter();
+                this.initializeInteractions();
+                this.setupEventDelegation();
+            }
 
-                // Close buttons
-                document.querySelectorAll('.panel-close').forEach(btn => {
-                    btn.addEventListener('click', () => this.closeAll());
-                });
-
-                // Overlay click
-                this.overlay.addEventListener('click', () => this.closeAll());
-
-                // Escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') this.closeAll();
-                });
-
-                // List item clicks
-                document.querySelectorAll('.list-item, .balance-action').forEach(item => {
-                    item.addEventListener('click', () => {
-                        // Announce action to screen readers
-                        this.announce(`${item.textContent.trim()} selected`);
-                        setTimeout(() => this.closeAll(), 100);
-                    });
-                });
-
-                // Filter options
-                document.querySelectorAll('.filter-option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        const isActive = option.classList.toggle('active');
-                        option.setAttribute('aria-checked', isActive);
-                        this.announce(`${option.textContent} ${isActive ? 'selected' : 'deselected'}`);
-                    });
-                });
-
-                // Filter actions
-                document.getElementById('clearFilters').addEventListener('click', () => {
-                    document.querySelectorAll('.filter-option').forEach(option => {
-                        option.classList.remove('active');
-                        option.setAttribute('aria-checked', 'false');
-                    });
-                    this.announce('All filters cleared');
-                });
-
-                document.getElementById('applyFilters').addEventListener('click', () => {
-                    const activeFilters = document.querySelectorAll('.filter-option.active').length;
-                    this.announce(`${activeFilters} filters applied`);
-                    this.closeAll();
+            initializePanels() {
+                // Register all panels with their triggers
+                const panelTriggers = document.querySelectorAll('[data-panel]');
+                panelTriggers.forEach(trigger => {
+                    const panelId = trigger.dataset.panel;
+                    this.panels.set(trigger, document.getElementById(panelId));
                 });
             }
 
-            toggle(triggerId) {
-                const panelId = this.panels[triggerId];
-                const panel = document.getElementById(panelId);
-                
+            setupEventDelegation() {
+                // Single click handler for all interactions
+                document.addEventListener('click', (e) => {
+                    const target = e.target.closest('[data-panel], [data-action], .list-item, .balance-action, .nav-item, .filter-option');
+                    
+                    if (!target) return;
+
+                    // Panel triggers
+                    if (target.dataset.panel) {
+                        e.stopPropagation();
+                        this.togglePanel(target);
+                        return;
+                    }
+
+                    // Actions
+                    if (target.dataset.action) {
+                        this.handleAction(target.dataset.action, target);
+                        return;
+                    }
+
+                    // Interactive items
+                    if (target.classList.contains('list-item') || target.classList.contains('balance-action')) {
+                        this.handleItemClick(target);
+                        return;
+                    }
+
+                    // Navigation items
+                    if (target.classList.contains('nav-item')) {
+                        this.handleNavClick(target);
+                        return;
+                    }
+
+                    // Filter options
+                    if (target.classList.contains('filter-option')) {
+                        this.handleFilterOption(target);
+                        return;
+                    }
+                });
+
+                // Global handlers
+                this.overlay.addEventListener('click', () => this.closeAll());
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeAll();
+                });
+            }
+
+            togglePanel(trigger) {
+                const panel = this.panels.get(trigger);
+                if (!panel) return;
+
                 if (panel.classList.contains('active')) {
                     this.closeAll();
                 } else {
                     this.closeAll();
-                    this.open(panelId, triggerId);
+                    this.openPanel(panel, trigger);
                 }
             }
 
-            open(panelId, triggerId) {
-                const panel = document.getElementById(panelId);
-                const trigger = document.getElementById(triggerId);
-                
+            openPanel(panel, trigger) {
+                // Update panel state
                 panel.classList.add('active');
                 panel.setAttribute('aria-hidden', 'false');
                 
+                // Update trigger state
                 trigger.classList.add('active');
                 trigger.setAttribute('aria-expanded', 'true');
                 
+                // Show overlay
                 this.overlay.classList.add('active');
                 this.overlay.setAttribute('aria-hidden', 'false');
                 
+                // Prevent body scroll
                 document.body.style.overflow = 'hidden';
-                this.activePanel = panelId;
+                this.activePanel = { panel, trigger };
 
                 // Focus management
-                if (panelId === 'searchPanel') {
-                    setTimeout(() => {
-                        document.getElementById('searchInput').focus();
-                    }, 300);
-                } else {
-                    // Focus first interactive element
-                    setTimeout(() => {
-                        const firstButton = panel.querySelector('button, input');
-                        if (firstButton) firstButton.focus();
-                    }, 300);
-                }
-
-                // Trap focus within panel
+                setTimeout(() => this.manageFocus(panel), 300);
                 this.trapFocus(panel);
             }
 
             closeAll() {
-                Object.values(this.panels).forEach(panelId => {
-                    const panel = document.getElementById(panelId);
-                    panel.classList.remove('active');
-                    panel.setAttribute('aria-hidden', 'true');
-                });
+                if (!this.activePanel) return;
+
+                const { panel, trigger } = this.activePanel;
+
+                // Reset panel state
+                panel.classList.remove('active');
+                panel.setAttribute('aria-hidden', 'true');
                 
-                Object.keys(this.panels).forEach(triggerId => {
-                    const trigger = document.getElementById(triggerId);
-                    trigger.classList.remove('active');
-                    trigger.setAttribute('aria-expanded', 'false');
-                });
+                // Reset trigger state
+                trigger.classList.remove('active');
+                trigger.setAttribute('aria-expanded', 'false');
                 
+                // Hide overlay
                 this.overlay.classList.remove('active');
                 this.overlay.setAttribute('aria-hidden', 'true');
+                
+                // Restore body scroll
                 document.body.style.overflow = '';
                 
                 // Return focus to trigger
-                if (this.activePanel) {
-                    const triggerId = Object.keys(this.panels).find(key => this.panels[key] === this.activePanel);
-                    if (triggerId) {
-                        document.getElementById(triggerId).focus();
-                    }
-                }
-                
+                trigger.focus();
                 this.activePanel = null;
+            }
+
+            manageFocus(panel) {
+                // Focus first input or button
+                const focusTarget = panel.querySelector('input, button');
+                if (focusTarget) focusTarget.focus();
             }
 
             trapFocus(element) {
@@ -1274,7 +1136,7 @@
                 const firstFocusable = focusableElements[0];
                 const lastFocusable = focusableElements[focusableElements.length - 1];
 
-                element.addEventListener('keydown', (e) => {
+                const handleTabKey = (e) => {
                     if (e.key !== 'Tab') return;
 
                     if (e.shiftKey) {
@@ -1288,6 +1150,136 @@
                             e.preventDefault();
                         }
                     }
+                };
+
+                element.addEventListener('keydown', handleTabKey);
+            }
+
+            handleAction(action, target) {
+                switch (action) {
+                    case 'close':
+                        this.closeAll();
+                        break;
+                    case 'clear':
+                        this.clearFilters();
+                        break;
+                    case 'apply':
+                        this.applyFilters();
+                        break;
+                }
+            }
+
+            handleItemClick(item) {
+                this.announce(`${item.textContent.trim()} selected`);
+                setTimeout(() => this.closeAll(), 100);
+            }
+
+            handleNavClick(item) {
+                // Remove active state from siblings
+                const siblings = item.parentElement.querySelectorAll('.nav-item');
+                siblings.forEach(sibling => {
+                    sibling.classList.remove('active');
+                    sibling.setAttribute('aria-current', 'false');
+                });
+                
+                // Add active state to clicked item
+                item.classList.add('active');
+                item.setAttribute('aria-current', 'page');
+            }
+
+            handleFilterOption(option) {
+                const isActive = option.classList.toggle('active');
+                option.setAttribute('aria-checked', isActive);
+                this.announce(`${option.textContent} ${isActive ? 'selected' : 'deselected'}`);
+            }
+
+            clearFilters() {
+                const options = document.querySelectorAll('.filter-option');
+                options.forEach(option => {
+                    option.classList.remove('active');
+                    option.setAttribute('aria-checked', 'false');
+                });
+                this.announce('All filters cleared');
+            }
+
+            applyFilters() {
+                const activeFilters = document.querySelectorAll('.filter-option.active').length;
+                this.announce(`${activeFilters} filters applied`);
+                this.closeAll();
+            }
+
+            initializeStickyFilter() {
+                const filterNav = document.querySelector('.filter-nav');
+                const filterPlaceholder = document.querySelector('.filter-placeholder');
+                const header = document.querySelector('.header');
+                
+                let originalOffset = 0;
+                let isSticky = false;
+
+                const updateOffset = () => {
+                    if (!isSticky) {
+                        const rect = filterNav.getBoundingClientRect();
+                        originalOffset = rect.top + window.pageYOffset - header.offsetHeight;
+                    }
+                };
+
+                const handleScroll = () => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    if (scrollTop >= originalOffset && !isSticky) {
+                        isSticky = true;
+                        filterNav.classList.add('sticky');
+                        filterPlaceholder.classList.add('active');
+                        
+                        document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
+                            panel.classList.add('filter-sticky');
+                        });
+                    } else if (scrollTop < originalOffset && isSticky) {
+                        isSticky = false;
+                        filterNav.classList.remove('sticky');
+                        filterPlaceholder.classList.remove('active');
+                        
+                        document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
+                            panel.classList.remove('filter-sticky');
+                        });
+                    }
+                };
+
+                window.addEventListener('load', updateOffset);
+                window.addEventListener('scroll', handleScroll);
+                window.addEventListener('resize', updateOffset);
+            }
+
+            initializeNavigation() {
+                // Navigation is handled by event delegation
+            }
+
+            initializeInteractions() {
+                // Quick deposit functionality
+                const quickDeposit = document.querySelector('.quick-deposit');
+                const balance = document.querySelector('.balance span:last-child');
+                const balanceAmount = document.querySelector('.balance-amount');
+
+                quickDeposit.addEventListener('click', () => {
+                    const current = parseInt(balance.textContent.replace(/\D/g, ''));
+                    const newAmount = current + 100;
+                    
+                    // Update display
+                    balance.textContent = newAmount.toLocaleString();
+                    balanceAmount.textContent = `$${newAmount.toLocaleString()}`;
+                    
+                    // Update aria-label
+                    const balanceButton = document.querySelector('.balance');
+                    balanceButton.setAttribute('aria-label', `Account balance: $${newAmount.toLocaleString()}. Click to view details`);
+                    
+                    // Announce change
+                    this.announce(`$100 deposited. New balance: $${newAmount.toLocaleString()}`);
+                    
+                    // Visual feedback
+                    balanceButton.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        balanceButton.style.transform = '';
+                    }, 200);
                 });
             }
 
@@ -1302,118 +1294,9 @@
             }
         }
 
-        // Initialize panel manager
-        new PanelManager();
-
-        // Sticky Filter Navigation
-        class StickyFilter {
-            constructor() {
-                this.filterNav = document.getElementById('filterNav');
-                this.filterPlaceholder = document.getElementById('filterPlaceholder');
-                this.header = document.querySelector('.header');
-                this.contentWrapper = document.querySelector('.content-wrapper');
-                this.isSticky = false;
-                this.originalOffset = 0;
-                this.init();
-            }
-
-            init() {
-                window.addEventListener('load', () => {
-                    this.updateOriginalOffset();
-                });
-                
-                window.addEventListener('scroll', () => {
-                    this.handleScroll();
-                });
-                
-                window.addEventListener('resize', () => {
-                    this.updateOriginalOffset();
-                });
-            }
-
-            updateOriginalOffset() {
-                if (!this.isSticky) {
-                    const rect = this.filterNav.getBoundingClientRect();
-                    this.originalOffset = rect.top + window.pageYOffset - this.header.offsetHeight;
-                }
-            }
-
-            handleScroll() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                
-                if (scrollTop >= this.originalOffset && !this.isSticky) {
-                    this.makeSticky();
-                } else if (scrollTop < this.originalOffset && this.isSticky) {
-                    this.removeSticky();
-                }
-            }
-
-            makeSticky() {
-                this.isSticky = true;
-                this.filterNav.classList.add('sticky');
-                this.filterPlaceholder.classList.add('active');
-                
-                document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
-                    panel.classList.add('filter-sticky');
-                });
-            }
-
-            removeSticky() {
-                this.isSticky = false;
-                this.filterNav.classList.remove('sticky');
-                this.filterPlaceholder.classList.remove('active');
-                
-                document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
-                    panel.classList.remove('filter-sticky');
-                });
-            }
-        }
-
-        // Initialize sticky filter
-        new StickyFilter();
-
-        // Horizontal Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const siblings = item.parentElement.querySelectorAll('.nav-item');
-                siblings.forEach(sibling => {
-                    sibling.classList.remove('active');
-                    sibling.setAttribute('aria-current', 'false');
-                });
-                
-                item.classList.add('active');
-                item.setAttribute('aria-current', 'page');
-            });
-        });
-
-        // Quick Deposit with animation
-        document.getElementById('quickDeposit').addEventListener('click', () => {
-            const balance = document.getElementById('balance');
-            const balanceAmount = document.getElementById('balanceAmount');
-            const current = parseInt(balance.textContent.replace('$', '').replace(',', ''));
-            const newAmount = current + 100;
-            
-            // Update values
-            balance.innerHTML = `<span aria-hidden="true">$</span><span>${newAmount.toLocaleString()}</span>`;
-            balanceAmount.textContent = `$${newAmount.toLocaleString()}`;
-            
-            // Update aria-label
-            balance.setAttribute('aria-label', `Account balance: $${newAmount.toLocaleString()}. Click to view details`);
-            
-            // Announce change
-            const announcement = document.createElement('div');
-            announcement.setAttribute('role', 'status');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.className = 'sr-only';
-            announcement.textContent = `$100 deposited. New balance: $${newAmount.toLocaleString()}`;
-            document.body.appendChild(announcement);
-            setTimeout(() => announcement.remove(), 1000);
-            
-            // Visual feedback
-            balance.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                balance.style.transform = '';
-            }, 200);
+        // Initialize the navigation framework
+        document.addEventListener('DOMContentLoaded', () => {
+            new NavigationFramework();
         });
     </script>
 </body>
