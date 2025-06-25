@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Framework</title>
+    <!-- 
+    Navigation Hierarchy:
+    - Header: Site-level navigation (fixed top bar)
+    - Local Nav: Section-level navigation (Sports types)
+    - Sub Nav: Category-level navigation (Competitions/providers)
+    - Filter Bar: Page-level controls and filters
+    - Burger Menu: Product Navigation
+    
+    Design System Principles:
+    - No sharp corners: All interactive elements have rounded corners
+    - Border radius hierarchy: 4px (small) → 8px (standard) → 12px (panels) → 16px (large)
+    - Consistent spacing: 4px → 8px → 16px → 24px → 32px → 48px
+    - Touch targets: Minimum 48px for accessibility
+    - Visual softness: Even functional elements like scrollbars are rounded
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-size: 16px; /* Base font size for accessibility */
+            line-height: 1.5;
+            background: #ffffff;
+            color: #1a1a1a; /* Slightly softer than pure black */
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        :root {
+            /* Spacing system */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            
+            /* Layout dimensions */
+            --header-height: 64px;
+            --local-nav-height: 56px;
+            --sub-nav-height: 48px;
+            --filter-height: 56px;
+            --touch-target: 48px; /* Increased from 44px for better accessibility */
+            --panel-width: 320px;
+            
+            /* Colors with better contrast */
+            --color-primary: #1a1a1a;
+            --color-primary-hover: #333333;
+            --color-secondary: #666666;
+            --color-border: #e0e0e0;
+            --color-border-hover: #cccccc;
+            --color-border-focus: #4A90E2;
+            --color-bg-base: #ffffff;
+            --color-bg-subtle: #f8f9fa;
+            --color-bg-muted: #f0f2f5;
+            --color-bg-active: #1a1a1a;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #4a4a4a;
+            --color-text-muted: #666666;
+            --color-text-inverse: #ffffff;
+            
+            /* Shadows for depth */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+            
+            /* Animation */
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
+        }
+
+        /* Focus visible for keyboard navigation */
+        *:focus {
+            outline: none;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--color-border-focus);
+            outline-offset: 2px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Skip to content link for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: var(--space-sm);
+            background: var(--color-primary);
+            color: var(--color-text-inverse);
+            padding: var(--space-sm) var(--space-md);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            z-index: 2000;
+        }
+
+        .skip-link:focus {
+            top: var(--space-sm);
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--color-bg-base);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-md);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            /* No border-radius: Headers spanning edge-to-edge maintain sharp corners */
+        }
+
+        /* Improved touch targets */
+        .touch-target {
+            min-width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            transition: all var(--transition-base);
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+
+        .touch-target:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .touch-target:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .touch-target.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        /* Accessible burger menu */
+        .burger-menu {
+            flex-direction: column;
+            gap: 5px;
+            padding: 0;
+        }
+
+        .burger-line {
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            transition: all var(--transition-base);
+            border-radius: 1px; /* Subtle rounding even on functional elements */
+        }
+
+        .burger-menu.active .burger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger-menu.active .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu.active .burger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--color-text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        /* Icons with better size */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .balance {
+            height: var(--touch-target);
+            padding: 0 var(--space-lg);
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            border-radius: var(--radius-sm);
+            gap: var(--space-sm);
+        }
+
+        .balance:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .balance.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        /* Content wrapper */
+        .content-wrapper {
+            margin-top: var(--header-height);
+            position: relative;
+        }
+
+        /* Panel improvements */
+        .panel {
+            position: fixed;
+            background: var(--color-bg-base);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-slow);
+            z-index: 999;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .panel-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--color-bg-subtle);
+        }
+
+        /* Match header radius to panel radius */
+        .panel-left .panel-header {
+            border-radius: 0 var(--radius-md) 0 0;
+        }
+
+        .panel-right .panel-header {
+            border-radius: var(--radius-md) 0 0 0;
+        }
+
+        .panel-top .panel-header {
+            border-radius: 0;
+        }
+
+        .panel-bottom .panel-header {
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--color-text-primary);
+        }
+
+        .panel-close {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all var(--transition-base);
+            border-radius: var(--radius-sm);
+        }
+
+        .panel-close:hover {
+            background: var(--color-bg-muted);
+            border-color: var(--color-border-hover);
+        }
+
+        .panel-content {
+            padding: var(--space-lg);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Panel navigation without padding for cleaner separators */
+        .panel-content nav {
+            margin: 0 calc(-1 * var(--space-lg));
+            padding: 0;
+        }
+
+        /* Side panels */
+        .panel-side {
+            top: var(--header-height);
+            width: var(--panel-width);
+            height: calc(100vh - var(--header-height));
+        }
+
+        .panel-side.filter-sticky {
+            top: calc(var(--header-height) + var(--filter-height));
+            height: calc(100vh - var(--header-height) - var(--filter-height));
+        }
+
+        .panel-left {
+            left: calc(-1 * var(--panel-width) - 20px);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            border-left: none;
+        }
+
+        .panel-left.active {
+            left: 0;
+        }
+
+        .panel-right {
+            right: calc(-1 * var(--panel-width) - 20px);
+            border-radius: var(--radius-md) 0 0 var(--radius-md);
+            border-right: none;
+        }
+
+        .panel-right.active {
+            right: 0;
+        }
+
+        /* Top panels */
+        .panel-top {
+            top: -420px;
+            left: 0;
+            right: 0;
+            height: 400px;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+            border-top: none;
+        }
+
+        .panel-top.active {
+            top: var(--header-height);
+        }
+
+        .panel-top.filter-sticky.active {
+            top: calc(var(--header-height) + var(--filter-height));
+        }
+
+        /* Bottom panels */
+        .panel-bottom {
+            bottom: -520px;
+            left: 0;
+            right: 0;
+            height: 500px;
+            border-top: 1px solid var(--color-border);
+            border-left: none;
+            border-right: none;
+            border-bottom: none;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .panel-bottom.active {
+            bottom: 0;
+        }
+
+        .panel-bottom .panel-content {
+            height: 400px;
+        }
+
+        /* List items with better touch targets */
+        .list-item {
+            padding: var(--space-md) var(--space-lg);
+            margin: 0;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            min-height: 56px;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: transparent;
+            position: relative;
+        }
+
+        /* Subtle rounded corners on hover for visual softness */
+        .list-item::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 8px;
+            right: 8px;
+            bottom: 4px;
+            background: var(--color-bg-subtle);
+            border-radius: var(--radius-sm);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            z-index: -1;
+        }
+
+        .list-item:hover::before {
+            opacity: 1;
+        }
+
+        .list-item:hover {
+            padding-left: calc(var(--space-lg) + var(--space-sm));
+        }
+
+        .list-item:active::before {
+            background: var(--color-bg-muted);
+            opacity: 1;
+        }
+
+        .list-separator {
+            height: 1px;
+            background: var(--color-border);
+            margin: 0;
+        }
+
+        /* Filter panel with improved accessibility */
+        .filter-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .filter-section-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: var(--space-md);
+            color: var(--color-text-primary);
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .filter-option {
+            padding: var(--space-md);
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-align: center;
+            font-size: 16px;
+            border-radius: var(--radius-sm);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-option:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-option:active {
+            transform: translateY(0);
+        }
+
+        .filter-option.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        .filter-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .filter-action {
+            padding: var(--space-md) var(--space-lg);
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: var(--radius-sm);
+            min-height: 48px;
+        }
+
+        .filter-action:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-action.primary {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        .filter-action.primary:hover {
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+
+        /* Search input */
+        .search-input {
+            width: 100%;
+            padding: var(--space-md);
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            font-size: 16px;
+            margin-bottom: var(--space-lg);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-base);
+        }
+
+        .search-input:focus {
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        /* Special case for search panel nav */
+        #searchPanel nav {
+            margin-top: var(--space-md);
+        }
+
+        /* Balance display */
+        .balance-display {
+            text-align: center;
+            padding: var(--space-xl);
+            background: var(--color-bg-subtle);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            letter-spacing: -1px;
+        }
+
+        .balance-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .balance-action {
+            padding: var(--space-lg);
+            background: var(--color-bg-subtle);
+            border: 1px solid var(--color-border);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border-radius: var(--radius-md);
+        }
+
+        .balance-action:hover {
+            background: var(--color-bg-muted);
+            border-color: var(--color-border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .balance-action-icon {
+            font-size: 24px;
+            margin-bottom: var(--space-sm);
+            font-weight: 700;
+            color: var(--color-text-secondary);
+        }
+
+        .balance-action-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Quick deposit button */
+        .quick-deposit {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 64px;
+            height: 64px;
+            border: none;
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 300;
+            z-index: 1001;
+            transition: all var(--transition-base);
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quick-deposit:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .quick-deposit:active {
+            transform: scale(1.05);
+        }
+
+        /* Main content */
+        .main-content {
+            padding: var(--space-lg);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .content-card {
+            padding: var(--space-xl);
+            background: var(--color-bg-subtle);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .content-card h2 {
+            font-size: 24px;
+            margin-bottom: var(--space-md);
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .content-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+        }
+
+        /* HORIZONTAL NAVIGATION HIERARCHY
+           Header → Site-level navigation (fixed)
+           Local Nav → Section-level navigation (Sports types)
+           Sub Nav → Category-level navigation (Competitions/providers)
+           Filter Bar → Page-level controls and filters 
+           Note: Horizontal navs maintain sharp corners as they span edge-to-edge */
+        .horizontal-nav {
+            position: relative;
+            left: 0;
+            right: 0;
+            border-bottom: 1px solid var(--color-border);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-border) transparent;
+        }
+
+        .horizontal-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .horizontal-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .horizontal-nav::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: var(--radius-xs);
+        }
+
+        .horizontal-nav::-webkit-scrollbar-thumb:hover {
+            background: var(--color-border-hover);
+        }
+
+        .local-nav {
+            height: var(--local-nav-height);
+            background: var(--color-bg-subtle);
+        }
+
+        .sub-nav {
+            height: var(--sub-nav-height);
+            background: var(--color-bg-muted);
+        }
+
+        .nav-list {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 var(--space-lg);
+            gap: var(--space-sm);
+            min-width: max-content;
+        }
+
+        .nav-item {
+            padding: var(--space-sm) var(--space-lg);
+            border: 1px solid transparent;
+            background: var(--color-bg-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-item.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        /* FILTER BAR - Initially in flow, becomes sticky */
+        .filter-nav {
+            position: relative;
+            left: 0;
+            right: 0;
+            height: var(--filter-height);
+            background: var(--color-bg-subtle);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-lg);
+            transition: all var(--transition-base);
+        }
+
+        .filter-nav.sticky {
+            position: fixed;
+            top: var(--header-height);
+            z-index: 999;
+            box-shadow: var(--shadow-md);
+            background: rgba(248, 249, 250, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-button {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 44px;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-base);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 16px;
+            border-radius: var(--radius-sm);
+            gap: var(--space-sm);
+        }
+
+        .filter-button:hover {
+            background: var(--color-bg-subtle);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-button.active {
+            background: var(--color-bg-active);
+            color: var(--color-text-inverse);
+            border-color: var(--color-bg-active);
+        }
+
+        .filter-placeholder {
+            height: var(--filter-height);
+            display: none;
+        }
+
+        .filter-placeholder.active {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            :root {
+                --panel-width: 280px;
+                --header-height: 60px;
+            }
+            
+            .header {
+                padding: 0 var(--space-md);
+            }
+            
+            .filter-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 15px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .balance {
+                padding: 0 var(--space-md);
+                font-size: 15px;
+            }
+            
+            .nav-item {
+                font-size: 15px;
+                padding: var(--space-sm) var(--space-md);
+            }
+            
+            .sub-nav .nav-item {
+                font-size: 14px;
+                padding: 6px var(--space-sm);
+            }
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    
+    <header class="header" role="banner">
+        <button class="touch-target burger-menu" id="burgerMenu" aria-label="Open product navigation menu" aria-expanded="false" aria-controls="menuPanel">
+            <span class="burger-line" aria-hidden="true"></span>
+            <span class="burger-line" aria-hidden="true"></span>
+            <span class="burger-line" aria-hidden="true"></span>
+        </button>
+
+        <div class="logo">Logo</div>
+        
+        <div class="header-actions">
+            <button class="touch-target" id="searchIcon" aria-label="Open search" aria-expanded="false" aria-controls="searchPanel">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+
+            <button class="balance" id="balance" aria-label="Account balance: $1,247. Click to view details" aria-expanded="false" aria-controls="balancePanel">
+                <span aria-hidden="true">$</span>
+                <span>1,247</span>
+            </button>
+            
+            <button class="touch-target" id="accountIcon" aria-label="Open account menu" aria-expanded="false" aria-controls="accountPanel">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <nav class="horizontal-nav local-nav" role="navigation" aria-label="Section-level navigation">
+            <div class="nav-list">
+                <button class="nav-item active" aria-current="page">Sports 01</button>
+                <button class="nav-item">Sports 02</button>
+                <button class="nav-item">Sports 03</button>
+                <button class="nav-item">Sports 04</button>
+                <button class="nav-item">Sports 05</button>
+                <button class="nav-item">Sports 06</button>
+                <button class="nav-item">Sports 07</button>
+                <button class="nav-item">Sports 08</button>
+            </div>
+        </nav>
+
+        <nav class="horizontal-nav sub-nav" role="navigation" aria-label="Category-level navigation">
+            <div class="nav-list">
+                <button class="nav-item active" aria-current="page">Competition 01</button>
+                <button class="nav-item">Competition 02</button>
+                <button class="nav-item">Competition 03</button>
+                <button class="nav-item">Competition 04</button>
+                <button class="nav-item">Competition 05</button>
+                <button class="nav-item">Competition 06</button>
+                <button class="nav-item">Competition 07</button>
+                <button class="nav-item">Competition 08</button>
+                <button class="nav-item">Competition 09</button>
+                <button class="nav-item">Competition 10</button>
+            </div>
+        </nav>
+
+        <nav class="filter-nav" id="filterNav" role="navigation" aria-label="Page-level controls and filters">
+            <button class="filter-button" id="filterButton" aria-label="Open filter options" aria-expanded="false" aria-controls="filterPanel">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                </svg>
+                <span id="filterText">Filter Options</span>
+            </button>
+        </nav>
+
+        <div class="filter-placeholder" id="filterPlaceholder" aria-hidden="true"></div>
+
+        <main class="main-content" id="main" role="main">
+            <div class="content-card">
+                <h2>Content 01</h2>
+                <p>Main content area</p>
+            </div>
+            
+            <div style="height: 1500px; padding: var(--space-xl); background: var(--color-bg-subtle); border-radius: var(--radius-md);">
+                <p>Additional content for scrolling demonstration</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Side Panels -->
+    <aside class="panel panel-side panel-left" id="menuPanel" role="dialog" aria-labelledby="menuTitle" aria-hidden="true">
+        <div class="panel-header">
+            <h2 class="panel-title" id="menuTitle">Product Navigation</h2>
+            <button class="panel-close" data-close="menuPanel" aria-label="Close menu">×</button>
+        </div>
+        <nav class="panel-content" role="navigation">
+            <button class="list-item" role="menuitem">
+                <span>Product Navigation 01</span>
+            </button>
+            <div class="list-separator"></div>
+            <button class="list-item" role="menuitem">
+                <span>Product Navigation 02</span>
+            </button>
+            <div class="list-separator"></div>
+            <button class="list-item" role="menuitem">
+                <span>Product Navigation 03</span>
+            </button>
+            <div class="list-separator"></div>
+            <button class="list-item" role="menuitem">
+                <span>Product Navigation 04</span>
+            </button>
+        </nav>
+    </aside>
+
+    <aside class="panel panel-side panel-right" id="accountPanel" role="dialog" aria-labelledby="accountTitle" aria-hidden="true">
+        <div class="panel-header">
+            <h2 class="panel-title" id="accountTitle">Panel 02</h2>
+            <button class="panel-close" data-close="accountPanel" aria-label="Close account menu">×</button>
+        </div>
+        <nav class="panel-content" role="navigation">
+            <button class="list-item" role="menuitem">
+                <span>Account 01</span>
+            </button>
+            <div class="list-separator"></div>
+            <button class="list-item" role="menuitem">
+                <span>Account 02</span>
+            </button>
+            <div class="list-separator"></div>
+            <button class="list-item" role="menuitem">
+                <span>Account 03</span>
+            </button>
+            <div class="list-separator"></div>
+            <button class="list-item" role="menuitem">
+                <span>Account 04</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Bottom Panel (Filters) -->
+    <aside class="panel panel-bottom" id="filterPanel" role="dialog" aria-labelledby="filterTitle" aria-hidden="true">
+        <div class="panel-header">
+            <h2 class="panel-title" id="filterTitle">Panel 05</h2>
+            <button class="panel-close" data-close="filterPanel" aria-label="Close filters">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="filter-section">
+                <h3 class="filter-section-title">Category</h3>
+                <div class="filter-options" role="group" aria-labelledby="category-title">
+                    <button class="filter-option active" role="checkbox" aria-checked="true">Option 01</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Option 02</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Option 03</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Option 04</button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-section-title">Type</h3>
+                <div class="filter-options" role="group" aria-labelledby="type-title">
+                    <button class="filter-option" role="checkbox" aria-checked="false">Type 01</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Type 02</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Type 03</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Type 04</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Type 05</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Type 06</button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-section-title">Range</h3>
+                <div class="filter-options" role="group" aria-labelledby="range-title">
+                    <button class="filter-option" role="checkbox" aria-checked="false">Range 01</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Range 02</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Range 03</button>
+                    <button class="filter-option" role="checkbox" aria-checked="false">Range 04</button>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button class="filter-action" id="clearFilters">Clear All</button>
+                <button class="filter-action primary" id="applyFilters">Apply Filters</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Top Panels -->
+    <aside class="panel panel-top" id="searchPanel" role="dialog" aria-labelledby="searchTitle" aria-hidden="true">
+        <div class="panel-header">
+            <h2 class="panel-title" id="searchTitle">Panel 03</h2>
+            <button class="panel-close" data-close="searchPanel" aria-label="Close search">×</button>
+        </div>
+        <div class="panel-content">
+            <label for="searchInput" class="sr-only">Search</label>
+            <input type="search" id="searchInput" class="search-input" placeholder="Search..." autofocus>
+            
+            <nav role="navigation" aria-label="Search results">
+                <button class="list-item">
+                    <span>Result 01</span>
+                </button>
+                <div class="list-separator"></div>
+                <button class="list-item">
+                    <span>Result 02</span>
+                </button>
+                <div class="list-separator"></div>
+                <button class="list-item">
+                    <span>Result 03</span>
+                </button>
+            </nav>
+        </div>
+    </aside>
+
+    <aside class="panel panel-top" id="balancePanel" role="dialog" aria-labelledby="balanceTitle" aria-hidden="true">
+        <div class="panel-header">
+            <h2 class="panel-title" id="balanceTitle">Panel 04</h2>
+            <button class="panel-close" data-close="balancePanel" aria-label="Close balance panel">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="balance-display">
+                <div class="balance-label">Balance</div>
+                <div class="balance-amount" id="balanceAmount">$1,247</div>
+            </div>
+            
+            <div class="balance-actions">
+                <button class="balance-action">
+                    <div class="balance-action-icon" aria-hidden="true">01</div>
+                    <div class="balance-action-label">Action 01</div>
+                </button>
+                <button class="balance-action">
+                    <div class="balance-action-icon" aria-hidden="true">02</div>
+                    <div class="balance-action-label">Action 02</div>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="overlay" id="overlay" aria-hidden="true"></div>
+    
+    <button class="quick-deposit" id="quickDeposit" aria-label="Quick deposit $100">
+        <span aria-hidden="true">+</span>
+    </button>
+
+    <script>
+        class PanelManager {
+            constructor() {
+                this.panels = {
+                    'burgerMenu': 'menuPanel',
+                    'searchIcon': 'searchPanel', 
+                    'accountIcon': 'accountPanel',
+                    'balance': 'balancePanel',
+                    'filterButton': 'filterPanel'
+                };
+                this.overlay = document.getElementById('overlay');
+                this.activePanel = null;
+                this.init();
+            }
+
+            init() {
+                // Initialize triggers
+                Object.keys(this.panels).forEach(triggerId => {
+                    const trigger = document.getElementById(triggerId);
+                    trigger.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggle(triggerId);
+                    });
+                });
+
+                // Close buttons
+                document.querySelectorAll('.panel-close').forEach(btn => {
+                    btn.addEventListener('click', () => this.closeAll());
+                });
+
+                // Overlay click
+                this.overlay.addEventListener('click', () => this.closeAll());
+
+                // Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeAll();
+                });
+
+                // List item clicks
+                document.querySelectorAll('.list-item, .balance-action').forEach(item => {
+                    item.addEventListener('click', () => {
+                        // Announce action to screen readers
+                        this.announce(`${item.textContent.trim()} selected`);
+                        setTimeout(() => this.closeAll(), 100);
+                    });
+                });
+
+                // Filter options
+                document.querySelectorAll('.filter-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const isActive = option.classList.toggle('active');
+                        option.setAttribute('aria-checked', isActive);
+                        this.announce(`${option.textContent} ${isActive ? 'selected' : 'deselected'}`);
+                    });
+                });
+
+                // Filter actions
+                document.getElementById('clearFilters').addEventListener('click', () => {
+                    document.querySelectorAll('.filter-option').forEach(option => {
+                        option.classList.remove('active');
+                        option.setAttribute('aria-checked', 'false');
+                    });
+                    this.announce('All filters cleared');
+                });
+
+                document.getElementById('applyFilters').addEventListener('click', () => {
+                    const activeFilters = document.querySelectorAll('.filter-option.active').length;
+                    this.announce(`${activeFilters} filters applied`);
+                    this.closeAll();
+                });
+            }
+
+            toggle(triggerId) {
+                const panelId = this.panels[triggerId];
+                const panel = document.getElementById(panelId);
+                
+                if (panel.classList.contains('active')) {
+                    this.closeAll();
+                } else {
+                    this.closeAll();
+                    this.open(panelId, triggerId);
+                }
+            }
+
+            open(panelId, triggerId) {
+                const panel = document.getElementById(panelId);
+                const trigger = document.getElementById(triggerId);
+                
+                panel.classList.add('active');
+                panel.setAttribute('aria-hidden', 'false');
+                
+                trigger.classList.add('active');
+                trigger.setAttribute('aria-expanded', 'true');
+                
+                this.overlay.classList.add('active');
+                this.overlay.setAttribute('aria-hidden', 'false');
+                
+                document.body.style.overflow = 'hidden';
+                this.activePanel = panelId;
+
+                // Focus management
+                if (panelId === 'searchPanel') {
+                    setTimeout(() => {
+                        document.getElementById('searchInput').focus();
+                    }, 300);
+                } else {
+                    // Focus first interactive element
+                    setTimeout(() => {
+                        const firstButton = panel.querySelector('button, input');
+                        if (firstButton) firstButton.focus();
+                    }, 300);
+                }
+
+                // Trap focus within panel
+                this.trapFocus(panel);
+            }
+
+            closeAll() {
+                Object.values(this.panels).forEach(panelId => {
+                    const panel = document.getElementById(panelId);
+                    panel.classList.remove('active');
+                    panel.setAttribute('aria-hidden', 'true');
+                });
+                
+                Object.keys(this.panels).forEach(triggerId => {
+                    const trigger = document.getElementById(triggerId);
+                    trigger.classList.remove('active');
+                    trigger.setAttribute('aria-expanded', 'false');
+                });
+                
+                this.overlay.classList.remove('active');
+                this.overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                
+                // Return focus to trigger
+                if (this.activePanel) {
+                    const triggerId = Object.keys(this.panels).find(key => this.panels[key] === this.activePanel);
+                    if (triggerId) {
+                        document.getElementById(triggerId).focus();
+                    }
+                }
+                
+                this.activePanel = null;
+            }
+
+            trapFocus(element) {
+                const focusableElements = element.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                const firstFocusable = focusableElements[0];
+                const lastFocusable = focusableElements[focusableElements.length - 1];
+
+                element.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Tab') return;
+
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            lastFocusable.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            firstFocusable.focus();
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
+
+            announce(message) {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('role', 'status');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                document.body.appendChild(announcement);
+                setTimeout(() => announcement.remove(), 1000);
+            }
+        }
+
+        // Initialize panel manager
+        new PanelManager();
+
+        // Sticky Filter Navigation
+        class StickyFilter {
+            constructor() {
+                this.filterNav = document.getElementById('filterNav');
+                this.filterPlaceholder = document.getElementById('filterPlaceholder');
+                this.header = document.querySelector('.header');
+                this.contentWrapper = document.querySelector('.content-wrapper');
+                this.isSticky = false;
+                this.originalOffset = 0;
+                this.init();
+            }
+
+            init() {
+                window.addEventListener('load', () => {
+                    this.updateOriginalOffset();
+                });
+                
+                window.addEventListener('scroll', () => {
+                    this.handleScroll();
+                });
+                
+                window.addEventListener('resize', () => {
+                    this.updateOriginalOffset();
+                });
+            }
+
+            updateOriginalOffset() {
+                if (!this.isSticky) {
+                    const rect = this.filterNav.getBoundingClientRect();
+                    this.originalOffset = rect.top + window.pageYOffset - this.header.offsetHeight;
+                }
+            }
+
+            handleScroll() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop >= this.originalOffset && !this.isSticky) {
+                    this.makeSticky();
+                } else if (scrollTop < this.originalOffset && this.isSticky) {
+                    this.removeSticky();
+                }
+            }
+
+            makeSticky() {
+                this.isSticky = true;
+                this.filterNav.classList.add('sticky');
+                this.filterPlaceholder.classList.add('active');
+                
+                document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
+                    panel.classList.add('filter-sticky');
+                });
+            }
+
+            removeSticky() {
+                this.isSticky = false;
+                this.filterNav.classList.remove('sticky');
+                this.filterPlaceholder.classList.remove('active');
+                
+                document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
+                    panel.classList.remove('filter-sticky');
+                });
+            }
+        }
+
+        // Initialize sticky filter
+        new StickyFilter();
+
+        // Horizontal Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const siblings = item.parentElement.querySelectorAll('.nav-item');
+                siblings.forEach(sibling => {
+                    sibling.classList.remove('active');
+                    sibling.setAttribute('aria-current', 'false');
+                });
+                
+                item.classList.add('active');
+                item.setAttribute('aria-current', 'page');
+            });
+        });
+
+        // Quick Deposit with animation
+        document.getElementById('quickDeposit').addEventListener('click', () => {
+            const balance = document.getElementById('balance');
+            const balanceAmount = document.getElementById('balanceAmount');
+            const current = parseInt(balance.textContent.replace('$', '').replace(',', ''));
+            const newAmount = current + 100;
+            
+            // Update values
+            balance.innerHTML = `<span aria-hidden="true">$</span><span>${newAmount.toLocaleString()}</span>`;
+            balanceAmount.textContent = `$${newAmount.toLocaleString()}`;
+            
+            // Update aria-label
+            balance.setAttribute('aria-label', `Account balance: $${newAmount.toLocaleString()}. Click to view details`);
+            
+            // Announce change
+            const announcement = document.createElement('div');
+            announcement.setAttribute('role', 'status');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.className = 'sr-only';
+            announcement.textContent = `$100 deposited. New balance: $${newAmount.toLocaleString()}`;
+            document.body.appendChild(announcement);
+            setTimeout(() => announcement.remove(), 1000);
+            
+            // Visual feedback
+            balance.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                balance.style.transform = '';
+            }, 200);
+        });
+    </script>
+</body>
+</html>
