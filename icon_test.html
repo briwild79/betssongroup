@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile App with Tab Bar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 60px; /* Space for tab bar */
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background-color: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Bottom Tab Bar */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+            position: relative;
+        }
+
+        .tab-item:active {
+            transform: scale(0.95);
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .tab-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            filter: grayscale(100%) opacity(0.6);
+            transition: filter 0.2s ease;
+        }
+
+        .tab-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #999;
+            fill: none;
+            stroke-width: 2;
+            transition: stroke 0.2s ease;
+        }
+
+        .tab-label {
+            font-size: 11px;
+            color: #999;
+            transition: color 0.2s ease;
+            font-weight: 500;
+        }
+
+        .tab-item.active .tab-icon img {
+            filter: grayscale(0%) opacity(1);
+        }
+
+        .tab-item.active .tab-icon svg {
+            stroke: #007AFF;
+        }
+
+        .tab-item.active .tab-label {
+            color: #007AFF;
+        }
+
+        /* Sports specific content */
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .sport-card {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .sport-card:hover {
+            background: #e8e8e8;
+        }
+
+        .sport-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .sport-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 id="page-title">Home</h1>
+    </div>
+
+    <div class="content">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="card">
+                <h2>Welcome to Mobile App</h2>
+                <p>This is a mobile-optimized web page with a bottom tab bar navigation. Tap on the different tabs below to explore.</p>
+            </div>
+            <div class="card">
+                <h2>Featured Content</h2>
+                <p>Check out our sports section for the latest updates and live scores from your favorite games.</p>
+            </div>
+        </div>
+
+        <!-- Sports Page -->
+        <div id="sports" class="page">
+            <div class="card">
+                <h2>Popular Sports</h2>
+                <div class="sports-grid">
+                    <div class="sport-card">
+                        <div class="sport-icon">⚽</div>
+                        <div class="sport-name">Football</div>
+                    </div>
+                    <div class="sport-card">
+                        <div class="sport-icon">🏀</div>
+                        <div class="sport-name">Basketball</div>
+                    </div>
+                    <div class="sport-card">
+                        <div class="sport-icon">🎾</div>
+                        <div class="sport-name">Tennis</div>
+                    </div>
+                    <div class="sport-card">
+                        <div class="sport-icon">🏈</div>
+                        <div class="sport-name">American Football</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Live Now</h2>
+                <p>No live matches at the moment. Check back later for updates.</p>
+            </div>
+        </div>
+
+        <!-- Search Page -->
+        <div id="search" class="page">
+            <div class="card">
+                <h2>Search</h2>
+                <p>Search functionality would go here. You can search for teams, players, or matches.</p>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profile" class="page">
+            <div class="card">
+                <h2>User Profile</h2>
+                <p>Manage your account settings and preferences here.</p>
+            </div>
+            <div class="card">
+                <h2>Settings</h2>
+                <p>Notifications, privacy, and other app settings.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item active" data-page="home">
+            <div class="tab-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            <span class="tab-label">Home</span>
+        </div>
+        
+        <div class="tab-item" data-page="sports">
+            <div class="tab-icon">
+                <img src="https://briwild79.github.io/betssongroup/betsson_sports_icon.png" alt="Sports">
+            </div>
+            <span class="tab-label">Sports</span>
+        </div>
+        
+        <div class="tab-item" data-page="search">
+            <div class="tab-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </div>
+            <span class="tab-label">Search</span>
+        </div>
+        
+        <div class="tab-item" data-page="profile">
+            <div class="tab-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <span class="tab-label">Profile</span>
+        </div>
+    </div>
+
+    <script>
+        // Tab navigation
+        const tabs = document.querySelectorAll('.tab-item');
+        const pages = document.querySelectorAll('.page');
+        const pageTitle = document.getElementById('page-title');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetPage = tab.dataset.page;
+                
+                // Remove active class from all tabs and pages
+                tabs.forEach(t => t.classList.remove('active'));
+                pages.forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding page
+                tab.classList.add('active');
+                document.getElementById(targetPage).classList.add('active');
+                
+                // Update page title
+                const titles = {
+                    'home': 'Home',
+                    'sports': 'Sports',
+                    'search': 'Search',
+                    'profile': 'Profile'
+                };
+                pageTitle.textContent = titles[targetPage];
+            });
+        });
+
+        // Add ripple effect on tab click
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(0, 122, 255, 0.3)';
+                ripple.style.width = ripple.style.height = '40px';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.transform = 'translate(-50%, -50%)';
+                
+                const rect = this.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top = (e.clientY - rect.top) + 'px';
+                
+                this.appendChild(ripple);
+                
+                ripple.animate([
+                    { transform: 'translate(-50%, -50%) scale(0)', opacity: 1 },
+                    { transform: 'translate(-50%, -50%) scale(2)', opacity: 0 }
+                ], {
+                    duration: 500,
+                    easing: 'ease-out'
+                }).onfinish = () => ripple.remove();
+            });
+        });
+    </script>
+</body>
+</html>
