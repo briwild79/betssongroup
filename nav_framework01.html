@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        :root {
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --header-height: 60px;
+            --product-nav-height: 50px;
+            --local-nav-height: 40px;
+            --filter-height: 50px;
+            --total-header-height: calc(var(--header-height) + var(--product-nav-height) + var(--local-nav-height) + var(--filter-height));
+            --touch-target: 44px;
+            --panel-width: 280px;
+            --border: 1px solid #e0e0e0;
+            --border-active: 2px solid #000000;
+            --bg-panel: #f8f8f8;
+            --bg-active: #000000;
+            --text-active: #ffffff;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: #ffffff;
+            border-bottom: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-md);
+            z-index: 1000;
+        }
+
+        .touch-target {
+            width: var(--touch-target);
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: var(--border);
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .touch-target:hover {
+            background: #f0f0f0;
+        }
+
+        .touch-target.active {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .burger-menu {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .burger-line {
+            width: 16px;
+            height: 2px;
+            background: currentColor;
+            transition: all 0.2s ease;
+        }
+
+        .burger-menu.active .burger-line:nth-child(1) {
+            transform: rotate(45deg) translate(3px, 3px);
+        }
+
+        .burger-menu.active .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu.active .burger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(3px, -3px);
+        }
+
+        .logo {
+            font-size: 16px;
+            font-weight: 600;
+            height: var(--touch-target);
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .balance {
+            height: var(--touch-target);
+            padding: 0 var(--space-md);
+            border: var(--border);
+            background: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: var(--space-sm);
+            display: flex;
+            align-items: center;
+        }
+
+        .balance:hover {
+            background: #f0f0f0;
+        }
+
+        .balance.active {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .account-icon {
+            position: relative;
+        }
+
+        .account-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* CONTENT WRAPPER - CRITICAL FIX */
+        .content-wrapper {
+            margin-top: var(--header-height);
+            position: relative;
+        }
+
+        .panel {
+            position: fixed;
+            background: var(--bg-panel);
+            border: var(--border);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .panel-header {
+            padding: var(--space-md);
+            border-bottom: var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .panel-close {
+            width: 32px;
+            height: 32px;
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .panel-close:hover {
+            background: #f0f0f0;
+        }
+
+        .panel-content {
+            padding: var(--space-md);
+        }
+
+        .panel-side {
+            top: var(--header-height);
+            width: var(--panel-width);
+            height: calc(100vh - var(--header-height));
+        }
+
+        .panel-side.filter-sticky {
+            top: calc(var(--header-height) + var(--filter-height));
+            height: calc(100vh - var(--header-height) - var(--filter-height));
+        }
+
+        .panel-left {
+            left: calc(-1 * var(--panel-width));
+        }
+
+        .panel-left.active {
+            left: 0;
+        }
+
+        .panel-right {
+            right: calc(-1 * var(--panel-width));
+        }
+
+        .panel-right.active {
+            right: 0;
+        }
+
+        .panel-top {
+            top: -400px;
+            left: 0;
+            right: 0;
+            height: 400px;
+        }
+
+        .panel-top.active {
+            top: var(--header-height);
+        }
+
+        .panel-top.filter-sticky.active {
+            top: calc(var(--header-height) + var(--filter-height));
+        }
+
+        /* PATTERN 3: BOTTOM PANELS (Actions) */
+        .panel-bottom {
+            bottom: -500px;
+            left: 0;
+            right: 0;
+            height: 500px;
+            border-top: var(--border);
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .panel-bottom.active {
+            bottom: 0;
+        }
+
+        .panel-bottom .panel-content {
+            height: 410px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            padding: var(--space-md) 0;
+            border-bottom: var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .list-item:hover {
+            background: #ffffff;
+            padding-left: var(--space-sm);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-icon {
+            width: var(--space-lg);
+            margin-right: var(--space-sm);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+
+        /* FILTER PANEL SPECIFIC CONTENT */
+        .filter-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .filter-section-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: var(--space-sm);
+            padding-bottom: var(--space-sm);
+            border-bottom: var(--border);
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm);
+        }
+
+        .filter-option {
+            padding: var(--space-sm);
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .filter-option:hover {
+            background: #f0f0f0;
+        }
+
+        .filter-option.active {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .filter-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: var(--border);
+        }
+
+        .filter-action {
+            padding: var(--space-md);
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .filter-action:hover {
+            background: #f0f0f0;
+        }
+
+        .filter-action.primary {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .filter-action.primary:hover {
+            opacity: 0.9;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-md);
+            border: var(--border);
+            background: #ffffff;
+            font-size: 16px;
+            margin-bottom: var(--space-md);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border: var(--border-active);
+        }
+
+        .balance-display {
+            text-align: center;
+            padding: var(--space-lg);
+            background: #ffffff;
+            border: var(--border);
+            margin-bottom: var(--space-md);
+        }
+
+        .balance-amount {
+            font-size: 24px;
+            font-weight: 600;
+            margin: var(--space-sm) 0;
+        }
+
+        .balance-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .balance-action {
+            padding: var(--space-lg);
+            background: #ffffff;
+            border: var(--border);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .balance-action:hover {
+            background: #f0f0f0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .quick-deposit {
+            position: fixed;
+            bottom: var(--space-md);
+            right: var(--space-md);
+            width: 56px;
+            height: 56px;
+            border: var(--border-active);
+            background: var(--bg-active);
+            color: var(--text-active);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1001;
+            transition: all 0.2s ease;
+        }
+
+        .quick-deposit:hover {
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            padding: var(--space-md);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* STICKY SCROLL BEHAVIOR */
+        .filter-placeholder {
+            height: var(--filter-height);
+            display: none;
+        }
+
+        .filter-placeholder.active {
+            display: block;
+        }
+
+        /* HORIZONTAL NAVIGATION - Now in document flow */
+        .horizontal-nav {
+            position: relative;
+            left: 0;
+            right: 0;
+            border-bottom: var(--border);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            z-index: 998;
+        }
+
+        .horizontal-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-nav {
+            height: var(--product-nav-height);
+            background: #f8f8f8;
+        }
+
+        .local-nav {
+            height: var(--local-nav-height);
+            background: #f0f0f0;
+        }
+
+        .nav-list {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 var(--space-md);
+            gap: var(--space-sm);
+            min-width: max-content;
+        }
+
+        .nav-item {
+            padding: var(--space-sm) var(--space-md);
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        .nav-item:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-item.active {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .product-nav .nav-item {
+            font-size: 14px;
+            padding: 10px var(--space-md);
+        }
+
+        .local-nav .nav-item {
+            font-size: 12px;
+            padding: 6px var(--space-sm);
+        }
+
+        /* FILTER BUTTON - Initially in flow, becomes sticky */
+        .filter-nav {
+            position: relative;
+            left: 0;
+            right: 0;
+            height: var(--filter-height);
+            background: #e8e8e8;
+            border-bottom: var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            transition: all 0.2s ease;
+        }
+
+        .filter-nav.sticky {
+            position: fixed;
+            top: var(--header-height);
+            z-index: 999;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            background: #d0d0d0;
+        }
+
+        .filter-button {
+            width: 100%;
+            height: 36px;
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 4px;
+            gap: var(--space-sm);
+        }
+
+        .filter-button:hover {
+            background: #f0f0f0;
+        }
+
+        .filter-button.active {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .filter-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .filter-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --panel-width: 260px;
+            }
+            
+            .header {
+                padding: 0 var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="touch-target burger-menu" id="burgerMenu">
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+        </div>
+
+        <div class="logo">Logo</div>
+        <div class="touch-target search-icon" id="searchIcon">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </div>
+
+        <div style="display: flex; align-items: center;">
+            <div class="balance" id="balance">$1,247</div>
+            <div class="touch-target account-icon" id="accountIcon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENT WRAPPER - This pushes content below the fixed header -->
+    <div class="content-wrapper">
+        <!-- HORIZONTAL NAVIGATION -->
+        <nav class="horizontal-nav product-nav">
+            <div class="nav-list">
+                <div class="nav-item active">Product 01</div>
+                <div class="nav-item">Product 02</div>
+                <div class="nav-item">Product 03</div>
+                <div class="nav-item">Product 04</div>
+                <div class="nav-item">Product 05</div>
+                <div class="nav-item">Product 06</div>
+                <div class="nav-item">Product 07</div>
+                <div class="nav-item">Product 08</div>
+            </div>
+        </nav>
+
+        <nav class="horizontal-nav local-nav">
+            <div class="nav-list">
+                <div class="nav-item active">Local 01</div>
+                <div class="nav-item">Local 02</div>
+                <div class="nav-item">Local 03</div>
+                <div class="nav-item">Local 04</div>
+                <div class="nav-item">Local 05</div>
+                <div class="nav-item">Local 06</div>
+                <div class="nav-item">Local 07</div>
+                <div class="nav-item">Local 08</div>
+                <div class="nav-item">Local 09</div>
+                <div class="nav-item">Local 10</div>
+            </div>
+        </nav>
+
+        <!-- FILTER NAVIGATION -->
+        <nav class="filter-nav" id="filterNav">
+            <button class="filter-button" id="filterButton">
+                <span class="filter-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                    </svg>
+                </span>
+                <span id="filterText">Filter Options</span>
+            </button>
+        </nav>
+
+        <!-- Filter placeholder to maintain layout when filter becomes sticky -->
+        <div class="filter-placeholder" id="filterPlaceholder"></div>
+
+        <main class="main-content">
+            <div style="padding: var(--space-lg); background: var(--bg-panel); border: var(--border); margin-bottom: 20px;">
+                <h2>Main content area</h2>
+                <p>Scroll down to see the filter navigation stick to the header.</p>
+            </div>
+            
+            <!-- Add more content to demonstrate scrolling -->
+            <div style="height: 1500px; padding: var(--space-lg); background: #f5f5f5; border: var(--border);">
+                <p>Additional content to enable scrolling...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- PANELS -->
+    <nav class="panel panel-side panel-left" id="menuPanel">
+        <div class="panel-header">
+            <div class="panel-title">Panel 01</div>
+            <button class="panel-close" data-close="menuPanel">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="list-item">
+                <div class="list-icon">01</div>
+                <div>Navigation 01</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">02</div>
+                <div>Navigation 02</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">03</div>
+                <div>Navigation 03</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">04</div>
+                <div>Navigation 04</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="panel panel-side panel-right" id="accountPanel">
+        <div class="panel-header">
+            <div class="panel-title">Panel 02</div>
+            <button class="panel-close" data-close="accountPanel">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="list-item">
+                <div class="list-icon">01</div>
+                <div>Account 01</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">02</div>
+                <div>Account 02</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">03</div>
+                <div>Account 03</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">04</div>
+                <div>Account 04</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM PANEL (Filters) -->
+    <div class="panel panel-bottom" id="filterPanel">
+        <div class="panel-header">
+            <div class="panel-title">Filter Options</div>
+            <button class="panel-close" data-close="filterPanel">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="filter-section">
+                <div class="filter-section-title">Category</div>
+                <div class="filter-options">
+                    <div class="filter-option active">Option 01</div>
+                    <div class="filter-option">Option 02</div>
+                    <div class="filter-option">Option 03</div>
+                    <div class="filter-option">Option 04</div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-section-title">Type</div>
+                <div class="filter-options">
+                    <div class="filter-option">Type 01</div>
+                    <div class="filter-option">Type 02</div>
+                    <div class="filter-option">Type 03</div>
+                    <div class="filter-option">Type 04</div>
+                    <div class="filter-option">Type 05</div>
+                    <div class="filter-option">Type 06</div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-section-title">Range</div>
+                <div class="filter-options">
+                    <div class="filter-option">Range 01</div>
+                    <div class="filter-option">Range 02</div>
+                    <div class="filter-option">Range 03</div>
+                    <div class="filter-option">Range 04</div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-section-title">Status</div>
+                <div class="filter-options">
+                    <div class="filter-option">Status 01</div>
+                    <div class="filter-option">Status 02</div>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <div class="filter-action">Clear All</div>
+                <div class="filter-action primary">Apply Filters</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-top" id="searchPanel">
+        <div class="panel-header">
+            <div class="panel-title">Panel 03</div>
+            <button class="panel-close" data-close="searchPanel">×</button>
+        </div>
+        <div class="panel-content">
+            <input type="text" class="search-input" placeholder="Search..." autofocus>
+            <div class="list-item">
+                <div class="list-icon">01</div>
+                <div>Search 01</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">02</div>
+                <div>Search 02</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">03</div>
+                <div>Search 03</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-top" id="balancePanel">
+        <div class="panel-header">
+            <div class="panel-title">Panel 04</div>
+            <button class="panel-close" data-close="balancePanel">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="balance-display">
+                <div style="font-size: 12px; opacity: 0.7;">Balance</div>
+                <div class="balance-amount" id="balanceAmount">$1,247</div>
+            </div>
+            
+            <div class="balance-actions">
+                <div class="balance-action">
+                    <div style="font-size: 20px; margin-bottom: 8px; font-weight: 600;">01</div>
+                    <div>Action 01</div>
+                </div>
+                <div class="balance-action">
+                    <div style="font-size: 20px; margin-bottom: 8px; font-weight: 600;">02</div>
+                    <div>Action 02</div>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-icon">01</div>
+                <div>Balance 01</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <button class="quick-deposit" id="quickDeposit">+</button>
+
+    <script>
+        class PanelManager {
+            constructor() {
+                this.panels = {
+                    'burgerMenu': 'menuPanel',
+                    'searchIcon': 'searchPanel', 
+                    'accountIcon': 'accountPanel',
+                    'balance': 'balancePanel',
+                    'filterButton': 'filterPanel'
+                };
+                this.overlay = document.getElementById('overlay');
+                this.init();
+            }
+
+            init() {
+                Object.keys(this.panels).forEach(triggerId => {
+                    document.getElementById(triggerId).addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggle(triggerId);
+                    });
+                });
+
+                document.querySelectorAll('.panel-close').forEach(btn => {
+                    btn.addEventListener('click', () => this.closeAll());
+                });
+
+                this.overlay.addEventListener('click', () => this.closeAll());
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeAll();
+                });
+
+                document.querySelectorAll('.list-item, .balance-action').forEach(item => {
+                    item.addEventListener('click', () => this.closeAll());
+                });
+
+                // Filter option interactions
+                document.querySelectorAll('.filter-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        option.classList.toggle('active');
+                    });
+                });
+
+                // Filter action buttons
+                document.querySelectorAll('.filter-action').forEach(action => {
+                    action.addEventListener('click', () => {
+                        if (action.textContent === 'Clear All') {
+                            document.querySelectorAll('.filter-option').forEach(option => {
+                                option.classList.remove('active');
+                            });
+                        } else if (action.textContent === 'Apply Filters') {
+                            this.closeAll();
+                        }
+                    });
+                });
+            }
+
+            toggle(triggerId) {
+                const panelId = this.panels[triggerId];
+                const panel = document.getElementById(panelId);
+                
+                if (panel.classList.contains('active')) {
+                    this.closeAll();
+                } else {
+                    this.closeAll();
+                    this.open(panelId, triggerId);
+                }
+            }
+
+            open(panelId, triggerId) {
+                document.getElementById(panelId).classList.add('active');
+                document.getElementById(triggerId).classList.add('active');
+                this.overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                if (panelId === 'searchPanel') {
+                    setTimeout(() => {
+                        document.querySelector('.search-input').focus();
+                    }, 300);
+                }
+            }
+
+            closeAll() {
+                Object.values(this.panels).forEach(panelId => {
+                    document.getElementById(panelId).classList.remove('active');
+                });
+                Object.keys(this.panels).forEach(triggerId => {
+                    document.getElementById(triggerId).classList.remove('active');
+                });
+                this.overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        new PanelManager();
+
+        // Sticky Filter Navigation on Scroll
+        class StickyFilter {
+            constructor() {
+                this.filterNav = document.getElementById('filterNav');
+                this.filterPlaceholder = document.getElementById('filterPlaceholder');
+                this.header = document.querySelector('.header');
+                this.contentWrapper = document.querySelector('.content-wrapper');
+                this.isSticky = false;
+                this.originalOffset = 0;
+                this.init();
+            }
+
+            init() {
+                // Calculate the original offset once the page loads
+                window.addEventListener('load', () => {
+                    this.updateOriginalOffset();
+                });
+                
+                window.addEventListener('scroll', () => {
+                    this.handleScroll();
+                });
+                
+                // Recalculate on resize
+                window.addEventListener('resize', () => {
+                    this.updateOriginalOffset();
+                });
+            }
+
+            updateOriginalOffset() {
+                if (!this.isSticky) {
+                    const rect = this.filterNav.getBoundingClientRect();
+                    this.originalOffset = rect.top + window.pageYOffset - this.header.offsetHeight;
+                }
+            }
+
+            handleScroll() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop >= this.originalOffset && !this.isSticky) {
+                    this.makeSticky();
+                } else if (scrollTop < this.originalOffset && this.isSticky) {
+                    this.removeSticky();
+                }
+            }
+
+            makeSticky() {
+                this.isSticky = true;
+                this.filterNav.classList.add('sticky');
+                this.filterPlaceholder.classList.add('active');
+                
+                // Update panel positions when filter becomes sticky
+                document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
+                    panel.classList.add('filter-sticky');
+                });
+            }
+
+            removeSticky() {
+                this.isSticky = false;
+                this.filterNav.classList.remove('sticky');
+                this.filterPlaceholder.classList.remove('active');
+                
+                // Remove sticky positioning from panels
+                document.querySelectorAll('.panel-side, .panel-top').forEach(panel => {
+                    panel.classList.remove('filter-sticky');
+                });
+            }
+        }
+
+        new StickyFilter();
+
+        // Horizontal Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active from siblings
+                const siblings = item.parentElement.querySelectorAll('.nav-item');
+                siblings.forEach(sibling => sibling.classList.remove('active'));
+                
+                // Add active to clicked item
+                item.classList.add('active');
+            });
+        });
+
+        // Quick Deposit
+        document.getElementById('quickDeposit').addEventListener('click', () => {
+            const balance = document.getElementById('balance');
+            const balanceAmount = document.getElementById('balanceAmount');
+            const current = parseInt(balance.textContent.replace('$', '').replace(',', ''));
+            const newAmount = current + 100;
+            
+            balance.textContent = `$${newAmount.toLocaleString()}`;
+            balanceAmount.textContent = `$${newAmount.toLocaleString()}`;
+        });
+    </script>
+</body>
+</html>
