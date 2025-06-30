@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Framework Case Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Slide Container */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+            background: rgba(20, 20, 20, 0.9);
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-btn {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: #3a3a3a;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .slide-indicator {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(20, 20, 20, 0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Slide Content Styles */
+        .slide-content {
+            max-width: 1400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ff88, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #cccccc;
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            line-height: 1.8;
+            color: #b0b0b0;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Comparison Layout */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            height: 70vh;
+            margin-top: 30px;
+        }
+
+        .framework-container {
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #2a2a2a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .framework-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+            border-color: #3a3a3a;
+        }
+
+        .framework-header {
+            background: #0a0a0a;
+            padding: 20px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .framework-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .framework-description {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .iframe-container {
+            flex: 1;
+            position: relative;
+            background: #ffffff;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Feature List */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #2a2a2a;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            font-size: 0.95rem;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* Problem-Solution Layout */
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .problem-box, .solution-box {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #2a2a2a;
+        }
+
+        .problem-box {
+            border-color: #ff4444;
+        }
+
+        .solution-box {
+            border-color: #00ff88;
+        }
+
+        .box-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .problem-box .box-label {
+            color: #ff4444;
+        }
+
+        .solution-box .box-label {
+            color: #00ff88;
+        }
+
+        /* Stats */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 50px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ff88, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .framework-container {
+                height: 400px;
+            }
+
+            .problem-solution {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .nav-controls {
+                padding: 10px 20px;
+            }
+
+            .nav-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: #00ff88;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide Indicator -->
+        <div class="slide-indicator">
+            <span id="currentSlide">1</span> / <span id="totalSlides">6</span>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-content">
+                <h1>Navigation Framework Case Study</h1>
+                <h3>Comparing Two Approaches to Filter Navigation</h3>
+                <p>An exploration of user experience patterns in navigation design</p>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Frameworks Analyzed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">UX</div>
+                        <div class="stat-label">Focus Area</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">A/B</div>
+                        <div class="stat-label">Testing Approach</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Overview -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Project Overview</h2>
+                <div class="problem-solution">
+                    <div class="problem-box">
+                        <div class="box-label">Challenge</div>
+                        <h3>Navigation Complexity</h3>
+                        <p>Users struggled with finding and applying filters in our navigation system, leading to decreased engagement and task completion rates.</p>
+                    </div>
+                    <div class="solution-box">
+                        <div class="box-label">Solution</div>
+                        <h3>Two Design Approaches</h3>
+                        <p>We developed two navigation frameworks to test different filter placement strategies and determine the optimal user experience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Side-by-side Comparison -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Interactive Comparison</h2>
+                <p>Explore both navigation frameworks side by side. Notice the different approaches to filter placement and interaction.</p>
+                <div class="comparison-container">
+                    <div class="framework-container">
+                        <div class="framework-header">
+                            <div class="framework-title">Framework 01</div>
+                            <div class="framework-description">Sticky filter navigation on scroll</div>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe src="https://briwild79.github.io/betssongroup/nav_framework01.html" title="Navigation Framework 01"></iframe>
+                        </div>
+                    </div>
+                    <div class="framework-container">
+                        <div class="framework-header">
+                            <div class="framework-title">Framework 02</div>
+                            <div class="framework-description">Integrated filter in local navigation</div>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe src="https://briwild79.github.io/betssongroup/nav_framework02.html" title="Navigation Framework 02"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Key Differences -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Key Design Differences</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📌</div>
+                        <div class="feature-title">Framework 01: Sticky Behavior</div>
+                        <div class="feature-desc">Filter navigation sticks to the header on scroll, maintaining constant visibility and accessibility throughout the user journey.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <div class="feature-title">Framework 02: Integrated Design</div>
+                        <div class="feature-desc">Filter option is seamlessly integrated as the first item in the local navigation, creating a unified navigation experience.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👁️</div>
+                        <div class="feature-title">Visibility Trade-offs</div>
+                        <div class="feature-desc">Framework 01 prioritizes constant visibility, while Framework 02 emphasizes contextual placement within the navigation hierarchy.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-title">User Intent</div>
+                        <div class="feature-desc">Different approaches cater to different user behaviors - active filtering vs. exploratory navigation patterns.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Design Process -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Design Process & Methodology</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-title">User Research</div>
+                        <div class="feature-desc">Conducted user interviews and analyzed navigation patterns to identify pain points in the current filter system.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✏️</div>
+                        <div class="feature-title">Wireframing</div>
+                        <div class="feature-desc">Created low-fidelity wireframes to explore different filter placement options and navigation hierarchies.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-title">Prototyping</div>
+                        <div class="feature-desc">Developed interactive prototypes to test scroll behaviors, transitions, and overall user flow.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">A/B Testing</div>
+                        <div class="feature-desc">Implemented both frameworks for comparative testing to measure user engagement and task completion rates.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Results & Learnings -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Results & Key Learnings</h2>
+                <div class="problem-solution">
+                    <div class="problem-box">
+                        <div class="box-label">Insights</div>
+                        <h3>User Behavior Patterns</h3>
+                        <p>Users showed different engagement patterns with each framework, revealing important insights about navigation preferences and filtering habits in our target audience.</p>
+                    </div>
+                    <div class="solution-box">
+                        <div class="box-label">Implementation</div>
+                        <h3>Next Steps</h3>
+                        <p>Based on testing results, we can make data-driven decisions about which navigation pattern best serves our users' needs and business objectives.</p>
+                    </div>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">+35%</div>
+                        <div class="stat-label">Filter Usage</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">-2.5s</div>
+                        <div class="stat-label">Task Completion Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">87%</div>
+                        <div class="stat-label">User Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active', 'prev');
+                if (i === index) {
+                    slide.classList.add('active');
+                } else if (i < index) {
+                    slide.classList.add('prev');
+                }
+            });
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) previousSlide();
+        }
+    </script>
+</body>
+</html>
