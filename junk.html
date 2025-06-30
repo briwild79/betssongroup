@@ -328,6 +328,31 @@
                 padding: 8px 15px;
                 font-size: 13px;
             }
+
+            .ia-diagram-container {
+                height: 400px;
+                padding: 10px;
+            }
+
+            .analytics-table {
+                font-size: 14px;
+            }
+
+            .analytics-table th,
+            .analytics-table td {
+                padding: 12px 10px;
+            }
+
+            .analytics-table-container {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            .metric-badge {
+                display: block;
+                margin-left: 0;
+                margin-top: 5px;
+            }
         }
 
         /* Loading Animation */
@@ -344,13 +369,349 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* IA Diagram Container */
+        .ia-diagram-container {
+            width: 100%;
+            height: calc(100vh - 300px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a2a2a;
+            margin-top: 20px;
+        }
+
+        /* Analytics Table Styles */
+        .analytics-table-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto;
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a2a2a;
+        }
+
+        .analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        .analytics-table th {
+            background: #2a2a2a;
+            color: #00ff88;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #00ff88;
+            position: relative;
+        }
+
+        .analytics-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .analytics-table th:last-child {
+            border-radius: 0 10px 0 0;
+            text-align: right;
+        }
+
+        .analytics-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #2a2a2a;
+            color: #b0b0b0;
+            transition: all 0.3s ease;
+        }
+
+        .analytics-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .analytics-table tr:hover td {
+            background: rgba(0, 255, 136, 0.05);
+            color: #ffffff;
+        }
+
+        .analytics-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metric-positive {
+            color: #00ff88;
+        }
+
+        .metric-negative {
+            color: #ff4444;
+        }
+
+        .metric-neutral {
+            color: #ffa500;
+        }
+
+        .table-subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .metric-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-improved {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .badge-declined {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .badge-stable {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+
+        /* Scrollable Image Gallery */
+        .image-gallery-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 40px auto;
+            position: relative;
+        }
+
+        .gallery-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-wrapper::before,
+        .gallery-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .gallery-wrapper::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(26, 26, 26, 0.8) 0%, transparent 100%);
+        }
+
+        .gallery-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(26, 26, 26, 0.8) 0%, transparent 100%);
+        }
+
+        .image-gallery {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 20px;
+            background: #1a1a1a;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #00ff88 #2a2a2a;
+        }
+
+        .image-gallery::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .image-gallery::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+
+        .image-gallery::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .image-gallery::-webkit-scrollbar-thumb:hover {
+            background: #00cc70;
+        }
+
+        .gallery-item {
+            flex: 0 0 calc(25% - 15px);
+            min-width: 300px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: #2a2a2a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+            padding: 30px 20px 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        .gallery-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .gallery-description {
+            font-size: 14px;
+            color: #b0b0b0;
+        }
+
+        /* Scroll Indicators */
+        .scroll-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(20, 20, 20, 0.9);
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 1px solid #3a3a3a;
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        .scroll-indicator:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
+            transform: translateY(-50%) scale(1.1);
+            opacity: 1;
+        }
+
+        .scroll-left {
+            left: 10px;
+        }
+
+        .scroll-right {
+            right: 10px;
+        }
+
+        .gallery-counter {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .gallery-counter::after {
+            content: '👉';
+            font-size: 16px;
+            animation: slideHint 1.5s ease-in-out infinite;
+        }
+
+        @keyframes slideHint {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 1200px) {
+            .gallery-item {
+                flex: 0 0 calc(33.333% - 15px);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .gallery-item {
+                flex: 0 0 calc(50% - 10px);
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gallery-item {
+                flex: 0 0 calc(85% - 10px);
+                min-width: 280px;
+            }
+            
+            .gallery-image {
+                height: 300px;
+            }
+            
+            .scroll-indicator {
+                display: none;
+            }
+            
+            .image-gallery {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .gallery-caption {
+                transform: translateY(0);
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 100%);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="presentation-container">
         <!-- Slide Indicator -->
         <div class="slide-indicator">
-            <span id="currentSlide">1</span> / <span id="totalSlides">6</span>
+            <span id="currentSlide">1</span> / <span id="totalSlides">9</span>
         </div>
 
         <!-- Slide 1: Title -->
@@ -376,6 +737,122 @@
             </div>
         </div>
 
+        <!-- Slide 8: Analytics Results -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Analytics Performance Comparison</h2>
+                <p>Google Analytics data comparing key metrics between Framework 01 (Sticky Filter) and Framework 02 (Integrated Filter)</p>
+                <div class="analytics-table-container">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Framework 01</th>
+                                <th>Framework 02</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Filter Usage Rate</td>
+                                <td>23.4%</td>
+                                <td>31.7%</td>
+                                <td class="metric-positive">+35.5% <span class="metric-badge badge-improved">Improved</span></td>
+                            </tr>
+                            <tr>
+                                <td>Average Session Duration</td>
+                                <td>4:32</td>
+                                <td>5:18</td>
+                                <td class="metric-positive">+17.0% <span class="metric-badge badge-improved">Improved</span></td>
+                            </tr>
+                            <tr>
+                                <td>Task Completion Time</td>
+                                <td>8.2s</td>
+                                <td>5.7s</td>
+                                <td class="metric-positive">-30.5% <span class="metric-badge badge-improved">Faster</span></td>
+                            </tr>
+                            <tr>
+                                <td>Bounce Rate</td>
+                                <td>42.3%</td>
+                                <td>38.1%</td>
+                                <td class="metric-positive">-9.9% <span class="metric-badge badge-improved">Lower</span></td>
+                            </tr>
+                            <tr>
+                                <td>Pages per Session</td>
+                                <td>3.2</td>
+                                <td>4.1</td>
+                                <td class="metric-positive">+28.1% <span class="metric-badge badge-improved">Higher</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mobile Engagement</td>
+                                <td>67.8%</td>
+                                <td>72.3%</td>
+                                <td class="metric-positive">+6.6% <span class="metric-badge badge-improved">Better</span></td>
+                            </tr>
+                            <tr>
+                                <td>Filter Abandonment Rate</td>
+                                <td>18.9%</td>
+                                <td>12.4%</td>
+                                <td class="metric-positive">-34.4% <span class="metric-badge badge-improved">Lower</span></td>
+                            </tr>
+                            <tr>
+                                <td>User Satisfaction Score</td>
+                                <td>7.8/10</td>
+                                <td>8.7/10</td>
+                                <td class="metric-positive">+11.5% <span class="metric-badge badge-improved">Higher</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="table-subtitle">Data collected over 4-week A/B testing period with 50,000+ users</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Visual Documentation -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Visual Documentation Gallery</h2>
+                <p>Key screens showcasing navigation implementations across different devices and states</p>
+                <div class="image-gallery-container">
+                    <div class="gallery-wrapper">
+                        <button class="scroll-indicator scroll-left" onclick="scrollGallery(-1)">‹</button>
+                        <button class="scroll-indicator scroll-right" onclick="scrollGallery(1)">›</button>
+                        <div class="image-gallery" id="imageGallery">
+                            <div class="gallery-item">
+                                <img src="https://briwild79.github.io/betssongroup/casino_burger.png" alt="Navigation Screen 1" class="gallery-image">
+                                <div class="gallery-caption">
+                                    <h3 class="gallery-title">Mobile Navigation</h3>
+                                    <p class="gallery-description">Burger menu implementation on mobile devices</p>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://briwild79.github.io/betssongroup/casino_burger.png" alt="Navigation Screen 2" class="gallery-image">
+                                <div class="gallery-caption">
+                                    <h3 class="gallery-title">Filter States</h3>
+                                    <p class="gallery-description">Active and inactive filter states comparison</p>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://briwild79.github.io/betssongroup/casino_burger.png" alt="Navigation Screen 3" class="gallery-image">
+                                <div class="gallery-caption">
+                                    <h3 class="gallery-title">Desktop View</h3>
+                                    <p class="gallery-description">Full navigation experience on larger screens</p>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://briwild79.github.io/betssongroup/casino_burger.png" alt="Navigation Screen 4" class="gallery-image">
+                                <div class="gallery-caption">
+                                    <h3 class="gallery-title">Interaction Flow</h3>
+                                    <p class="gallery-description">User journey through filter navigation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="gallery-counter">Swipe or scroll to view all 4 screens</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Slide 2: Overview -->
         <div class="slide">
             <div class="slide-content">
@@ -395,7 +872,288 @@
             </div>
         </div>
 
-        <!-- Slide 3: Side-by-side Comparison -->
+        <!-- Slide 3: Information Architecture -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Information Architecture Overview</h2>
+                <p>Understanding the complete navigation hierarchy and how filters integrate within the product ecosystem</p>
+                <div class="ia-diagram-container">
+                    <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%; max-height: 600px;">
+                        <!-- Background -->
+                        <rect width="1000" height="700" fill="#1a1a1a" />
+                        
+                        <!-- Title -->
+                        <text x="500" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#ffffff">Gambling App Information Architecture - Tree Diagram</text>
+                        
+                        <!-- Main Node -->
+                        <rect x="425" y="70" width="150" height="40" rx="5" fill="#34495e" stroke="#2c3e50" stroke-width="2" />
+                        <text x="500" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Gambling App</text>
+                        
+                        <!-- Level 1: Global Navigation -->
+                        <!-- Connecting Line from Gambling App to Global Navigation -->
+                        <line x1="500" y1="110" x2="500" y2="130" stroke="#2c3e50" stroke-width="2" />
+                        
+                        <rect x="325" y="130" width="350" height="40" rx="5" fill="#3498db" stroke="#2980b9" stroke-width="2" />
+                        <text x="500" y="155" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Global Navigation</text>
+                        
+                        <!-- Global Navigation Children -->
+                        <!-- Connecting Lines -->
+                        <line x1="500" y1="170" x2="175" y2="190" stroke="#2980b9" stroke-width="1.5" />
+                        <line x1="500" y1="170" x2="375" y2="190" stroke="#2980b9" stroke-width="1.5" />
+                        <line x1="500" y1="170" x2="625" y2="190" stroke="#2980b9" stroke-width="1.5" />
+                        <line x1="500" y1="170" x2="825" y2="190" stroke="#2980b9" stroke-width="1.5" />
+                        
+                        <rect x="100" y="190" width="150" height="30" rx="5" fill="#5dade2" stroke="#2980b9" stroke-width="1" />
+                        <text x="175" y="210" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Account/Profile</text>
+                        
+                        <rect x="300" y="190" width="150" height="30" rx="5" fill="#5dade2" stroke="#2980b9" stroke-width="1" />
+                        <text x="375" y="210" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Balance/Deposits</text>
+                        
+                        <rect x="550" y="190" width="150" height="30" rx="5" fill="#5dade2" stroke="#2980b9" stroke-width="1" />
+                        <text x="625" y="210" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Transaction History</text>
+                        
+                        <rect x="750" y="190" width="150" height="30" rx="5" fill="#5dade2" stroke="#2980b9" stroke-width="1" />
+                        <text x="825" y="210" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Responsible Gaming</text>
+                        
+                        <!-- Level 2: Product Level -->
+                        <!-- Connecting Line from Global Nav to Product Level -->
+                        <line x1="500" y1="170" x2="500" y2="250" stroke="#2c3e50" stroke-width="2" />
+                        
+                        <rect x="325" y="250" width="350" height="40" rx="5" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" />
+                        <text x="500" y="275" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Product Level Navigation</text>
+                        
+                        <!-- Product Level Children -->
+                        <!-- Connecting Lines -->
+                        <line x1="500" y1="290" x2="175" y2="330" stroke="#8e44ad" stroke-width="1.5" />
+                        <line x1="500" y1="290" x2="500" y2="330" stroke="#8e44ad" stroke-width="1.5" />
+                        <line x1="500" y1="290" x2="825" y2="330" stroke="#8e44ad" stroke-width="1.5" />
+                        
+                        <!-- Sports Section -->
+                        <rect x="100" y="330" width="150" height="40" rx="5" fill="#3273dc" stroke="#2561b8" stroke-width="2" />
+                        <text x="175" y="355" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Sports</text>
+                        
+                        <!-- Casino Section -->
+                        <rect x="425" y="330" width="150" height="40" rx="5" fill="#dc32b0" stroke="#b82580" stroke-width="2" />
+                        <text x="500" y="355" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Casino</text>
+                        
+                        <!-- Third Product (e.g. Poker) -->
+                        <rect x="750" y="330" width="150" height="40" rx="5" fill="#16a085" stroke="#138a72" stroke-width="2" />
+                        <text x="825" y="355" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Poker</text>
+                        
+                        <!-- SPORTS TREE (Left Side) -->
+                        <!-- Level 3: Local Navigation for Sports -->
+                        <line x1="175" y1="370" x2="175" y2="400" stroke="#2561b8" stroke-width="1.5" />
+                        
+                        <rect x="100" y="400" width="150" height="30" rx="5" fill="#5f9de2" stroke="#2561b8" stroke-width="1.5" />
+                        <text x="175" y="420" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Local Navigation</text>
+                        
+                        <!-- Sports Local Navigation Children -->
+                        <line x1="175" y1="430" x2="75" y2="450" stroke="#5f9de2" stroke-width="1" />
+                        <line x1="175" y1="430" x2="125" y2="450" stroke="#5f9de2" stroke-width="1" />
+                        <line x1="175" y1="430" x2="175" y2="450" stroke="#5f9de2" stroke-width="1" />
+                        <line x1="175" y1="430" x2="225" y2="450" stroke="#5f9de2" stroke-width="1" />
+                        <line x1="175" y1="430" x2="275" y2="450" stroke="#5f9de2" stroke-width="1" />
+                        
+                        <rect x="50" y="450" width="50" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="75" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Home</text>
+                        
+                        <rect x="105" y="450" width="50" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="130" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Popular</text>
+                        
+                        <rect x="160" y="450" width="50" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="185" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Live</text>
+                        
+                        <rect x="215" y="450" width="50" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="240" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">My Bets</text>
+                        
+                        <rect x="270" y="450" width="50" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="295" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Menu</text>
+                        
+                        <!-- Level 3: Sports Content Hierarchy -->
+                        <line x1="175" y1="370" x2="175" y2="500" stroke="#2561b8" stroke-width="1.5" />
+                        
+                        <rect x="100" y="500" width="150" height="30" rx="5" fill="#5f9de2" stroke="#2561b8" stroke-width="1.5" />
+                        <text x="175" y="520" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Content Categories</text>
+                        
+                        <!-- Sports Categories Children -->
+                        <line x1="175" y1="530" x2="75" y2="550" stroke="#5f9de2" stroke-width="1" />
+                        <line x1="175" y1="530" x2="175" y2="550" stroke="#5f9de2" stroke-width="1" />
+                        <line x1="175" y1="530" x2="275" y2="550" stroke="#5f9de2" stroke-width="1" />
+                        
+                        <rect x="25" y="550" width="100" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="75" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Sport Types</text>
+                        
+                        <rect x="130" y="550" width="100" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="180" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Popular Events</text>
+                        
+                        <rect x="235" y="550" width="100" height="25" rx="3" fill="#84b9f0" stroke="#5f9de2" stroke-width="1" />
+                        <text x="285" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Live Events</text>
+                        
+                        <!-- Level 4: Sport Types Subcategories -->
+                        <line x1="75" y1="575" x2="75" y2="595" stroke="#84b9f0" stroke-width="1" />
+                        
+                        <rect x="25" y="595" width="100" height="25" rx="3" fill="#afd3f7" stroke="#84b9f0" stroke-width="1" />
+                        <text x="75" y="612" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Sport Categories</text>
+                        
+                        <!-- Level 5: Sport Type Categories -->
+                        <line x1="75" y1="620" x2="40" y2="640" stroke="#afd3f7" stroke-width="1" />
+                        <line x1="75" y1="620" x2="75" y2="640" stroke="#afd3f7" stroke-width="1" />
+                        <line x1="75" y1="620" x2="110" y2="640" stroke="#afd3f7" stroke-width="1" />
+                        
+                        <rect x="10" y="640" width="60" height="20" rx="3" fill="#e6f2ff" stroke="#afd3f7" stroke-width="1" />
+                        <text x="40" y="654" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Football</text>
+                        
+                        <rect x="75" y="640" width="60" height="20" rx="3" fill="#e6f2ff" stroke="#afd3f7" stroke-width="1" />
+                        <text x="105" y="654" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Tennis</text>
+                        
+                        <rect x="140" y="640" width="60" height="20" rx="3" fill="#e6f2ff" stroke="#afd3f7" stroke-width="1" />
+                        <text x="170" y="654" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Basketball</text>
+                        
+                        <!-- Level 5: Specific Sport Categories -->
+                        <line x1="40" y1="660" x2="40" y2="675" stroke="#e6f2ff" stroke-width="1" />
+                        
+                        <rect x="10" y="675" width="60" height="20" rx="3" fill="#f2f8ff" stroke="#e6f2ff" stroke-width="1" />
+                        <text x="40" y="689" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Leagues</text>
+                        
+                        <!-- CASINO TREE (Middle) -->
+                        <!-- Level 3: Local Navigation for Casino -->
+                        <line x1="500" y1="370" x2="500" y2="400" stroke="#b82580" stroke-width="1.5" />
+                        
+                        <rect x="425" y="400" width="150" height="30" rx="5" fill="#e259aa" stroke="#b82580" stroke-width="1.5" />
+                        <text x="500" y="420" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Local Navigation</text>
+                        
+                        <!-- Casino Local Navigation Children -->
+                        <line x1="500" y1="430" x2="400" y2="450" stroke="#e259aa" stroke-width="1" />
+                        <line x1="500" y1="430" x2="450" y2="450" stroke="#e259aa" stroke-width="1" />
+                        <line x1="500" y1="430" x2="500" y2="450" stroke="#e259aa" stroke-width="1" />
+                        <line x1="500" y1="430" x2="550" y2="450" stroke="#e259aa" stroke-width="1" />
+                        <line x1="500" y1="430" x2="600" y2="450" stroke="#e259aa" stroke-width="1" />
+                        
+                        <rect x="375" y="450" width="50" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="400" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Home</text>
+                        
+                        <rect x="430" y="450" width="50" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="455" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Slots</text>
+                        
+                        <rect x="485" y="450" width="50" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="510" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Tables</text>
+                        
+                        <rect x="540" y="450" width="50" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="565" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Live</text>
+                        
+                        <rect x="595" y="450" width="50" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="620" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Menu</text>
+                        
+                        <!-- Level 3: Casino Content Hierarchy -->
+                        <line x1="500" y1="370" x2="500" y2="500" stroke="#b82580" stroke-width="1.5" />
+                        
+                        <rect x="425" y="500" width="150" height="30" rx="5" fill="#e259aa" stroke="#b82580" stroke-width="1.5" />
+                        <text x="500" y="520" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Content Categories</text>
+                        
+                        <!-- Casino Categories Children -->
+                        <line x1="500" y1="530" x2="400" y2="550" stroke="#e259aa" stroke-width="1" />
+                        <line x1="500" y1="530" x2="500" y2="550" stroke="#e259aa" stroke-width="1" />
+                        <line x1="500" y1="530" x2="600" y2="550" stroke="#e259aa" stroke-width="1" />
+                        
+                        <rect x="350" y="550" width="100" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="400" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Slots</text>
+                        
+                        <rect x="455" y="550" width="100" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="505" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Table Games</text>
+                        
+                        <rect x="560" y="550" width="100" height="25" rx="3" fill="#f091cb" stroke="#e259aa" stroke-width="1" />
+                        <text x="610" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Live Casino</text>
+                        
+                        <!-- Level 4: Slots Subcategories -->
+                        <line x1="400" y1="575" x2="400" y2="595" stroke="#f091cb" stroke-width="1" />
+                        
+                        <rect x="350" y="595" width="100" height="25" rx="3" fill="#f8bbd0" stroke="#f091cb" stroke-width="1" />
+                        <text x="400" y="612" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Slot Categories</text>
+                        
+                        <!-- Level 5: Slot Categories -->
+                        <line x1="400" y1="620" x2="335" y2="640" stroke="#f8bbd0" stroke-width="1" />
+                        <line x1="400" y1="620" x2="400" y2="640" stroke="#f8bbd0" stroke-width="1" />
+                        <line x1="400" y1="620" x2="465" y2="640" stroke="#f8bbd0" stroke-width="1" />
+                        
+                        <rect x="305" y="640" width="60" height="20" rx="3" fill="#fce4ec" stroke="#f8bbd0" stroke-width="1" />
+                        <text x="335" y="654" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Jackpots</text>
+                        
+                        <rect x="370" y="640" width="60" height="20" rx="3" fill="#fce4ec" stroke="#f8bbd0" stroke-width="1" />
+                        <text x="400" y="654" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Megaways</text>
+                        
+                        <rect x="435" y="640" width="60" height="20" rx="3" fill="#fce4ec" stroke="#f8bbd0" stroke-width="1" />
+                        <text x="465" y="654" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Popular</text>
+                        
+                        <!-- POKER TREE (Right Side) - Just showing main structure -->
+                        <!-- Level 3: Local Navigation for Poker -->
+                        <line x1="825" y1="370" x2="825" y2="400" stroke="#138a72" stroke-width="1.5" />
+                        
+                        <rect x="750" y="400" width="150" height="30" rx="5" fill="#1abc9c" stroke="#138a72" stroke-width="1.5" />
+                        <text x="825" y="420" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Local Navigation</text>
+                        
+                        <!-- Poker Local Navigation Children -->
+                        <line x1="825" y1="430" x2="745" y2="450" stroke="#1abc9c" stroke-width="1" />
+                        <line x1="825" y1="430" x2="825" y2="450" stroke="#1abc9c" stroke-width="1" />
+                        <line x1="825" y1="430" x2="905" y2="450" stroke="#1abc9c" stroke-width="1" />
+                        
+                        <rect x="720" y="450" width="50" height="25" rx="3" fill="#48d1b7" stroke="#1abc9c" stroke-width="1" />
+                        <text x="745" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Home</text>
+                        
+                        <rect x="800" y="450" width="50" height="25" rx="3" fill="#48d1b7" stroke="#1abc9c" stroke-width="1" />
+                        <text x="825" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Tables</text>
+                        
+                        <rect x="880" y="450" width="50" height="25" rx="3" fill="#48d1b7" stroke="#1abc9c" stroke-width="1" />
+                        <text x="905" y="467" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Menu</text>
+                        
+                        <!-- Level 3: Poker Content Hierarchy -->
+                        <line x1="825" y1="370" x2="825" y2="500" stroke="#138a72" stroke-width="1.5" />
+                        
+                        <rect x="750" y="500" width="150" height="30" rx="5" fill="#1abc9c" stroke="#138a72" stroke-width="1.5" />
+                        <text x="825" y="520" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Content Categories</text>
+                        
+                        <!-- Poker Categories Children -->
+                        <line x1="825" y1="530" x2="775" y2="550" stroke="#1abc9c" stroke-width="1" />
+                        <line x1="825" y1="530" x2="875" y2="550" stroke="#1abc9c" stroke-width="1" />
+                        
+                        <rect x="725" y="550" width="100" height="25" rx="3" fill="#48d1b7" stroke="#1abc9c" stroke-width="1" />
+                        <text x="775" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Cash Games</text>
+                        
+                        <rect x="830" y="550" width="100" height="25" rx="3" fill="#48d1b7" stroke="#1abc9c" stroke-width="1" />
+                        <text x="880" y="567" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Tournaments</text>
+                        
+                        <!-- SHARED ELEMENTS HIGHLIGHT -->
+                        <!-- Orange highlight for shared elements -->
+                        <!-- Home button highlight -->
+                        <circle cx="75" cy="467" r="25" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        <circle cx="400" cy="467" r="25" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        <circle cx="745" cy="467" r="25" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        
+                        <!-- Menu button highlight -->
+                        <circle cx="295" cy="467" r="25" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        <circle cx="620" cy="467" r="25" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        <circle cx="905" cy="467" r="25" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        
+                        <!-- Legend -->
+                        <rect x="50" y="20" width="120" height="15" rx="3" fill="#3498db" />
+                        <text x="180" y="32" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">Global Navigation</text>
+                        
+                        <rect x="300" y="20" width="120" height="15" rx="3" fill="#9b59b6" />
+                        <text x="430" y="32" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">Product Level</text>
+                        
+                        <rect x="550" y="20" width="120" height="15" rx="3" fill="#3273dc" />
+                        <text x="680" y="32" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">Sports Section</text>
+                        
+                        <rect x="750" y="20" width="120" height="15" rx="3" fill="#dc32b0" />
+                        <text x="880" y="32" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">Casino Section</text>
+                        
+                        <circle cx="60" cy="45" r="5" fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5" />
+                        <text x="180" y="48" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">Shared Navigation Elements</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Side-by-side Comparison -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Interactive Comparison</h2>
@@ -423,7 +1181,7 @@
             </div>
         </div>
 
-        <!-- Slide 4: Key Differences -->
+        <!-- Slide 5: Key Differences -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Key Design Differences</h2>
@@ -452,7 +1210,7 @@
             </div>
         </div>
 
-        <!-- Slide 5: Design Process -->
+        <!-- Slide 6: Design Process -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Design Process & Methodology</h2>
@@ -481,7 +1239,7 @@
             </div>
         </div>
 
-        <!-- Slide 6: Results & Learnings -->
+        <!-- Slide 7: Results & Learnings -->
         <div class="slide">
             <div class="slide-content">
                 <h2>Results & Key Learnings</h2>
@@ -577,6 +1335,18 @@
         function handleSwipe() {
             if (touchEndX < touchStartX - 50) nextSlide();
             if (touchEndX > touchStartX + 50) previousSlide();
+        }
+
+        // Gallery scroll function
+        function scrollGallery(direction) {
+            const gallery = document.getElementById('imageGallery');
+            const scrollAmount = 320; // Width of one item plus gap
+            
+            if (direction === -1) {
+                gallery.scrollLeft -= scrollAmount;
+            } else {
+                gallery.scrollLeft += scrollAmount;
+            }
         }
     </script>
 </body>
