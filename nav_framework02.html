@@ -132,6 +132,7 @@
             background: var(--bg-active);
             color: var(--text-active);
             border: var(--border-active);
+            padding: 0 calc(var(--space-md) - 1px);
         }
 
         .account-icon {
@@ -311,6 +312,7 @@
             background: var(--bg-active);
             color: var(--text-active);
             border: var(--border-active);
+            padding: calc(var(--space-sm) - 1px);
         }
 
         .filter-actions {
@@ -503,9 +505,13 @@
             padding: 10px var(--space-md);
         }
 
+        /* Local nav specific item styles */
         .local-nav .nav-item {
             font-size: 12px;
             padding: 6px var(--space-sm);
+            height: 28px;
+            display: flex;
+            align-items: center;
         }
 
         /* Filter button styling within nav */
@@ -513,12 +519,91 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            position: sticky;
+            left: var(--space-md);
+            z-index: 10;
+            background: #ffffff;
+            padding: 6px var(--space-sm);
+            height: 28px;
+            overflow: visible;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Solid background behind filter to prevent bleed-through */
+        .nav-item.filter-button::before {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: -15px;
+            bottom: -15px;
+            right: 0;
+            background: #f0f0f0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Gradient fade effect after filter button */
+        .nav-item.filter-button::after {
+            content: '';
+            position: absolute;
+            right: -25px;
+            top: -15px;
+            bottom: -15px;
+            width: 25px;
+            background: linear-gradient(to right, #f0f0f0 0%, rgba(240, 240, 240, 0) 100%);
+            pointer-events: none;
+        }
+
+        .nav-item.filter-button:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-item.filter-button.active {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+            padding: 5px calc(var(--space-sm) - 1px);
+        }
+
+        .nav-item.filter-button.active .filter-count {
+            background: #ffffff;
+            color: #ff0000;
         }
 
         .nav-item.filter-button svg {
             width: 12px;
             height: 12px;
             fill: currentColor;
+        }
+
+        /* Filter count badge */
+        .filter-count {
+            display: none;
+            background: #ff0000;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            margin-left: 4px;
+        }
+
+        .filter-count.active {
+            display: inline-block;
+        }
+
+        /* Adjust nav list for sticky filter */
+        .local-nav .nav-list {
+            padding: 0 var(--space-md);
+            position: relative;
+        }
+
+        /* Filter button aligns with content */
+        .local-nav .nav-item.filter-button {
+            margin-left: 0;
         }
 
         @media (max-width: 480px) {
@@ -580,6 +665,7 @@
                         <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
                     </svg>
                     <span>Filter</span>
+                    <span class="filter-count" id="filterCount">0</span>
                 </div>
                 <div class="nav-item active">Local 01</div>
                 <div class="nav-item">Local 02</div>
@@ -808,6 +894,7 @@
                 document.querySelectorAll('.filter-option').forEach(option => {
                     option.addEventListener('click', () => {
                         option.classList.toggle('active');
+                        this.updateFilterCount();
                     });
                 });
 
@@ -818,11 +905,15 @@
                             document.querySelectorAll('.filter-option').forEach(option => {
                                 option.classList.remove('active');
                             });
+                            this.updateFilterCount();
                         } else if (action.textContent === 'Apply Filters') {
                             this.closeAll();
                         }
                     });
                 });
+
+                // Initialize filter count
+                this.updateFilterCount();
             }
 
             toggle(triggerId) {
@@ -862,6 +953,18 @@
                 });
                 this.overlay.classList.remove('active');
                 document.body.style.overflow = '';
+            }
+
+            updateFilterCount() {
+                const activeFilters = document.querySelectorAll('.filter-option.active').length;
+                const filterCount = document.getElementById('filterCount');
+                
+                if (activeFilters > 0) {
+                    filterCount.textContent = activeFilters;
+                    filterCount.classList.add('active');
+                } else {
+                    filterCount.classList.remove('active');
+                }
             }
         }
 
