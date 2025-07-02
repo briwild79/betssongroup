@@ -175,15 +175,17 @@
         }
 
         .panel-close {
-            width: 32px;
+            width: auto;
             height: 32px;
+            padding: 0 var(--space-md);
             border: var(--border);
             background: #ffffff;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
 
@@ -218,14 +220,39 @@
         }
 
         .panel-top {
-            top: -400px;
+            transform: translateY(-100%);
+            top: var(--header-height);
             left: 0;
             right: 0;
             height: 400px;
         }
 
         .panel-top.active {
+            transform: translateY(0);
+        }
+
+        /* Deposit panel specific styles */
+        #balancePanel {
+            height: auto;
+            max-height: 80vh;
+            transform: translateY(-100%);
             top: var(--header-height);
+        }
+
+        #balancePanel.active {
+            transform: translateY(0);
+        }
+
+        #balancePanel .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #balancePanel .panel-content {
+            max-height: calc(80vh - 80px);
+            overflow-y: auto;
+            padding: var(--space-md);
         }
 
         /* PATTERN 3: BOTTOM PANELS (Actions) */
@@ -236,7 +263,6 @@
             height: 500px;
             border-top: var(--border);
             border-bottom: none;
-            border-radius: 12px 12px 0 0;
         }
 
         .panel-bottom.active {
@@ -302,7 +328,6 @@
             transition: all 0.2s ease;
             text-align: center;
             font-size: 15px;
-            border-radius: 4px;
         }
 
         .filter-option:hover {
@@ -334,7 +359,6 @@
             text-align: center;
             font-weight: 600;
             font-size: 15px;
-            border-radius: 4px;
         }
 
         .filter-action:hover {
@@ -351,6 +375,210 @@
             opacity: 0.9;
         }
 
+        /* DEPOSIT PANEL STYLES */
+        .quick-amounts-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .quick-amount {
+            padding: var(--space-md);
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-amount:hover {
+            background: #f0f0f0;
+        }
+
+        .quick-amount.selected {
+            background: var(--bg-active);
+            color: var(--text-active);
+            border: var(--border-active);
+        }
+
+        .deposit-amount-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .deposit-input-wrapper {
+            position: relative;
+            margin-bottom: var(--space-sm);
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            font-weight: 500;
+            color: #000000;
+        }
+
+        .deposit-input.large {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            padding-left: calc(var(--space-lg) * 2);
+            border: var(--border-active);
+            background: #ffffff;
+            font-size: 24px;
+            font-weight: 500;
+            text-align: center;
+            height: 60px;
+        }
+
+        .deposit-input.large::placeholder {
+            color: #cccccc;
+        }
+
+        .deposit-input.large:focus {
+            outline: none;
+            border: var(--border-active);
+        }
+
+        .deposit-limits {
+            font-size: 13px;
+            color: #666666;
+            text-align: center;
+        }
+
+        .primary-payment-section {
+            margin-bottom: var(--space-sm);
+        }
+
+        .primary-deposit-button {
+            width: 100%;
+            padding: 0 var(--space-md);
+            background: #000000;
+            color: var(--text-active);
+            border: none;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 50px;
+            border-radius: 6px;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .primary-deposit-button:hover {
+            background: #1a1a1a;
+        }
+
+        .primary-deposit-button:active {
+            transform: scale(0.98);
+        }
+
+        .payment-icon {
+            display: flex;
+            align-items: center;
+            height: 24px;
+        }
+
+        .payment-text {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .change-payment-section {
+            text-align: center;
+            margin-bottom: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .change-payment-link {
+            background: none;
+            border: none;
+            color: #000000;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: underline;
+            padding: var(--space-sm);
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .change-payment-link:hover {
+            opacity: 0.7;
+        }
+
+        .payment-hint {
+            font-size: 13px;
+            color: #666666;
+            font-weight: 400;
+        }
+
+        .other-payments-section {
+            border-top: var(--border);
+            padding-top: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm);
+            border: var(--border);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-sm);
+        }
+
+        .payment-method:hover {
+            background: #f0f0f0;
+        }
+
+        .payment-method-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-sm);
+            font-size: 10px;
+            font-weight: 600;
+            background: #f0f0f0;
+            border: var(--border);
+            color: #666666;
+        }
+
+        .payment-method-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #000000;
+            flex: 1;
+        }
+
+        .payment-method-badge {
+            background: #000000;
+            color: #ffffff;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
         .search-input {
             width: 100%;
             padding: var(--space-md);
@@ -363,40 +591,6 @@
         .search-input:focus {
             outline: none;
             border: var(--border-active);
-        }
-
-        .balance-display {
-            text-align: center;
-            padding: var(--space-lg);
-            background: #ffffff;
-            border: var(--border);
-            margin-bottom: var(--space-md);
-        }
-
-        .balance-amount {
-            font-size: 24px;
-            font-weight: 600;
-            margin: var(--space-sm) 0;
-        }
-
-        .balance-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .balance-action {
-            padding: var(--space-lg);
-            background: #ffffff;
-            border: var(--border);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .balance-action:hover {
-            background: #f0f0f0;
         }
 
         .overlay {
@@ -456,6 +650,7 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             z-index: 998;
+            font-size: inherit;
         }
 
         .horizontal-nav::-webkit-scrollbar {
@@ -470,6 +665,7 @@
         .local-nav {
             height: var(--local-nav-height);
             background: #f0f0f0;
+            font-size: 15px;
         }
 
         .nav-list {
@@ -479,6 +675,7 @@
             padding: 0 var(--space-md);
             gap: var(--space-sm);
             min-width: max-content;
+            font-size: inherit;
         }
 
         .nav-item {
@@ -588,7 +785,6 @@
             font-size: 12px;
             font-weight: 600;
             padding: 2px 6px;
-            border-radius: 10px;
             min-width: 16px;
             text-align: center;
             margin-left: 4px;
@@ -699,8 +895,8 @@
     <!-- PANELS -->
     <nav class="panel panel-side panel-left" id="menuPanel">
         <div class="panel-header">
-            <div class="panel-title">Panel 01</div>
-            <button class="panel-close" data-close="menuPanel">×</button>
+            <div class="panel-title">Menu</div>
+            <button class="panel-close" data-close="menuPanel">Close</button>
         </div>
         <div class="panel-content">
             <div class="list-item">
@@ -724,8 +920,8 @@
 
     <div class="panel panel-side panel-right" id="accountPanel">
         <div class="panel-header">
-            <div class="panel-title">Panel 02</div>
-            <button class="panel-close" data-close="accountPanel">×</button>
+            <div class="panel-title">Account</div>
+            <button class="panel-close" data-close="accountPanel">Close</button>
         </div>
         <div class="panel-content">
             <div class="list-item">
@@ -751,7 +947,7 @@
     <div class="panel panel-bottom" id="filterPanel">
         <div class="panel-header">
             <div class="panel-title">Filter Options</div>
-            <button class="panel-close" data-close="filterPanel">×</button>
+            <button class="panel-close" data-close="filterPanel">Close</button>
         </div>
         <div class="panel-content">
             <div class="filter-section">
@@ -803,8 +999,8 @@
 
     <div class="panel panel-top" id="searchPanel">
         <div class="panel-header">
-            <div class="panel-title">Panel 03</div>
-            <button class="panel-close" data-close="searchPanel">×</button>
+            <div class="panel-title">Search</div>
+            <button class="panel-close" data-close="searchPanel">Close</button>
         </div>
         <div class="panel-content">
             <input type="text" class="search-input" placeholder="Search..." autofocus>
@@ -825,29 +1021,69 @@
 
     <div class="panel panel-top" id="balancePanel">
         <div class="panel-header">
-            <div class="panel-title">Panel 04</div>
-            <button class="panel-close" data-close="balancePanel">×</button>
+            <div class="panel-title">Deposit</div>
+            <button class="panel-close" data-close="balancePanel">Cancel</button>
         </div>
         <div class="panel-content">
-            <div class="balance-display">
-                <div style="font-size: 12px; opacity: 0.7;">Balance</div>
-                <div class="balance-amount" id="balanceAmount">$1,247</div>
-            </div>
-            
-            <div class="balance-actions">
-                <div class="balance-action">
-                    <div style="font-size: 20px; margin-bottom: 8px; font-weight: 600;">01</div>
-                    <div>Action 01</div>
-                </div>
-                <div class="balance-action">
-                    <div style="font-size: 20px; margin-bottom: 8px; font-weight: 600;">02</div>
-                    <div>Action 02</div>
+            <!-- Quick Amount Selection -->
+            <div class="quick-amounts-section">
+                <div class="quick-amounts">
+                    <div class="quick-amount" data-amount="5">$5</div>
+                    <div class="quick-amount" data-amount="10">$10</div>
+                    <div class="quick-amount" data-amount="25">$25</div>
+                    <div class="quick-amount" data-amount="50">$50</div>
                 </div>
             </div>
 
-            <div class="list-item">
-                <div class="list-icon">01</div>
-                <div>Balance 01</div>
+            <!-- Deposit Amount -->
+            <div class="deposit-amount-section">
+                <div class="deposit-input-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" class="deposit-input large" id="depositAmount" placeholder="0.00" min="5" max="500" step="0.01">
+                </div>
+                <div class="deposit-limits">Min $5.00 • Max $500.00</div>
+            </div>
+
+            <!-- Primary Payment Method -->
+            <div class="primary-payment-section">
+                <button class="primary-deposit-button" id="primaryDepositBtn">
+                    <span style="display: flex; align-items: center; gap: 5px; font-size: 17px;">
+                        <span style="font-weight: 500;">Deposit with</span>
+                        <span style="display: flex; align-items: center; gap: 2px;">
+                            <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; margin-top: -1px;" fill="#FFFFFF">
+                                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                            </svg>
+                            <span style="font-weight: 600; font-size: 18px;">Pay</span>
+                        </span>
+                    </span>
+                </button>
+                <div class="payment-hint" style="text-align: center; margin-top: 8px;">Visa •••• 4242 available</div>
+            </div>
+
+            <!-- Change Payment Method (Progressive Disclosure) -->
+            <div class="change-payment-section">
+                <button class="change-payment-link" id="changePaymentBtn">Change Payment Method</button>
+            </div>
+
+            <!-- Other Payment Methods (Hidden by default) -->
+            <div class="other-payments-section" id="otherPayments" style="display: none;">
+                <div class="payment-method">
+                    <div class="payment-method-icon">CARD</div>
+                    <span class="payment-method-name">•••• 4242</span>
+                    <span class="payment-method-badge">Saved</span>
+                </div>
+                <div class="payment-method">
+                    <div class="payment-method-icon">DEBIT</div>
+                    <span class="payment-method-name">Add Debit Card</span>
+                </div>
+                <div class="payment-method">
+                    <div class="payment-method-icon">BANK</div>
+                    <span class="payment-method-name">Bank Transfer</span>
+                </div>
+                <div class="payment-method">
+                    <div class="payment-method-icon">PP</div>
+                    <span class="payment-method-name">PayPal</span>
+                </div>
             </div>
         </div>
     </div>
@@ -889,9 +1125,113 @@
                     if (e.key === 'Escape') this.closeAll();
                 });
 
-                document.querySelectorAll('.list-item, .balance-action').forEach(item => {
-                    item.addEventListener('click', () => this.closeAll());
+                document.querySelectorAll('.list-item, .payment-method').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        // Handle payment method selection
+                        if (item.classList.contains('payment-method')) {
+                            const methodName = item.querySelector('.payment-method-name').textContent;
+                            const methodIcon = item.querySelector('.payment-method-icon').textContent;
+                            
+                            if (primaryBtn) {
+                                // For all non-Apple Pay methods
+                                primaryBtn.style.background = '#000000';
+                                primaryBtn.style.border = 'none';
+                                primaryBtn.innerHTML = `
+                                    <span class="payment-icon" style="font-size: 14px; font-weight: 600; padding: 4px 10px; background: #ffffff; color: #000000; border-radius: 4px;">
+                                        ${methodIcon}
+                                    </span>
+                                    <span class="payment-text" style="font-weight: 500;">Deposit with ${methodName}</span>
+                                `;
+                            }
+                            
+                            // Hide other payments section
+                            const otherPayments = document.getElementById('otherPayments');
+                            if (otherPayments) {
+                                otherPayments.style.display = 'none';
+                            }
+                            
+                            // Restore the change button text and hint
+                            const changeBtn = document.getElementById('changePaymentBtn');
+                            if (changeBtn) {
+                                changeBtn.textContent = 'Change Payment Method';
+                            }
+                            
+                            const paymentHint = document.querySelector('.payment-hint');
+                            if (paymentHint) {
+                                paymentHint.style.display = 'block';
+                                // Update hint to show newly selected method
+                                if (methodName.includes('••••')) {
+                                    paymentHint.textContent = `${methodName} selected`;
+                                } else {
+                                    paymentHint.textContent = `${methodName} available`;
+                                }
+                            }
+                        } else {
+                            this.closeAll();
+                        }
+                    });
                 });
+
+                // Progressive disclosure for payment methods
+                const changePaymentBtn = document.getElementById('changePaymentBtn');
+                const otherPayments = document.getElementById('otherPayments');
+                const paymentHint = document.querySelector('.payment-hint');
+                
+                if (changePaymentBtn && otherPayments) {
+                    changePaymentBtn.addEventListener('click', () => {
+                        if (otherPayments.style.display === 'none') {
+                            otherPayments.style.display = 'block';
+                            changePaymentBtn.textContent = 'Hide Payment Methods';
+                            if (paymentHint) paymentHint.style.display = 'none';
+                        } else {
+                            otherPayments.style.display = 'none';
+                            changePaymentBtn.textContent = 'Change Payment Method';
+                            if (paymentHint) paymentHint.style.display = 'block';
+                        }
+                    });
+                }
+
+                // Quick amount buttons
+                document.querySelectorAll('.quick-amount').forEach(button => {
+                    button.addEventListener('click', () => {
+                        // Remove selected from all buttons
+                        document.querySelectorAll('.quick-amount').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        
+                        // Add selected to clicked button
+                        button.classList.add('selected');
+                        
+                        // Set the amount in the input
+                        const amount = button.getAttribute('data-amount');
+                        const depositInput = document.getElementById('depositAmount');
+                        if (depositInput) {
+                            depositInput.value = amount + '.00';
+                        }
+                    });
+                });
+
+                // Deposit input validation
+                const depositInput = document.getElementById('depositAmount');
+                if (depositInput) {
+                    depositInput.addEventListener('input', (e) => {
+                        // Clear quick amount selection when manually typing
+                        document.querySelectorAll('.quick-amount').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        
+                        const value = parseFloat(e.target.value);
+                        if (value && value < 5) e.target.value = '5.00';
+                        if (value && value > 500) e.target.value = '500.00';
+                    });
+                    
+                    // Focus on input when panel opens
+                    depositInput.addEventListener('focus', () => {
+                        if (!depositInput.value || depositInput.value === '0.00') {
+                            depositInput.value = '';
+                        }
+                    });
+                }
 
                 // Filter option interactions
                 document.querySelectorAll('.filter-option').forEach(option => {
@@ -917,11 +1257,27 @@
 
                 // Initialize filter count
                 this.updateFilterCount();
+                
+                // Handle deposit form submission (for future implementation)
+                const depositPanel = document.getElementById('balancePanel');
+                if (depositPanel) {
+                    depositPanel.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('payment-method-action')) {
+                            e.preventDefault();
+                            // Handle edit action
+                        }
+                    });
+                }
             }
 
             toggle(triggerId) {
                 const panelId = this.panels[triggerId];
                 const panel = document.getElementById(panelId);
+                
+                if (!panel) {
+                    console.error(`Panel not found for trigger: ${triggerId}`);
+                    return;
+                }
                 
                 if (panel.classList.contains('active')) {
                     this.closeAll();
@@ -940,6 +1296,14 @@
                 if (panelId === 'searchPanel') {
                     setTimeout(() => {
                         document.querySelector('.search-input').focus();
+                    }, 300);
+                } else if (panelId === 'balancePanel') {
+                    setTimeout(() => {
+                        const depositInput = document.getElementById('depositAmount');
+                        if (depositInput) {
+                            depositInput.focus();
+                            depositInput.select();
+                        }
                     }, 300);
                 }
             }
@@ -971,7 +1335,8 @@
             }
         }
 
-        new PanelManager();
+        // Initialize panel manager
+        const panelManager = new PanelManager();
 
         // Horizontal Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -994,15 +1359,13 @@
             });
         });
 
-        // Quick Deposit
+        // Quick Deposit Button
         document.getElementById('quickDeposit').addEventListener('click', () => {
-            const balance = document.getElementById('balance');
-            const balanceAmount = document.getElementById('balanceAmount');
-            const current = parseInt(balance.textContent.replace('$', '').replace(',', ''));
-            const newAmount = current + 100;
-            
-            balance.textContent = `$${newAmount.toLocaleString()}`;
-            balanceAmount.textContent = `$${newAmount.toLocaleString()}`;
+            // Find the balance element and trigger its click
+            const balanceElement = document.getElementById('balance');
+            if (balanceElement) {
+                balanceElement.click();
+            }
         });
     </script>
 </body>
