@@ -1,393 +1,328 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const CarouselPrototype = () => {
-  const [activeIndex, setActiveIndex] = useState(2); // Start with middle item
-  const [isInteracting, setIsInteracting] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const carouselRef = useRef(null);
-  const autoPlayRef = useRef(null);
+const PortraitCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(2); // Start with middle item
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const touchStartX = useRef(null);
-
-  // Detect mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // 5 items with middle one centered
-  const items = Array.from({ length: 5 }, (_, i) => ({
-    id: i,
-    title: `Title ${i + 1}`,
-    subtitle: `Subtitle`,
-    color: ['#4A90E2', '#E94B3C', '#6B5B95', '#88B04B', '#F7CAC9'][i]
-  }));
-
-  // Auto-play
-  useEffect(() => {
-    if (!isInteracting) {
-      autoPlayRef.current = setInterval(() => {
-        setActiveIndex(prev => (prev + 1) % items.length);
-      }, 4000);
+  const touchEndX = useRef(null);
+  
+  /* 
+   * MARKETING TEAM CONTENT GUIDE
+   * ============================
+   * 
+   * ACCESSIBILITY NOTE: Text sizes are optimized to be as small as possible
+   * while maintaining WCAG AA compliance (min 12px on mobile)
+   * 
+   * For each carousel item, provide:
+   * 
+   * 1. IMAGE SPECIFICATIONS:
+   *    - Format: JPG or WebP (WebP preferred for better performance)
+   *    - Dimensions: 440x560px (portrait, 11:14 ratio)
+   *    - File size: Under 200KB per image
+   *    - Resolution: 2x for retina displays
+   * 
+   * 2. TEXT CONTENT:
+   *    - title: Main headline (max 30 characters)
+   *    - subtitle: Supporting text (max 50 characters)
+   *    - description: Additional detail text (max 60 characters, optional)
+   *    - ctaText: Call-to-action button text (optional)
+   *    - link: Where the card should navigate to (optional)
+   * 
+   * 3. STYLING:
+   *    - overlayColor: Dark overlay for text readability (e.g., "bg-black/40")
+   *    - textPosition: Where to place text ("top", "center", "bottom")
+   */
+  
+  const items = [
+    {
+      id: 1,
+      // Replace with actual image URL when available
+      imageUrl: "/api/placeholder/440/560",
+      imageAlt: "Club World Cup football match action",
+      title: "Get Ready for the Club World Cup!",
+      subtitle: "Bet €10 on any match and get a €5 Free Bet",
+      description: "for the final!",
+      ctaText: "Bet Now & Claim Your Free Bet",
+      link: "/sports/club-world-cup",
+      overlayColor: "bg-gradient-to-t from-black/70 via-black/50 to-transparent",
+      textPosition: "bottom"
+    },
+    {
+      id: 2,
+      imageUrl: "/api/placeholder/440/560",
+      imageAlt: "Wimbledon tennis championship court",
+      title: "Wimbledon 2025 - Place Your Bets",
+      subtitle: "Bet €20 on Wimbledon and get 10 Free Spins",
+      description: "on Wimbledon-themed slots!",
+      ctaText: "Bet on Wimbledon & Spin for Free!",
+      link: "/sports/wimbledon",
+      overlayColor: "bg-gradient-to-t from-green-900/70 via-black/50 to-transparent",
+      textPosition: "bottom"
+    },
+    {
+      id: 3,
+      imageUrl: "/api/placeholder/440/560",
+      imageAlt: "Premier League football match",
+      title: "Bet on Premier League Matches!",
+      subtitle: "Place a €15 bet on any Premier League game",
+      description: "and get a €10 casino bonus to use on slots.",
+      ctaText: "Bet on Premier League Now",
+      link: "/sports/premier-league",
+      overlayColor: "bg-gradient-to-t from-purple-900/70 via-black/50 to-transparent",
+      textPosition: "bottom"
+    },
+    {
+      id: 4,
+      imageUrl: "/api/placeholder/440/560",
+      imageAlt: "Starburst slot game graphics",
+      title: "Exclusive Slots Offer Just for You!",
+      subtitle: "Deposit €50 and get 100 Free Spins on our",
+      description: "latest slot game - Starburst!",
+      ctaText: "Claim Your 100 Free Spins",
+      link: "/casino/slots/starburst",
+      overlayColor: "bg-gradient-to-t from-pink-900/70 via-purple-900/50 to-transparent",
+      textPosition: "bottom"
+    },
+    {
+      id: 5,
+      imageUrl: "/api/placeholder/440/560",
+      imageAlt: "Live casino dealer at blackjack table",
+      title: "Live Casino - Real Dealers, Real Wins",
+      subtitle: "Make your first deposit of €30 and receive",
+      description: "a €50 Live Casino bonus.",
+      ctaText: "Play Live Casino Now",
+      link: "/casino/live",
+      overlayColor: "bg-gradient-to-t from-red-900/70 via-black/50 to-transparent",
+      textPosition: "bottom"
     }
+  ];
 
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    };
-  }, [isInteracting, items.length]);
-
-  // Scroll to center active item
+  // Auto-play functionality
   useEffect(() => {
-    if (carouselRef.current) {
-      const container = carouselRef.current;
-      const items = container.querySelectorAll('.carousel-item');
-      const activeItem = items[activeIndex];
-      
-      if (activeItem) {
-        const containerWidth = container.offsetWidth;
-        const itemLeft = activeItem.offsetLeft;
-        const itemWidth = activeItem.offsetWidth;
-        const scrollTarget = itemLeft - (containerWidth / 2) + (itemWidth / 2);
-        
-        container.scrollTo({
-          left: scrollTarget,
-          behavior: 'smooth'
-        });
-      }
-    }
-  }, [activeIndex]);
+    if (!isAutoPlaying) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 3000);
 
-  const handleItemClick = (index) => {
-    setActiveIndex(index);
-    setIsInteracting(true);
-    setTimeout(() => setIsInteracting(false), 6000);
-  };
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, items.length]);
 
-  const handleSwipe = (direction) => {
-    if (direction === 'left') {
-      setActiveIndex(prev => (prev + 1) % items.length);
-    } else {
-      setActiveIndex(prev => (prev - 1 + items.length) % items.length);
-    }
-    setIsInteracting(true);
-    setTimeout(() => setIsInteracting(false), 6000);
-  };
-
-  // Touch handling
+  // Handle swipe gestures
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
+    setIsAutoPlaying(false);
   };
 
-  const handleTouchEnd = (e) => {
-    if (!touchStartX.current) return;
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
     
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // Swiped left
+        setCurrentIndex((prev) => (prev + 1) % items.length);
+      } else {
+        // Swiped right
+        setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+      }
+    }
+
+    // Reset touch positions
+    touchStartX.current = null;
+    touchEndX.current = null;
     
-    if (Math.abs(diff) > 50) {
-      handleSwipe(diff > 0 ? 'left' : 'right');
+    // Resume auto-play after interaction
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+    setIsAutoPlaying(false);
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
+  const handleCardClick = (index, link) => {
+    if (index === currentIndex && link) {
+      // Navigate to link (replace with your navigation method)
+      window.location.href = link;
+    } else {
+      goToSlide(index);
+    }
+  };
+
+  const getItemStyle = (index) => {
+    const diff = index - currentIndex;
+    const normalizedDiff = diff > 2 ? diff - items.length : diff < -2 ? diff + items.length : diff;
+    
+    // Calculate position, scale, and opacity based on distance from center
+    const absNormalizedDiff = Math.abs(normalizedDiff);
+    let scale, opacity, zIndex, blur;
+    
+    // Different scaling for different screen sizes
+    const isMobile = window.innerWidth < 640;
+    const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+    
+    if (absNormalizedDiff === 0) {
+      // Center item
+      scale = 1;
+      opacity = 1;
+      zIndex = 50;
+      blur = 0;
+    } else if (absNormalizedDiff === 1) {
+      // Adjacent items
+      scale = isMobile ? 0.75 : isTablet ? 0.8 : 0.85;
+      opacity = isMobile ? 0.6 : 0.75;
+      zIndex = 40;
+      blur = 0;
+    } else if (absNormalizedDiff === 2) {
+      // Outer items
+      scale = isMobile ? 0.6 : isTablet ? 0.65 : 0.7;
+      opacity = isMobile ? 0.3 : 0.5;
+      zIndex = 30;
+      blur = isMobile ? 2 : 1;
+    } else {
+      // Hidden items
+      scale = 0.5;
+      opacity = 0;
+      zIndex = 20;
+      blur = 3;
     }
     
-    touchStartX.current = null;
-  };
-
-  // Calculate item position relative to center
-  const getItemStyle = (index) => {
-    const distance = Math.abs(activeIndex - index);
-    const isActive = activeIndex === index;
-    const isAdjacent = distance === 1;
-    
-    // Base dimensions
-    const portraitWidth = isMobile ? '90px' : '120px';
-    const portraitHeight = isMobile ? '135px' : '180px';
-    const landscapeWidth = isMobile ? '200px' : '280px';
-    const landscapeHeight = isMobile ? '112px' : '157px';
+    // Dynamic spacing based on screen size
+    let spacing;
+    if (isMobile) {
+      spacing = normalizedDiff * 25; // vw units for mobile
+    } else if (isTablet) {
+      spacing = normalizedDiff * 20; // vw units for tablet
+    } else {
+      spacing = normalizedDiff * 15; // vw units for desktop
+    }
     
     return {
-      width: isActive ? landscapeWidth : portraitWidth,
-      height: isActive ? landscapeHeight : portraitHeight,
-      transform: `scale(${isActive ? 1 : isAdjacent ? 0.85 : 0.7})`,
-      opacity: isActive ? 1 : isAdjacent ? 0.6 : 0.4,
-      zIndex: isActive ? 10 : 5 - distance,
+      transform: `translateX(${spacing}vw) scale(${scale})`,
+      opacity,
+      zIndex,
+      filter: blur > 0 ? `blur(${blur}px)` : 'none',
     };
+  };
+
+  const getTextPositionClasses = (position) => {
+    switch (position) {
+      case 'top':
+        return 'justify-start pt-4 sm:pt-6';
+      case 'center':
+        return 'justify-center';
+      case 'bottom':
+      default:
+        return 'justify-end pb-4 sm:pb-6';
+    }
   };
 
   return (
-    <div style={{ 
-      padding: '0',
-      background: '#141414',
-      minHeight: '100vh',
-      color: 'white',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    }}>
-      {/* Header */}
-      <div style={{
-        textAlign: 'center',
-        padding: '20px',
-        marginBottom: isMobile ? '10px' : '20px',
-      }}>
-        <h1 style={{ 
-          fontSize: isMobile ? '18px' : '24px',
-          margin: '0 0 5px 0',
-          fontWeight: '500',
-          opacity: 0.9,
-        }}>
-          Center-Focused Carousel
-        </h1>
-        <p style={{ 
-          opacity: 0.4, 
-          fontSize: isMobile ? '11px' : '12px', 
-          margin: 0,
-        }}>
-          Always one in center • Portrait to landscape transform
-        </p>
-      </div>
-      
-      {/* Carousel container */}
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+      {/* Carousel Container */}
       <div 
-        ref={carouselRef}
+        className="relative h-56 sm:h-64 md:h-72 lg:h-80 mb-4 overflow-hidden"
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        style={{
-          position: 'relative',
-          overflowX: 'auto',
-          overflowY: 'hidden',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          height: isMobile ? '200px' : '260px',
-          display: 'flex',
-          alignItems: 'center',
-          // Visual guides for center (remove in production)
-          background: 'linear-gradient(90deg, transparent 48%, rgba(255,255,255,0.02) 48%, rgba(255,255,255,0.02) 52%, transparent 52%)',
-        }}
       >
-        {/* Items container with proper centering */}
-        <div style={{
-          display: 'flex',
-          gap: isMobile ? '15px' : '20px',
-          alignItems: 'center',
-          padding: `0 calc(50vw - ${isMobile ? '100px' : '140px'})`,
-          height: '100%',
-        }}>
-          {items.map((item, index) => {
-            const style = getItemStyle(index);
-            const isActive = activeIndex === index;
-            
-            return (
-              <div
-                key={item.id}
-                className="carousel-item"
-                onClick={() => handleItemClick(index)}
-                style={{
-                  flexShrink: 0,
-                  transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                  cursor: 'pointer',
-                  backgroundColor: item.color,
-                  borderRadius: '8px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-end',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  ...style,
-                  // Low-fi shadow
-                  boxShadow: isActive 
-                    ? '0 10px 30px rgba(0,0,0,0.6)' 
-                    : '0 5px 15px rgba(0,0,0,0.4)',
-                }}
-              >
-                {/* Simple gradient overlay */}
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 70%)',
-                }} />
+        <div className="relative h-full flex items-center justify-center">
+          {items.map((item, index) => (
+            <div
+              key={item.id}
+              className="absolute transition-all duration-700 ease-out cursor-pointer"
+              style={{
+                ...getItemStyle(index),
+                width: 'clamp(140px, 40vw, 220px)',
+                height: 'clamp(180px, 50vw, 280px)',
+              }}
+              onClick={() => handleCardClick(index, item.link)}
+            >
+              {/* Portrait Card */}
+              <div className="w-full h-full rounded-xl sm:rounded-2xl overflow-hidden relative bg-gray-100">
+                {/* Image */}
+                <img 
+                  src={item.imageUrl}
+                  alt={item.imageAlt}
+                  className="w-full h-full object-cover"
+                  loading={index === currentIndex ? "eager" : "lazy"}
+                />
                 
-                {/* Content */}
-                <div style={{
-                  padding: isMobile ? '12px' : '16px',
-                  position: 'relative',
-                  zIndex: 1,
-                }}>
-                  <div style={{
-                    fontSize: isActive ? (isMobile ? '16px' : '20px') : (isMobile ? '14px' : '16px'),
-                    fontWeight: '500',
-                    marginBottom: '2px',
-                    transition: 'font-size 0.6s ease',
-                  }}>
-                    {item.title}
+                {/* Overlay and Text */}
+                <div className={`absolute inset-0 ${item.overlayColor} flex flex-col ${getTextPositionClasses(item.textPosition)} px-3 sm:px-4`}>
+                  <div className="text-white">
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold leading-tight mb-0.5 drop-shadow-md">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm leading-tight opacity-90 drop-shadow-md">
+                      {item.subtitle}
+                    </p>
+                    {item.description && (
+                      <p className="text-xs leading-tight mt-1 opacity-80 drop-shadow-md line-clamp-2">
+                        {item.description}
+                      </p>
+                    )}
+                    {item.ctaText && index === currentIndex && (
+                      <button className="mt-2 bg-white text-black px-3 py-1 rounded-full text-xs font-medium hover:bg-opacity-90 transition-all transform hover:scale-105">
+                        {item.ctaText}
+                      </button>
+                    )}
                   </div>
-                  
-                  <div style={{
-                    fontSize: isMobile ? '10px' : '12px',
-                    opacity: 0.6,
-                  }}>
-                    {item.subtitle}
-                  </div>
-                  
-                  {/* Show extra info only when active */}
-                  {isActive && (
-                    <div style={{
-                      marginTop: '8px',
-                      fontSize: '10px',
-                      opacity: 0,
-                      animation: 'fadeIn 0.6s ease 0.3s forwards',
-                    }}>
-                      <span style={{ 
-                        display: 'inline-block',
-                        padding: '2px 6px',
-                        backgroundColor: 'rgba(255,255,255,0.2)',
-                        borderRadius: '4px',
-                        marginRight: '6px'
-                      }}>NEW</span>
-                      <span style={{ opacity: 0.6 }}>2024</span>
-                    </div>
-                  )}
                 </div>
-
-                {/* Center indicator for active item */}
-                {isActive && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '-2px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '40px',
-                    height: '3px',
-                    backgroundColor: 'white',
-                    borderRadius: '3px',
-                    opacity: 0.8,
-                  }} />
-                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
+
+        {/* Navigation Arrows - visible on larger screens */}
+        <button
+          onClick={() => {
+            setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+            setIsAutoPlaying(false);
+            setTimeout(() => setIsAutoPlaying(true), 5000);
+          }}
+          className="hidden lg:flex absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-50 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all hover:scale-110"
+        >
+          <ChevronLeft size={28} />
+        </button>
+        <button
+          onClick={() => {
+            setCurrentIndex((prev) => (prev + 1) % items.length);
+            setIsAutoPlaying(false);
+            setTimeout(() => setIsAutoPlaying(true), 5000);
+          }}
+          className="hidden lg:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-50 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all hover:scale-110"
+        >
+          <ChevronRight size={28} />
+        </button>
       </div>
 
-      {/* Navigation arrows (desktop only) */}
-      {!isMobile && (
-        <>
-          <button
-            onClick={() => handleSwipe('right')}
-            style={{
-              position: 'absolute',
-              left: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '1px solid rgba(255,255,255,0.2)',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              fontSize: '18px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0.8)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0.5)'}
-          >
-            ←
-          </button>
-          <button
-            onClick={() => handleSwipe('left')}
-            style={{
-              position: 'absolute',
-              right: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '1px solid rgba(255,255,255,0.2)',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              fontSize: '18px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0.8)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0.5)'}
-          >
-            →
-          </button>
-        </>
-      )}
-
-      {/* Dot indicators */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '8px',
-        marginTop: '30px',
-      }}>
+      {/* Dot Navigation */}
+      <div className="flex items-center justify-center gap-1.5">
         {items.map((_, index) => (
           <button
             key={index}
-            onClick={() => handleItemClick(index)}
-            style={{
-              width: activeIndex === index ? '24px' : '8px',
-              height: '8px',
-              borderRadius: '4px',
-              border: 'none',
-              backgroundColor: activeIndex === index ? 'white' : 'rgba(255,255,255,0.3)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              padding: 0,
-            }}
+            onClick={() => goToSlide(index)}
+            className={`transition-all duration-300 rounded-full ${
+              index === currentIndex 
+                ? 'w-6 sm:w-8 h-1.5 sm:h-2 bg-gray-800' 
+                : 'w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-400 hover:bg-gray-600'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
-
-      {/* Design notes */}
-      <div style={{
-        maxWidth: '400px',
-        margin: '40px auto 20px',
-        padding: '20px',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        borderRadius: '8px',
-        fontSize: '12px',
-        lineHeight: '1.6',
-      }}>
-        <h3 style={{ marginTop: 0, fontSize: '14px', opacity: 0.9 }}>UI Design Principles Applied:</h3>
-        <ul style={{ marginLeft: '20px', opacity: 0.7, paddingLeft: '0', listStyle: 'none' }}>
-          <li>✓ Always one item centered (focal point)</li>
-          <li>✓ Center item expands to landscape</li>
-          <li>✓ Adjacent items visible (shows scrollability)</li>
-          <li>✓ Progressive scaling creates depth</li>
-          <li>✓ Clear visual hierarchy</li>
-          <li>✓ Smooth transitions maintain context</li>
-        </ul>
-      </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          to { opacity: 1; }
-        }
-        
-        *::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 };
 
-export default CarouselPrototype;
+export default PortraitCarousel;
