@@ -2,32 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Portrait Carousel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a1a">
+    <title>Mobile Betting Offers</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #22c55e;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --card-radius: 20px;
+            --transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --auto-play-duration: 5000ms;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            color: var(--dark);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
         }
 
-        .carousel-container {
+        /* Container */
+        .offers-section {
+            position: relative;
             width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 16px;
+            padding: 16px 0 24px;
+            background: white;
         }
 
-        .carousel-wrapper {
+        .section-header {
+            padding: 0 20px 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Carousel Container */
+        .carousel-viewport {
             position: relative;
-            height: 420px;
-            margin-bottom: 24px;
+            width: 100%;
+            height: 320px;
             overflow: hidden;
         }
 
@@ -37,482 +69,625 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 30px;
         }
 
-        .carousel-item {
+        /* Cards */
+        .offer-card {
             position: absolute;
-            width: clamp(140px, 25vw, 320px);
-            height: clamp(180px, 35vw, 420px);
-            transition: all 0.7s ease-out;
-            cursor: pointer;
+            width: calc(100vw - 80px);
+            max-width: 280px;
+            height: 300px;
+            transition: all var(--transition);
+            cursor: grab;
+            user-select: none;
         }
 
-        .card {
+        .offer-card.grabbing {
+            cursor: grabbing;
+        }
+
+        .card-inner {
+            position: relative;
             width: 100%;
             height: 100%;
-            border-radius: 16px;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            position: relative;
-            background-color: #e5e7eb;
+            background: white;
+            border: 2px solid #e5e7eb;
         }
 
-        .card img {
+        /* Card positions - Only 3 visible */
+        .offer-card[data-position="-2"] {
+            transform: translateX(-130%) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .offer-card[data-position="-1"] {
+            transform: translateX(-90%) scale(0.85);
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        .offer-card[data-position="0"] {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            z-index: 3;
+        }
+        
+        .offer-card[data-position="0"] .card-inner {
+            border-color: #94a3b8;
+        }
+
+        .offer-card[data-position="1"] {
+            transform: translateX(90%) scale(0.85);
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        .offer-card[data-position="2"] {
+            transform: translateX(130%) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Image Section */
+        .card-image-container {
+            position: relative;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+        }
+
+        .card-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.3s ease;
         }
 
-        .card:hover img {
-            transform: scale(1.05);
-        }
-
-        .card-overlay {
+        .card-badge {
             position: absolute;
-            inset: 0;
+            top: 12px;
+            left: 12px;
+            background: var(--danger);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Content Section */
+        .card-content {
+            padding: 16px;
+            height: 50%;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: 24px 16px;
-            color: white;
         }
-
-        /* Gradient overlays for each card */
-        .overlay-1 { background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
-        .overlay-2 { background: linear-gradient(to top, rgba(20,83,45,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
-        .overlay-3 { background: linear-gradient(to top, rgba(88,28,135,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
-        .overlay-4 { background: linear-gradient(to top, rgba(131,24,67,0.7) 0%, rgba(88,28,135,0.5) 50%, transparent 100%); }
-        .overlay-5 { background: linear-gradient(to top, rgba(127,29,29,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
 
         .card-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
             line-height: 1.2;
-            margin-bottom: 4px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        .card-subtitle {
-            font-size: 12px;
-            line-height: 1.2;
-            opacity: 0.9;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .card-offer {
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 12px;
+            flex-grow: 1;
+            line-height: 1.4;
         }
 
-        .card-description {
-            font-size: 12px;
-            line-height: 1.2;
-            margin-top: 4px;
-            opacity: 0.8;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .card-offer strong {
+            color: var(--primary);
+            font-weight: 600;
         }
 
+        /* CTA Button - Always visible */
         .card-cta {
-            margin-top: 8px;
-            background: white;
-            color: black;
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 500;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
             border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
-            display: inline-block;
-            transition: all 0.2s ease;
-            opacity: 0;
-            transform: translateY(10px);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
-        .carousel-item.active .card-cta {
-            opacity: 1;
-            transform: translateY(0);
+        .offer-card[data-position="0"] .card-cta {
+            animation: pulse 3s infinite;
         }
 
-        .card-cta:hover {
-            background-color: rgba(255,255,255,0.9);
-            transform: scale(1.05);
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.01); }
         }
 
-        /* Navigation dots */
+        .card-cta:active {
+            transform: scale(0.98);
+        }
+
+        /* Dot Navigation */
         .dots-container {
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             gap: 6px;
+            margin-top: 16px;
+            padding: 0 20px;
         }
 
         .dot {
             width: 6px;
             height: 6px;
-            border-radius: 9999px;
-            background-color: #9ca3af;
+            border-radius: 50%;
+            background: #cbd5e1;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition);
+            padding: 0;
         }
 
         .dot.active {
             width: 24px;
-            height: 8px;
-            background-color: #1f2937;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--dark);
         }
 
         .dot:hover:not(.active) {
-            background-color: #6b7280;
+            background: #94a3b8;
         }
 
-        /* Navigation arrows for desktop */
-        .nav-arrow {
+        /* Touch feedback */
+        .touch-indicator {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 50;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(8px);
-            color: white;
-            padding: 12px;
-            border-radius: 9999px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: none;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 11px;
+            animation: swipeHint 4s ease-in-out infinite;
+            transition: opacity 0.5s ease;
         }
 
-        .nav-arrow:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .nav-arrow.prev {
-            left: 16px;
-        }
-
-        .nav-arrow.next {
-            right: 16px;
+        @keyframes swipeHint {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) translateX(0); }
+            50% { opacity: 0.8; transform: translateX(-50%) translateX(-8px); }
         }
 
         /* Responsive adjustments */
-        @media (min-width: 640px) {
-            .carousel-container {
-                padding: 32px 24px;
+        @media (min-width: 768px) {
+            .offers-section {
+                padding: 24px 0 32px;
             }
-            
-            .card-title {
-                font-size: 16px;
+
+            .section-header {
+                text-align: center;
+                padding: 0 40px 24px;
             }
-            
-            .card-subtitle, .card-description {
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .section-subtitle {
                 font-size: 14px;
             }
-            
+
+            .carousel-viewport {
+                height: 360px;
+            }
+
+            .offer-card {
+                max-width: 320px;
+                height: 340px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+
+            .card-title {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+
+            .card-offer {
+                font-size: 15px;
+                margin-bottom: 16px;
+            }
+
+            .card-cta {
+                font-size: 15px;
+                padding: 14px;
+            }
+
             .dot {
                 width: 8px;
                 height: 8px;
             }
-            
+
             .dot.active {
                 width: 32px;
+                height: 8px;
+                border-radius: 4px;
             }
-        }
 
-        @media (min-width: 768px) {
-            .carousel-wrapper {
-                height: 480px;
+            /* Adjust card positions for larger screens */
+            .offer-card[data-position="-1"] {
+                transform: translateX(-100%) scale(0.85);
             }
-            
-            .card-title {
-                font-size: 18px;
-            }
-            
-            .card-overlay {
-                padding: 32px 24px;
+
+            .offer-card[data-position="1"] {
+                transform: translateX(100%) scale(0.85);
             }
         }
 
         @media (min-width: 1024px) {
-            .nav-arrow {
-                display: flex;
+            .offer-card {
+                max-width: 340px;
+                height: 360px;
             }
-            
-            .carousel-container {
-                padding: 32px;
+
+            .carousel-viewport {
+                height: 380px;
             }
+
+            .offer-card[data-position="-1"] {
+                transform: translateX(-110%) scale(0.9);
+                opacity: 0.7;
+            }
+
+            .offer-card[data-position="1"] {
+                transform: translateX(110%) scale(0.9);
+                opacity: 0.7;
+            }
+        }
+
+        /* Loading state */
+        .card-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
 <body>
-    <div class="carousel-container">
-        <div class="carousel-wrapper">
-            <div class="carousel-track" id="carouselTrack">
-                <!-- Carousel items will be injected here -->
-            </div>
-            
-            <button class="nav-arrow prev" onclick="prevSlide()">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </button>
-            
-            <button class="nav-arrow next" onclick="nextSlide()">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
+    <section class="offers-section">
+        <div class="section-header">
+            <h2 class="section-title">Special Offers</h2>
+            <p class="section-subtitle">Limited time only</p>
         </div>
-        
+
+        <div class="carousel-viewport" id="carouselViewport">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Cards will be injected here -->
+            </div>
+            <div class="touch-indicator" id="touchIndicator">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                <span>Swipe for more</span>
+            </div>
+        </div>
+
         <div class="dots-container" id="dotsContainer">
             <!-- Dots will be injected here -->
         </div>
-    </div>
+    </section>
 
     <script>
-        // Carousel data
-        const carouselData = [
+        // Carousel data with sport/casino categorization
+        const offers = [
             {
                 id: 1,
-                imageUrl: "https://via.placeholder.com/440x560/1e40af/ffffff?text=Club+World+Cup",
-                imageAlt: "Club World Cup football match action",
-                title: "Get Ready for the Club World Cup!",
-                subtitle: "Bet €10 on any match and get a €5 Free Bet",
-                description: "for the final!",
-                ctaText: "Bet Now & Claim Your Free Bet",
-                link: "/sports/club-world-cup",
-                overlayClass: "overlay-1"
+                category: 'sport',
+                badge: 'LIMITED TIME',
+                imageUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&h=400&fit=crop',
+                title: 'Club World Cup Special',
+                offer: 'Bet <strong>€10</strong> on any match and get a <strong>€5 Free Bet</strong> for the final!',
+                ctaText: 'Claim Free Bet',
+                link: '/sports/club-world-cup'
             },
             {
                 id: 2,
-                imageUrl: "https://via.placeholder.com/440x560/14532d/ffffff?text=Wimbledon+2025",
-                imageAlt: "Wimbledon tennis championship court",
-                title: "Wimbledon 2025 - Place Your Bets",
-                subtitle: "Bet €20 on Wimbledon and get 10 Free Spins",
-                description: "on Wimbledon-themed slots!",
-                ctaText: "Bet on Wimbledon & Spin for Free!",
-                link: "/sports/wimbledon",
-                overlayClass: "overlay-2"
+                category: 'sport',
+                badge: 'EXCLUSIVE',
+                imageUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&h=400&fit=crop',
+                title: 'Wimbledon 2025',
+                offer: 'Bet <strong>€20</strong> on any match and get <strong>10 Free Spins</strong> on tennis slots!',
+                ctaText: 'Bet & Spin',
+                link: '/sports/wimbledon'
             },
             {
                 id: 3,
-                imageUrl: "https://via.placeholder.com/440x560/581c87/ffffff?text=Premier+League",
-                imageAlt: "Premier League football match",
-                title: "Bet on Premier League Matches!",
-                subtitle: "Place a €15 bet on any Premier League game",
-                description: "and get a €10 casino bonus to use on slots.",
-                ctaText: "Bet on Premier League Now",
-                link: "/sports/premier-league",
-                overlayClass: "overlay-3"
+                category: 'sport',
+                badge: 'POPULAR',
+                imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&h=400&fit=crop',
+                title: 'Premier League Bonus',
+                offer: 'Place a <strong>€15</strong> bet and get a <strong>€10 casino bonus</strong> instantly!',
+                ctaText: 'Get Bonus',
+                link: '/sports/premier-league'
             },
             {
                 id: 4,
-                imageUrl: "https://via.placeholder.com/440x560/831843/ffffff?text=Exclusive+Slots",
-                imageAlt: "Starburst slot game graphics",
-                title: "Exclusive Slots Offer Just for You!",
-                subtitle: "Deposit €50 and get 100 Free Spins on our",
-                description: "latest slot game - Starburst!",
-                ctaText: "Claim Your 100 Free Spins",
-                link: "/casino/slots/starburst",
-                overlayClass: "overlay-4"
+                category: 'casino',
+                badge: 'HOT OFFER',
+                imageUrl: 'https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&h=400&fit=crop',
+                title: 'Mega Slots Bonus',
+                offer: 'Deposit <strong>€50</strong> and get <strong>100 Free Spins</strong> on Starburst!',
+                ctaText: 'Claim 100 Spins',
+                link: '/casino/slots'
             },
             {
                 id: 5,
-                imageUrl: "https://via.placeholder.com/440x560/7f1d1d/ffffff?text=Live+Casino",
-                imageAlt: "Live casino dealer at blackjack table",
-                title: "Live Casino - Real Dealers, Real Wins",
-                subtitle: "Make your first deposit of €30 and receive",
-                description: "a €50 Live Casino bonus.",
-                ctaText: "Play Live Casino Now",
-                link: "/casino/live",
-                overlayClass: "overlay-5"
+                category: 'casino',
+                badge: 'VIP ONLY',
+                imageUrl: 'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=800&h=400&fit=crop',
+                title: 'Live Casino Welcome',
+                offer: 'First deposit of <strong>€30</strong> gets you a <strong>€50 bonus</strong>!',
+                ctaText: 'Play Live Now',
+                link: '/casino/live'
             }
         ];
 
-        // State
-        let currentIndex = 2;
+        // State management
+        let currentIndex = 2; // Start from middle position
         let isAutoPlaying = true;
-        let autoPlayInterval;
-        let touchStartX = null;
-        let touchEndX = null;
+        let autoPlayTimer;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let isDragging = false;
+        let isTransitioning = false;
 
-        // Initialize carousel
+        // Initialize
         function init() {
-            renderCarousel();
+            renderCards();
             renderDots();
-            updateStyles();
-            startAutoPlay();
-            addTouchListeners();
+            updatePositions();
+            
+            // Start auto-play after a brief delay to let users orient
+            setTimeout(() => {
+                startAutoPlay();
+            }, 2000);
+            
+            addEventListeners();
+            
+            // Hide touch indicator after some interaction time
+            setTimeout(() => {
+                document.getElementById('touchIndicator').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('touchIndicator').style.display = 'none';
+                }, 500);
+            }, 8000);
         }
 
-        // Render carousel items
-        function renderCarousel() {
+        // Render cards
+        function renderCards() {
             const track = document.getElementById('carouselTrack');
-            track.innerHTML = carouselData.map((item, index) => `
-                <div class="carousel-item" data-index="${index}" onclick="handleCardClick(${index}, '${item.link}')">
-                    <div class="card">
-                        <img src="${item.imageUrl}" alt="${item.imageAlt}" loading="${index === currentIndex ? 'eager' : 'lazy'}">
-                        <div class="card-overlay ${item.overlayClass}">
-                            <h3 class="card-title">${item.title}</h3>
-                            <p class="card-subtitle">${item.subtitle}</p>
-                            ${item.description ? `<p class="card-description">${item.description}</p>` : ''}
-                            ${item.ctaText ? `<button class="card-cta">${item.ctaText}</button>` : ''}
+            track.innerHTML = offers.map((offer, index) => `
+                <div class="offer-card" data-index="${index}" data-position="0">
+                    <div class="card-inner">
+                        <div class="card-image-container">
+                            <img class="card-image" 
+                                 src="${offer.imageUrl}" 
+                                 alt="${offer.title}"
+                                 loading="${index === 2 ? 'eager' : 'lazy'}">
+                            <span class="card-badge">${offer.badge}</span>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">${offer.title}</h3>
+                            <p class="card-offer">${offer.offer}</p>
+                            <button class="card-cta" onclick="handleCTA('${offer.link}')">
+                                ${offer.ctaText}
+                            </button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Render navigation dots
+        // Render dots
         function renderDots() {
-            const dotsContainer = document.getElementById('dotsContainer');
-            dotsContainer.innerHTML = carouselData.map((_, index) => `
-                <button class="dot ${index === currentIndex ? 'active' : ''}" 
+            const container = document.getElementById('dotsContainer');
+            container.innerHTML = offers.map((_, index) => `
+                <button class="dot ${index === 2 ? 'active' : ''}" 
+                        data-index="${index}"
                         onclick="goToSlide(${index})"
                         aria-label="Go to slide ${index + 1}"></button>
             `).join('');
         }
 
-        // Update carousel item positions and styles
-        function updateStyles() {
-            const items = document.querySelectorAll('.carousel-item');
+        // Update card positions
+        function updatePositions() {
+            const cards = document.querySelectorAll('.offer-card');
             const dots = document.querySelectorAll('.dot');
             
-            items.forEach((item, index) => {
-                const diff = index - currentIndex;
-                const normalizedDiff = diff > 2 ? diff - carouselData.length : diff < -2 ? diff + carouselData.length : diff;
-                const absNormalizedDiff = Math.abs(normalizedDiff);
-                
-                let scale, opacity, zIndex, blur;
-                const isMobile = window.innerWidth < 640;
-                const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-                
-                if (absNormalizedDiff === 0) {
-                    scale = 1;
-                    opacity = 1;
-                    zIndex = 50;
-                    blur = 0;
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                    if (absNormalizedDiff === 1) {
-                        scale = isMobile ? 0.75 : isTablet ? 0.8 : 0.85;
-                        opacity = isMobile ? 0.6 : 0.75;
-                        zIndex = 40;
-                        blur = 0;
-                    } else if (absNormalizedDiff === 2) {
-                        scale = isMobile ? 0.6 : isTablet ? 0.65 : 0.7;
-                        opacity = isMobile ? 0.3 : 0.5;
-                        zIndex = 30;
-                        blur = isMobile ? 2 : 1;
-                    } else {
-                        scale = 0.5;
-                        opacity = 0;
-                        zIndex = 20;
-                        blur = 3;
-                    }
-                }
-                
-                let spacing = isMobile ? normalizedDiff * 25 : isTablet ? normalizedDiff * 18 : normalizedDiff * 12;
-                
-                item.style.transform = `translateX(${spacing}vw) scale(${scale})`;
-                item.style.opacity = opacity;
-                item.style.zIndex = zIndex;
-                item.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+            cards.forEach((card, index) => {
+                const position = index - currentIndex;
+                card.setAttribute('data-position', position);
             });
             
             // Update dots
             dots.forEach((dot, index) => {
-                if (index === currentIndex) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
+                dot.classList.toggle('active', index === currentIndex);
             });
         }
 
-        // Navigation functions
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % carouselData.length;
-            updateStyles();
-            pauseAutoPlay();
-        }
-
-        function prevSlide() {
-            currentIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
-            updateStyles();
-            pauseAutoPlay();
-        }
-
+        // Go to specific slide
         function goToSlide(index) {
+            // Prevent rapid navigation
+            if (isTransitioning || index === currentIndex) return;
+            
+            isTransitioning = true;
             currentIndex = index;
-            updateStyles();
-            pauseAutoPlay();
+            updatePositions();
+            resetAutoPlay();
+            
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 500);
         }
 
-        function handleCardClick(index, link) {
-            if (index === currentIndex && link) {
-                window.location.href = link;
+        // Navigation
+        function navigate(direction) {
+            // Prevent rapid navigation
+            if (isTransitioning) return;
+            
+            isTransitioning = true;
+            
+            if (direction === 'next') {
+                currentIndex = (currentIndex + 1) % offers.length;
             } else {
-                goToSlide(index);
+                currentIndex = (currentIndex - 1 + offers.length) % offers.length;
             }
+            updatePositions();
+            resetAutoPlay();
+            
+            // Allow next transition after animation completes
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 500);
         }
 
-        // Auto-play functions
+        // Auto-play
         function startAutoPlay() {
             if (isAutoPlaying) {
-                autoPlayInterval = setInterval(nextSlide, 3000);
+                autoPlayTimer = setInterval(() => navigate('next'), 5000);
             }
         }
 
-        function pauseAutoPlay() {
+        function resetAutoPlay() {
+            clearInterval(autoPlayTimer);
             isAutoPlaying = false;
-            clearInterval(autoPlayInterval);
+            // Longer pause after user interaction
             setTimeout(() => {
                 isAutoPlaying = true;
                 startAutoPlay();
-            }, 5000);
+            }, 8000);
         }
 
         // Touch handlers
-        function addTouchListeners() {
-            const wrapper = document.querySelector('.carousel-wrapper');
+        function addEventListeners() {
+            const viewport = document.getElementById('carouselViewport');
             
-            wrapper.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-                isAutoPlaying = false;
-                clearInterval(autoPlayInterval);
-            });
+            // Touch events
+            viewport.addEventListener('touchstart', handleTouchStart, { passive: true });
+            viewport.addEventListener('touchmove', handleTouchMove, { passive: true });
+            viewport.addEventListener('touchend', handleTouchEnd);
             
-            wrapper.addEventListener('touchmove', (e) => {
-                touchEndX = e.touches[0].clientX;
-            });
-            
-            wrapper.addEventListener('touchend', () => {
-                if (!touchStartX || !touchEndX) return;
-                
-                const diff = touchStartX - touchEndX;
-                const threshold = 50;
-                
-                if (Math.abs(diff) > threshold) {
-                    if (diff > 0) {
-                        nextSlide();
-                    } else {
-                        prevSlide();
-                    }
-                }
-                
-                touchStartX = null;
-                touchEndX = null;
-                
-                setTimeout(() => {
-                    isAutoPlaying = true;
-                    startAutoPlay();
-                }, 5000);
+            // Mouse events for desktop testing
+            viewport.addEventListener('mousedown', handleMouseDown);
+            viewport.addEventListener('mousemove', handleMouseMove);
+            viewport.addEventListener('mouseup', handleMouseUp);
+            viewport.addEventListener('mouseleave', handleMouseUp);
+        }
+
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            isDragging = true;
+            document.querySelectorAll('.offer-card').forEach(card => {
+                card.classList.add('grabbing');
             });
         }
 
-        // Handle window resize
-        window.addEventListener('resize', updateStyles);
+        function handleTouchMove(e) {
+            if (!isDragging) return;
+            touchEndX = e.touches[0].clientX;
+        }
 
-        // Initialize on load
+        function handleTouchEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            document.querySelectorAll('.offer-card').forEach(card => {
+                card.classList.remove('grabbing');
+            });
+            
+            const diff = touchStartX - touchEndX;
+            const threshold = 50;
+            
+            if (Math.abs(diff) > threshold) {
+                navigate(diff > 0 ? 'next' : 'prev');
+            }
+            
+            // Hide touch indicator after first swipe with smooth transition
+            const indicator = document.getElementById('touchIndicator');
+            if (indicator.style.display !== 'none') {
+                indicator.style.opacity = '0';
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        // Mouse events (for desktop testing)
+        function handleMouseDown(e) {
+            touchStartX = e.clientX;
+            isDragging = true;
+            e.preventDefault();
+        }
+
+        function handleMouseMove(e) {
+            if (!isDragging) return;
+            touchEndX = e.clientX;
+        }
+
+        function handleMouseUp() {
+            if (!isDragging) return;
+            handleTouchEnd();
+        }
+
+        // CTA handler
+        function handleCTA(link) {
+            // Track engagement
+            console.log('CTA clicked:', link);
+            window.location.href = link;
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') navigate('prev');
+            if (e.key === 'ArrowRight') navigate('next');
+        });
+
+        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', init);
+
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(autoPlayTimer);
+                isAutoPlaying = false;
+            } else {
+                // Resume after a delay when page becomes visible
+                setTimeout(() => {
+                    isAutoPlaying = true;
+                    startAutoPlay();
+                }, 2000);
+            }
+        });
     </script>
 </body>
 </html>
