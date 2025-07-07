@@ -1,328 +1,518 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Portrait Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-const PortraitCarousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(2); // Start with middle item
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const touchStartX = useRef(null);
-  const touchEndX = useRef(null);
-  
-  /* 
-   * MARKETING TEAM CONTENT GUIDE
-   * ============================
-   * 
-   * ACCESSIBILITY NOTE: Text sizes are optimized to be as small as possible
-   * while maintaining WCAG AA compliance (min 12px on mobile)
-   * 
-   * For each carousel item, provide:
-   * 
-   * 1. IMAGE SPECIFICATIONS:
-   *    - Format: JPG or WebP (WebP preferred for better performance)
-   *    - Dimensions: 440x560px (portrait, 11:14 ratio)
-   *    - File size: Under 200KB per image
-   *    - Resolution: 2x for retina displays
-   * 
-   * 2. TEXT CONTENT:
-   *    - title: Main headline (max 30 characters)
-   *    - subtitle: Supporting text (max 50 characters)
-   *    - description: Additional detail text (max 60 characters, optional)
-   *    - ctaText: Call-to-action button text (optional)
-   *    - link: Where the card should navigate to (optional)
-   * 
-   * 3. STYLING:
-   *    - overlayColor: Dark overlay for text readability (e.g., "bg-black/40")
-   *    - textPosition: Where to place text ("top", "center", "bottom")
-   */
-  
-  const items = [
-    {
-      id: 1,
-      // Replace with actual image URL when available
-      imageUrl: "/api/placeholder/440/560",
-      imageAlt: "Club World Cup football match action",
-      title: "Get Ready for the Club World Cup!",
-      subtitle: "Bet €10 on any match and get a €5 Free Bet",
-      description: "for the final!",
-      ctaText: "Bet Now & Claim Your Free Bet",
-      link: "/sports/club-world-cup",
-      overlayColor: "bg-gradient-to-t from-black/70 via-black/50 to-transparent",
-      textPosition: "bottom"
-    },
-    {
-      id: 2,
-      imageUrl: "/api/placeholder/440/560",
-      imageAlt: "Wimbledon tennis championship court",
-      title: "Wimbledon 2025 - Place Your Bets",
-      subtitle: "Bet €20 on Wimbledon and get 10 Free Spins",
-      description: "on Wimbledon-themed slots!",
-      ctaText: "Bet on Wimbledon & Spin for Free!",
-      link: "/sports/wimbledon",
-      overlayColor: "bg-gradient-to-t from-green-900/70 via-black/50 to-transparent",
-      textPosition: "bottom"
-    },
-    {
-      id: 3,
-      imageUrl: "/api/placeholder/440/560",
-      imageAlt: "Premier League football match",
-      title: "Bet on Premier League Matches!",
-      subtitle: "Place a €15 bet on any Premier League game",
-      description: "and get a €10 casino bonus to use on slots.",
-      ctaText: "Bet on Premier League Now",
-      link: "/sports/premier-league",
-      overlayColor: "bg-gradient-to-t from-purple-900/70 via-black/50 to-transparent",
-      textPosition: "bottom"
-    },
-    {
-      id: 4,
-      imageUrl: "/api/placeholder/440/560",
-      imageAlt: "Starburst slot game graphics",
-      title: "Exclusive Slots Offer Just for You!",
-      subtitle: "Deposit €50 and get 100 Free Spins on our",
-      description: "latest slot game - Starburst!",
-      ctaText: "Claim Your 100 Free Spins",
-      link: "/casino/slots/starburst",
-      overlayColor: "bg-gradient-to-t from-pink-900/70 via-purple-900/50 to-transparent",
-      textPosition: "bottom"
-    },
-    {
-      id: 5,
-      imageUrl: "/api/placeholder/440/560",
-      imageAlt: "Live casino dealer at blackjack table",
-      title: "Live Casino - Real Dealers, Real Wins",
-      subtitle: "Make your first deposit of €30 and receive",
-      description: "a €50 Live Casino bonus.",
-      ctaText: "Play Live Casino Now",
-      link: "/casino/live",
-      overlayColor: "bg-gradient-to-t from-red-900/70 via-black/50 to-transparent",
-      textPosition: "bottom"
-    }
-  ];
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f3f4f6;
+            overflow-x: hidden;
+        }
 
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % items.length);
-    }, 3000);
+        .carousel-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
 
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, items.length]);
+        .carousel-wrapper {
+            position: relative;
+            height: 420px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
 
-  // Handle swipe gestures
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    setIsAutoPlaying(false);
-  };
+        .carousel-track {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
+        .carousel-item {
+            position: absolute;
+            width: clamp(140px, 25vw, 320px);
+            height: clamp(180px, 35vw, 420px);
+            transition: all 0.7s ease-out;
+            cursor: pointer;
+        }
 
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    
-    const diff = touchStartX.current - touchEndX.current;
-    const threshold = 50;
+        .card {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background-color: #e5e7eb;
+        }
 
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0) {
-        // Swiped left
-        setCurrentIndex((prev) => (prev + 1) % items.length);
-      } else {
-        // Swiped right
-        setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
-      }
-    }
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
 
-    // Reset touch positions
-    touchStartX.current = null;
-    touchEndX.current = null;
-    
-    // Resume auto-play after interaction
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
+        .card:hover img {
+            transform: scale(1.05);
+        }
 
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 5000);
-  };
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 24px 16px;
+            color: white;
+        }
 
-  const handleCardClick = (index, link) => {
-    if (index === currentIndex && link) {
-      // Navigate to link (replace with your navigation method)
-      window.location.href = link;
-    } else {
-      goToSlide(index);
-    }
-  };
+        /* Gradient overlays for each card */
+        .overlay-1 { background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
+        .overlay-2 { background: linear-gradient(to top, rgba(20,83,45,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
+        .overlay-3 { background: linear-gradient(to top, rgba(88,28,135,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
+        .overlay-4 { background: linear-gradient(to top, rgba(131,24,67,0.7) 0%, rgba(88,28,135,0.5) 50%, transparent 100%); }
+        .overlay-5 { background: linear-gradient(to top, rgba(127,29,29,0.7) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); }
 
-  const getItemStyle = (index) => {
-    const diff = index - currentIndex;
-    const normalizedDiff = diff > 2 ? diff - items.length : diff < -2 ? diff + items.length : diff;
-    
-    // Calculate position, scale, and opacity based on distance from center
-    const absNormalizedDiff = Math.abs(normalizedDiff);
-    let scale, opacity, zIndex, blur;
-    
-    // Different scaling for different screen sizes
-    const isMobile = window.innerWidth < 640;
-    const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-    
-    if (absNormalizedDiff === 0) {
-      // Center item
-      scale = 1;
-      opacity = 1;
-      zIndex = 50;
-      blur = 0;
-    } else if (absNormalizedDiff === 1) {
-      // Adjacent items
-      scale = isMobile ? 0.75 : isTablet ? 0.8 : 0.85;
-      opacity = isMobile ? 0.6 : 0.75;
-      zIndex = 40;
-      blur = 0;
-    } else if (absNormalizedDiff === 2) {
-      // Outer items
-      scale = isMobile ? 0.6 : isTablet ? 0.65 : 0.7;
-      opacity = isMobile ? 0.3 : 0.5;
-      zIndex = 30;
-      blur = isMobile ? 2 : 1;
-    } else {
-      // Hidden items
-      scale = 0.5;
-      opacity = 0;
-      zIndex = 20;
-      blur = 3;
-    }
-    
-    // Dynamic spacing based on screen size
-    let spacing;
-    if (isMobile) {
-      spacing = normalizedDiff * 25; // vw units for mobile
-    } else if (isTablet) {
-      spacing = normalizedDiff * 20; // vw units for tablet
-    } else {
-      spacing = normalizedDiff * 15; // vw units for desktop
-    }
-    
-    return {
-      transform: `translateX(${spacing}vw) scale(${scale})`,
-      opacity,
-      zIndex,
-      filter: blur > 0 ? `blur(${blur}px)` : 'none',
-    };
-  };
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
 
-  const getTextPositionClasses = (position) => {
-    switch (position) {
-      case 'top':
-        return 'justify-start pt-4 sm:pt-6';
-      case 'center':
-        return 'justify-center';
-      case 'bottom':
-      default:
-        return 'justify-end pb-4 sm:pb-6';
-    }
-  };
+        .card-subtitle {
+            font-size: 12px;
+            line-height: 1.2;
+            opacity: 0.9;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
 
-  return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
-      {/* Carousel Container */}
-      <div 
-        className="relative h-56 sm:h-64 md:h-72 lg:h-80 mb-4 overflow-hidden"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <div className="relative h-full flex items-center justify-center">
-          {items.map((item, index) => (
-            <div
-              key={item.id}
-              className="absolute transition-all duration-700 ease-out cursor-pointer"
-              style={{
-                ...getItemStyle(index),
-                width: 'clamp(140px, 40vw, 220px)',
-                height: 'clamp(180px, 50vw, 280px)',
-              }}
-              onClick={() => handleCardClick(index, item.link)}
-            >
-              {/* Portrait Card */}
-              <div className="w-full h-full rounded-xl sm:rounded-2xl overflow-hidden relative bg-gray-100">
-                {/* Image */}
-                <img 
-                  src={item.imageUrl}
-                  alt={item.imageAlt}
-                  className="w-full h-full object-cover"
-                  loading={index === currentIndex ? "eager" : "lazy"}
-                />
-                
-                {/* Overlay and Text */}
-                <div className={`absolute inset-0 ${item.overlayColor} flex flex-col ${getTextPositionClasses(item.textPosition)} px-3 sm:px-4`}>
-                  <div className="text-white">
-                    <h3 className="text-sm sm:text-base md:text-lg font-bold leading-tight mb-0.5 drop-shadow-md">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm leading-tight opacity-90 drop-shadow-md">
-                      {item.subtitle}
-                    </p>
-                    {item.description && (
-                      <p className="text-xs leading-tight mt-1 opacity-80 drop-shadow-md line-clamp-2">
-                        {item.description}
-                      </p>
-                    )}
-                    {item.ctaText && index === currentIndex && (
-                      <button className="mt-2 bg-white text-black px-3 py-1 rounded-full text-xs font-medium hover:bg-opacity-90 transition-all transform hover:scale-105">
-                        {item.ctaText}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+        .card-description {
+            font-size: 12px;
+            line-height: 1.2;
+            margin-top: 4px;
+            opacity: 0.8;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .card-cta {
+            margin-top: 8px;
+            background: white;
+            color: black;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .carousel-item.active .card-cta {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-cta:hover {
+            background-color: rgba(255,255,255,0.9);
+            transform: scale(1.05);
+        }
+
+        /* Navigation dots */
+        .dots-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 9999px;
+            background-color: #9ca3af;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            width: 24px;
+            height: 8px;
+            background-color: #1f2937;
+        }
+
+        .dot:hover:not(.active) {
+            background-color: #6b7280;
+        }
+
+        /* Navigation arrows for desktop */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 12px;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: none;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.prev {
+            left: 16px;
+        }
+
+        .nav-arrow.next {
+            right: 16px;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 640px) {
+            .carousel-container {
+                padding: 32px 24px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .card-subtitle, .card-description {
+                font-size: 14px;
+            }
+            
+            .dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .dot.active {
+                width: 32px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .carousel-wrapper {
+                height: 480px;
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+            
+            .card-overlay {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .nav-arrow {
+                display: flex;
+            }
+            
+            .carousel-container {
+                padding: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Carousel items will be injected here -->
             </div>
-          ))}
+            
+            <button class="nav-arrow prev" onclick="prevSlide()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            
+            <button class="nav-arrow next" onclick="nextSlide()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
         </div>
-
-        {/* Navigation Arrows - visible on larger screens */}
-        <button
-          onClick={() => {
-            setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
-            setIsAutoPlaying(false);
-            setTimeout(() => setIsAutoPlaying(true), 5000);
-          }}
-          className="hidden lg:flex absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-50 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all hover:scale-110"
-        >
-          <ChevronLeft size={28} />
-        </button>
-        <button
-          onClick={() => {
-            setCurrentIndex((prev) => (prev + 1) % items.length);
-            setIsAutoPlaying(false);
-            setTimeout(() => setIsAutoPlaying(true), 5000);
-          }}
-          className="hidden lg:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-50 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all hover:scale-110"
-        >
-          <ChevronRight size={28} />
-        </button>
-      </div>
-
-      {/* Dot Navigation */}
-      <div className="flex items-center justify-center gap-1.5">
-        {items.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`transition-all duration-300 rounded-full ${
-              index === currentIndex 
-                ? 'w-6 sm:w-8 h-1.5 sm:h-2 bg-gray-800' 
-                : 'w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-400 hover:bg-gray-600'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+        
+        <div class="dots-container" id="dotsContainer">
+            <!-- Dots will be injected here -->
+        </div>
     </div>
-  );
-};
 
-export default PortraitCarousel;
+    <script>
+        // Carousel data
+        const carouselData = [
+            {
+                id: 1,
+                imageUrl: "https://via.placeholder.com/440x560/1e40af/ffffff?text=Club+World+Cup",
+                imageAlt: "Club World Cup football match action",
+                title: "Get Ready for the Club World Cup!",
+                subtitle: "Bet €10 on any match and get a €5 Free Bet",
+                description: "for the final!",
+                ctaText: "Bet Now & Claim Your Free Bet",
+                link: "/sports/club-world-cup",
+                overlayClass: "overlay-1"
+            },
+            {
+                id: 2,
+                imageUrl: "https://via.placeholder.com/440x560/14532d/ffffff?text=Wimbledon+2025",
+                imageAlt: "Wimbledon tennis championship court",
+                title: "Wimbledon 2025 - Place Your Bets",
+                subtitle: "Bet €20 on Wimbledon and get 10 Free Spins",
+                description: "on Wimbledon-themed slots!",
+                ctaText: "Bet on Wimbledon & Spin for Free!",
+                link: "/sports/wimbledon",
+                overlayClass: "overlay-2"
+            },
+            {
+                id: 3,
+                imageUrl: "https://via.placeholder.com/440x560/581c87/ffffff?text=Premier+League",
+                imageAlt: "Premier League football match",
+                title: "Bet on Premier League Matches!",
+                subtitle: "Place a €15 bet on any Premier League game",
+                description: "and get a €10 casino bonus to use on slots.",
+                ctaText: "Bet on Premier League Now",
+                link: "/sports/premier-league",
+                overlayClass: "overlay-3"
+            },
+            {
+                id: 4,
+                imageUrl: "https://via.placeholder.com/440x560/831843/ffffff?text=Exclusive+Slots",
+                imageAlt: "Starburst slot game graphics",
+                title: "Exclusive Slots Offer Just for You!",
+                subtitle: "Deposit €50 and get 100 Free Spins on our",
+                description: "latest slot game - Starburst!",
+                ctaText: "Claim Your 100 Free Spins",
+                link: "/casino/slots/starburst",
+                overlayClass: "overlay-4"
+            },
+            {
+                id: 5,
+                imageUrl: "https://via.placeholder.com/440x560/7f1d1d/ffffff?text=Live+Casino",
+                imageAlt: "Live casino dealer at blackjack table",
+                title: "Live Casino - Real Dealers, Real Wins",
+                subtitle: "Make your first deposit of €30 and receive",
+                description: "a €50 Live Casino bonus.",
+                ctaText: "Play Live Casino Now",
+                link: "/casino/live",
+                overlayClass: "overlay-5"
+            }
+        ];
+
+        // State
+        let currentIndex = 2;
+        let isAutoPlaying = true;
+        let autoPlayInterval;
+        let touchStartX = null;
+        let touchEndX = null;
+
+        // Initialize carousel
+        function init() {
+            renderCarousel();
+            renderDots();
+            updateStyles();
+            startAutoPlay();
+            addTouchListeners();
+        }
+
+        // Render carousel items
+        function renderCarousel() {
+            const track = document.getElementById('carouselTrack');
+            track.innerHTML = carouselData.map((item, index) => `
+                <div class="carousel-item" data-index="${index}" onclick="handleCardClick(${index}, '${item.link}')">
+                    <div class="card">
+                        <img src="${item.imageUrl}" alt="${item.imageAlt}" loading="${index === currentIndex ? 'eager' : 'lazy'}">
+                        <div class="card-overlay ${item.overlayClass}">
+                            <h3 class="card-title">${item.title}</h3>
+                            <p class="card-subtitle">${item.subtitle}</p>
+                            ${item.description ? `<p class="card-description">${item.description}</p>` : ''}
+                            ${item.ctaText ? `<button class="card-cta">${item.ctaText}</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render navigation dots
+        function renderDots() {
+            const dotsContainer = document.getElementById('dotsContainer');
+            dotsContainer.innerHTML = carouselData.map((_, index) => `
+                <button class="dot ${index === currentIndex ? 'active' : ''}" 
+                        onclick="goToSlide(${index})"
+                        aria-label="Go to slide ${index + 1}"></button>
+            `).join('');
+        }
+
+        // Update carousel item positions and styles
+        function updateStyles() {
+            const items = document.querySelectorAll('.carousel-item');
+            const dots = document.querySelectorAll('.dot');
+            
+            items.forEach((item, index) => {
+                const diff = index - currentIndex;
+                const normalizedDiff = diff > 2 ? diff - carouselData.length : diff < -2 ? diff + carouselData.length : diff;
+                const absNormalizedDiff = Math.abs(normalizedDiff);
+                
+                let scale, opacity, zIndex, blur;
+                const isMobile = window.innerWidth < 640;
+                const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+                
+                if (absNormalizedDiff === 0) {
+                    scale = 1;
+                    opacity = 1;
+                    zIndex = 50;
+                    blur = 0;
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                    if (absNormalizedDiff === 1) {
+                        scale = isMobile ? 0.75 : isTablet ? 0.8 : 0.85;
+                        opacity = isMobile ? 0.6 : 0.75;
+                        zIndex = 40;
+                        blur = 0;
+                    } else if (absNormalizedDiff === 2) {
+                        scale = isMobile ? 0.6 : isTablet ? 0.65 : 0.7;
+                        opacity = isMobile ? 0.3 : 0.5;
+                        zIndex = 30;
+                        blur = isMobile ? 2 : 1;
+                    } else {
+                        scale = 0.5;
+                        opacity = 0;
+                        zIndex = 20;
+                        blur = 3;
+                    }
+                }
+                
+                let spacing = isMobile ? normalizedDiff * 25 : isTablet ? normalizedDiff * 18 : normalizedDiff * 12;
+                
+                item.style.transform = `translateX(${spacing}vw) scale(${scale})`;
+                item.style.opacity = opacity;
+                item.style.zIndex = zIndex;
+                item.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+            });
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Navigation functions
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % carouselData.length;
+            updateStyles();
+            pauseAutoPlay();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
+            updateStyles();
+            pauseAutoPlay();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateStyles();
+            pauseAutoPlay();
+        }
+
+        function handleCardClick(index, link) {
+            if (index === currentIndex && link) {
+                window.location.href = link;
+            } else {
+                goToSlide(index);
+            }
+        }
+
+        // Auto-play functions
+        function startAutoPlay() {
+            if (isAutoPlaying) {
+                autoPlayInterval = setInterval(nextSlide, 3000);
+            }
+        }
+
+        function pauseAutoPlay() {
+            isAutoPlaying = false;
+            clearInterval(autoPlayInterval);
+            setTimeout(() => {
+                isAutoPlaying = true;
+                startAutoPlay();
+            }, 5000);
+        }
+
+        // Touch handlers
+        function addTouchListeners() {
+            const wrapper = document.querySelector('.carousel-wrapper');
+            
+            wrapper.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                isAutoPlaying = false;
+                clearInterval(autoPlayInterval);
+            });
+            
+            wrapper.addEventListener('touchmove', (e) => {
+                touchEndX = e.touches[0].clientX;
+            });
+            
+            wrapper.addEventListener('touchend', () => {
+                if (!touchStartX || !touchEndX) return;
+                
+                const diff = touchStartX - touchEndX;
+                const threshold = 50;
+                
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+                
+                touchStartX = null;
+                touchEndX = null;
+                
+                setTimeout(() => {
+                    isAutoPlaying = true;
+                    startAutoPlay();
+                }, 5000);
+            });
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', updateStyles);
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
