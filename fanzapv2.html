@@ -1,976 +1,1496 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Mic, MicOff, Users, DollarSign, Star, Trophy, Send, Heart, Volume2, Radio, Zap, User, BarChart3, Calendar, Settings, ChevronRight, Clock, TrendingUp, Award, MessageCircle, Gift, Headphones, CheckCircle, ArrowRight, Globe, Shield, Sparkles } from 'lucide-react';
 
-const FanZapApp = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userRole, setUserRole] = useState('listener');
-  const [currentView, setCurrentView] = useState('home');
-  const [selectedMatch, setSelectedMatch] = useState(null);
-  const [isCommenting, setIsCommenting] = useState(false);
-  const [earnings, setEarnings] = useState(42.50);
-  const [listeners, setListeners] = useState(247);
-  const [tips, setTips] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [messageInput, setMessageInput] = useState('');
-  const [volume, setVolume] = useState(75);
-  const [selectedCommentator, setSelectedCommentator] = useState(null);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [userProfile, setUserProfile] = useState({
-    name: 'FanZap User',
-    team: 'Arsenal',
-    level: 'Bronze',
-    commentaryCount: 0,
-    listenCount: 0
-  });
-
-  // Simulated live stats for landing page
-  const [liveStats] = useState({
-    activeUsers: 47382,
-    liveCommentaries: 234,
-    monthlyEarnings: 156847,
-    topCommentator: 'ANGRY_GOONER_87'
-  });
-
-  // Simulated live matches
-  const [matches] = useState([
-    {
-      id: 1,
-      homeTeam: 'Arsenal',
-      awayTeam: 'Chelsea', 
-      time: '15:00',
-      score: '2-1',
-      competition: 'Premier League',
-      status: 'live',
-      commentators: [
-        { id: 1, name: 'ANGRY_GOONER_87', style: 'PASSIONATE', rating: 4.8, listeners: 523, tips: 127.50 },
-        { id: 2, name: 'TACTICAL_GENIUS_99', style: 'ANALYTICAL', rating: 4.9, listeners: 342, tips: 156.80 },
-        { id: 3, name: 'COMEDY_CENTRAL_FC', style: 'HUMOROUS', rating: 4.6, listeners: 289, tips: 89.20 }
-      ]
-    },
-    {
-      id: 2,
-      homeTeam: 'Man City',
-      awayTeam: 'Liverpool',
-      time: '17:30',
-      score: '0-0',
-      competition: 'Premier League',
-      status: 'live',
-      commentators: [
-        { id: 4, name: 'BLUE_MOON_RISING', style: 'CLUB BIAS', rating: 4.4, listeners: 189, tips: 67.30 },
-        { id: 5, name: 'TACTICAL_MASTER', style: 'EXPERT', rating: 4.7, listeners: 412, tips: 134.50 }
-      ]
-    },
-    {
-      id: 3,
-      homeTeam: 'Man United',
-      awayTeam: 'Tottenham',
-      time: '20:00',
-      score: 'VS',
-      competition: 'Premier League',
-      status: 'upcoming',
-      commentators: []
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
+  <title>FanZap Match Browser</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  ]);
 
-  // Base styles
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: 'linear-gradient(45deg, #1a0033 0%, #330066 25%, #1a0033 50%, #330066 75%, #1a0033 100%)',
-      backgroundSize: '40px 40px',
-      color: '#00ffff',
-      fontFamily: '"Courier New", monospace',
-      padding: '1rem',
-      animation: 'backgroundPulse 10s ease-in-out infinite'
-    },
-    header: {
-      background: 'linear-gradient(135deg, #ff00ff, #00ffff, #ffff00, #ff00ff)',
-      backgroundSize: '300% 300%',
-      animation: 'gradientShift 3s ease infinite',
-      border: '4px solid #ffffff',
-      padding: '1.5rem',
-      marginBottom: '2rem',
-      transform: 'perspective(800px) rotateX(5deg)',
-      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.5)',
-      position: 'relative',
-      overflow: 'hidden'
-    },
-    title: {
-      fontSize: '2rem',
-      fontWeight: 'bold',
-      textTransform: 'uppercase',
-      letterSpacing: '3px',
-      color: '#000',
-      textShadow: '2px 2px 0px #ff00ff, 4px 4px 0px #00ffff',
-      marginBottom: '0.5rem'
-    },
-    card: {
-      background: 'linear-gradient(145deg, #333333, #1a1a1a)',
-      border: '4px ridge #666666',
-      padding: '1.5rem',
-      marginBottom: '1.5rem',
-      transform: 'perspective(600px) rotateX(3deg)',
-      boxShadow: '8px 8px 25px rgba(0, 0, 0, 0.7)',
-      transition: 'all 0.3s ease'
-    },
-    button: {
-      background: 'linear-gradient(145deg, #4a4a4a, #2a2a2a)',
-      color: '#00ffff',
-      border: '3px solid #00ffff',
-      padding: '0.8rem 1.5rem',
-      fontFamily: 'inherit',
-      fontWeight: 'bold',
-      textTransform: 'uppercase',
-      cursor: 'pointer',
-      transform: 'perspective(300px) rotateX(5deg)',
-      boxShadow: '0 5px 15px rgba(0, 0, 0, 0.6)',
-      transition: 'all 0.3s ease',
-      fontSize: '0.9rem',
-      letterSpacing: '1px'
-    },
-    primaryButton: {
-      background: 'linear-gradient(145deg, #00ff00, #00cc00)',
-      color: '#000',
-      border: '3px solid #ffff00'
-    },
-    dangerButton: {
-      background: 'linear-gradient(145deg, #ff0000, #cc0000)',
-      color: '#fff',
-      border: '3px solid #ffff00'
-    },
-    stat: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '1rem',
-      background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-      border: '3px solid #00ffff',
-      transform: 'perspective(300px) rotateY(-5deg)',
-      boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.6)'
-    },
-    input: {
-      background: 'rgba(0,0,0,0.5)',
-      border: '2px solid #00ffff',
-      color: '#00ffff',
-      padding: '0.8rem',
-      fontFamily: 'inherit',
-      fontSize: '1rem',
-      width: '100%',
-      marginBottom: '1rem'
+    body {
+      font-family: 'Courier New', monospace;
+      background: 
+        linear-gradient(45deg, #0a1a33 0%, #1a0033 25%, #330066 50%, #1a0033 75%, #0a1a33 100%),
+        radial-gradient(circle at 25% 75%, #00ffff22 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, #ff00ff22 0%, transparent 50%);
+      background-size: 80px 80px, 400px 400px, 400px 400px;
+      color: #00ffff;
+      line-height: 1.4;
+      overflow-x: hidden;
+      perspective: 1000px;
+      animation: backgroundRotate 15s ease-in-out infinite;
+      min-width: 280px;
     }
-  };
 
-  // Simulate real-time updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isCommenting) {
-        setListeners(prev => prev + Math.floor(Math.random() * 10) - 5);
-        if (Math.random() > 0.8) {
-          const tipAmount = (Math.random() * 5 + 1).toFixed(2);
-          setTips(prev => [...prev, { amount: tipAmount, time: new Date() }]);
-          setEarnings(prev => prev + parseFloat(tipAmount));
-        }
+    @keyframes backgroundRotate {
+      0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+      25% { filter: hue-rotate(10deg) brightness(1.1); }
+      50% { filter: hue-rotate(-5deg) brightness(0.9); }
+      75% { filter: hue-rotate(15deg) brightness(1.05); }
+    }
+
+    .browser-container {
+      min-height: 100vh;
+      padding: 1rem;
+      transform-style: preserve-3d;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+      background-size: 500% 500%;
+      animation: headerFlow 5s ease infinite;
+      border: 4px solid #ffffff;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      transform: perspective(800px) rotateX(5deg);
+      box-shadow: 
+        0 15px 30px rgba(0, 0, 0, 0.6),
+        inset 0 3px 6px rgba(255, 255, 255, 0.3),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: headerSweep 4s linear infinite;
+    }
+
+    @keyframes headerSweep {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    @keyframes headerFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .header-title {
+      font-size: 2rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+      color: #000;
+      text-shadow: 
+        2px 2px 0px #ff00ff,
+        4px 4px 0px #00ffff,
+        6px 6px 12px rgba(0, 0, 0, 0.5);
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { filter: drop-shadow(0 0 15px #ffffff); }
+      to { filter: drop-shadow(0 0 25px #ffffff) drop-shadow(0 0 35px #ff00ff); }
+    }
+
+    .header-subtitle {
+      color: #000;
+      font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    .live-ticker {
+      background: linear-gradient(145deg, #ff0000, #cc0000);
+      border: 3px solid #ffff00;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      transform: perspective(600px) rotateX(3deg);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.7),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+        0 0 25px rgba(255, 0, 0, 0.5);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .live-ticker::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: tickerScan 3s linear infinite;
+    }
+
+    @keyframes tickerScan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .ticker-title {
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .ticker-content {
+      color: #ffff00;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+      animation: tickerScroll 20s linear infinite;
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .search-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+      animation: searchScan 6s linear infinite;
+    }
+
+    @keyframes searchScan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .search-title {
+      color: #00ffff;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px #00ffff;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .search-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      background: linear-gradient(145deg, #333, #1a1a1a);
+      color: #00ffff;
+      border: 3px solid #00ffff;
+      padding: 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      transform: perspective(300px) rotateX(5deg);
+      box-shadow: 
+        inset 2px 2px 5px rgba(0, 0, 0, 0.8),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.1);
+      text-shadow: 0 0 5px #00ffff;
+      min-height: 48px;
+    }
+
+    .search-input::placeholder {
+      color: #66ffff;
+      text-shadow: none;
+    }
+
+    .search-input:focus {
+      outline: 3px solid #ffff00;
+      outline-offset: 2px;
+      box-shadow: 
+        inset 2px 2px 5px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .competition-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
+      color: #ff66ff;
+      border: 3px solid #ff66ff;
+      padding: 1rem 1.5rem;
+      font-family: inherit;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transform: perspective(300px) rotateX(5deg);
+      box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 8px #ff66ff;
+      min-height: 48px;
+      letter-spacing: 1px;
+    }
+
+    .tab-btn:hover,
+    .tab-btn.active {
+      background: linear-gradient(145deg, #ff66ff, #cc00cc);
+      color: #000;
+      transform: perspective(300px) rotateX(0deg) translateZ(5px);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+        0 0 25px rgba(255, 102, 255, 0.6);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .tab-btn:focus {
+      outline: 3px solid #ffff00;
+      outline-offset: 3px;
+    }
+
+    .matches-section {
+      margin-bottom: 2rem;
+    }
+
+    .time-filter {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .time-btn {
+      background: transparent;
+      color: #00ffff;
+      border: 2px solid #00ffff;
+      padding: 0.8rem 1.5rem;
+      font-family: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      min-height: 44px;
+      transform: perspective(200px) rotateX(3deg);
+    }
+
+    .time-btn:hover,
+    .time-btn.active {
+      background: #00ffff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      transform: perspective(200px) rotateX(0deg) translateZ(3px);
+    }
+
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .match-card {
+      background: linear-gradient(145deg, #333333, #1a1a1a);
+      border: 4px ridge #666666;
+      transform: perspective(600px) rotateY(-2deg) rotateX(4deg);
+      box-shadow: 
+        8px 8px 25px rgba(0, 0, 0, 0.7),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.1),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.8);
+      position: relative;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+
+    .match-card:hover {
+      transform: perspective(600px) rotateY(0deg) rotateX(0deg) translateZ(10px);
+      box-shadow: 
+        12px 12px 35px rgba(0, 0, 0, 0.8),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.15),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.8);
+      border-color: #00ffff;
+    }
+
+    .match-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.15), transparent);
+      animation: matchScan 5s linear infinite;
+    }
+
+    @keyframes matchScan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .match-header {
+      background: linear-gradient(45deg, #ff00ff, #00ffff);
+      color: #000;
+      padding: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      border-bottom: 3px solid #ffffff;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .match-status {
+      background: #000;
+      color: #00ff00;
+      padding: 0.3rem 0.8rem;
+      border: 2px solid #00ff00;
+      font-size: 0.8rem;
+      text-shadow: 0 0 5px #00ff00;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .match-status.live {
+      background: #ff0000;
+      color: #ffffff;
+      border-color: #ffffff;
+      animation: liveIndicator 1.5s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+
+    @keyframes liveIndicator {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    .match-status.upcoming {
+      background: #333;
+      color: #ffff00;
+      border-color: #ffff00;
+      text-shadow: 0 0 5px #ffff00;
+    }
+
+    .match-status.ended {
+      background: #666;
+      color: #999;
+      border-color: #999;
+      text-shadow: none;
+    }
+
+    .match-card.live {
+      border-color: #ff0000;
+      box-shadow: 
+        8px 8px 25px rgba(0, 0, 0, 0.7),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.1),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(255, 0, 0, 0.6);
+    }
+
+    .match-card.live:hover {
+      box-shadow: 
+        12px 12px 35px rgba(0, 0, 0, 0.8),
+        inset 3px 3px 8px rgba(255, 255, 255, 0.15),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(255, 0, 0, 0.8);
+    }
+
+    .match-content {
+      padding: 1.5rem;
+    }
+
+    .match-teams {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ffff00;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px #ffff00;
+      text-align: center;
+    }
+
+    .match-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .match-time {
+      color: #ff66ff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .match-score {
+      color: #00ff00;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 8px #00ff00;
+    }
+
+    .commentator-count {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #66ffff;
+      font-size: 1rem;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .match-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .enter-btn {
+      background: linear-gradient(145deg, #00ff00, #00cc00);
+      color: #000;
+      border: 3px solid #ffff00;
+      padding: 1rem 2rem;
+      font-family: inherit;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      flex: 1;
+      min-width: 120px;
+      transform: perspective(300px) rotateX(5deg);
+      box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      min-height: 48px;
+      letter-spacing: 1px;
+    }
+
+    .enter-btn:hover {
+      transform: perspective(300px) rotateX(0deg) translateZ(8px);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.4),
+        0 0 25px rgba(0, 255, 0, 0.6);
+    }
+
+    .enter-btn:focus {
+      outline: 3px solid #ff00ff;
+      outline-offset: 3px;
+    }
+
+    .favorite-btn {
+      background: linear-gradient(145deg, #ff00ff, #cc00cc);
+      color: #fff;
+      border: 3px solid #ffff00;
+      padding: 1rem;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      transform: perspective(300px) rotateX(5deg);
+      box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      min-height: 48px;
+      min-width: 60px;
+    }
+
+    .favorite-btn:hover {
+      transform: perspective(300px) rotateX(0deg) translateZ(8px);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(255, 0, 255, 0.6);
+    }
+
+    .primary-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: linear-gradient(145deg, #1a1a1a, #000000);
+      border: 3px ridge #333;
+      padding: 1rem;
+      transform: perspective(500px) rotateX(2deg);
+    }
+
+    .primary-tab {
+      background: linear-gradient(145deg, #333333, #1a1a1a);
+      color: #66ffff;
+      border: 3px solid #66ffff;
+      padding: 1rem 1.5rem;
+      font-family: inherit;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transform: perspective(300px) rotateX(5deg);
+      box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 8px #66ffff;
+      min-height: 48px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      position: relative;
+    }
+
+    .primary-tab.live-tab {
+      border-color: #ff0000;
+      color: #ff0000;
+      text-shadow: 0 0 8px #ff0000;
+      animation: liveTabPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes liveTabPulse {
+      0%, 100% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 0, 0, 0.3); }
+      50% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 0, 0, 0.6); }
+    }
+
+    .primary-tab:hover,
+    .primary-tab.active {
+      background: linear-gradient(145deg, #66ffff, #4499cc);
+      color: #000;
+      transform: perspective(300px) rotateX(0deg) translateZ(5px);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+        0 0 25px rgba(102, 255, 255, 0.6);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .primary-tab.live-tab:hover,
+    .primary-tab.live-tab.active {
+      background: linear-gradient(145deg, #ff0000, #cc0000);
+      color: #fff;
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+        0 0 25px rgba(255, 0, 0, 0.6);
+    }
+
+    .live-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff0000;
+      color: #ffffff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border: 2px solid #ffffff;
+      animation: countPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes countPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .persistent-filters {
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      border: 3px ridge #666;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      transform: perspective(400px) rotateX(2deg);
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .filter-label {
+      color: #ffff00;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      text-shadow: 0 0 5px #ffff00;
+    }
+
+    .quick-search {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      background: linear-gradient(145deg, #333, #1a1a1a);
+      color: #00ffff;
+      border: 2px solid #00ffff;
+      padding: 0.8rem;
+      font-family: inherit;
+      font-size: 1rem;
+      text-shadow: 0 0 5px #00ffff;
+    }
+
+    .quick-search::placeholder {
+      color: #66ffff;
+      text-shadow: none;
+    }
+
+    .region-filter {
+      background: transparent;
+      color: #ff66ff;
+      border: 2px solid #ff66ff;
+      padding: 0.8rem 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      min-height: 44px;
+    }
+
+    .region-filter:hover {
+      background: #ff66ff;
+      color: #000;
+    }
+
+    .league-title {
+      color: #ffff00;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 12px #ffff00;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .region-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .region-btn {
+      background: linear-gradient(145deg, #333333, #1a1a1a);
+      color: #ffff00;
+      border: 3px solid #ffff00;
+      padding: 0.8rem 1.2rem;
+      font-family: inherit;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transform: perspective(300px) rotateX(5deg);
+      box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 8px #ffff00;
+      min-height: 48px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .region-btn:hover,
+    .region-btn.active {
+      background: linear-gradient(145deg, #ffff00, #cccc00);
+      color: #000;
+      transform: perspective(300px) rotateX(0deg) translateZ(5px);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+        0 0 25px rgba(255, 255, 0, 0.6);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .region-btn:focus {
+      outline: 3px solid #ff00ff;
+      outline-offset: 3px;
+    }
+
+    .team-title {
+      color: #ffff00;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px #ffff00;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .team-btn {
+      background: transparent;
+      color: #66ffff;
+      border: 2px solid #66ffff;
+      padding: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      min-height: 44px;
+      font-weight: bold;
+    }
+
+    .team-btn:hover,
+    .team-btn.selected {
+      background: #66ffff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(102, 255, 255, 0.5);
+    }
+
+    .footer {
+      border-top: 4px ridge #666;
+      padding: 2rem;
+      text-align: center;
+      color: #ccc;
+      font-size: 1rem;
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      transform: perspective(600px) rotateX(-3deg);
+      box-shadow: 
+        0 -10px 20px rgba(0, 0, 0, 0.5),
+        inset 0 3px 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .ascii-divider {
+      text-align: center;
+      color: #666;
+      margin: 2rem 0;
+      font-size: 1rem;
+      text-shadow: 0 0 10px #666;
+      animation: dividerShimmer 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes dividerShimmer {
+      from { text-shadow: 0 0 10px #666; }
+      to { text-shadow: 0 0 20px #00ffff, 0 0 30px #ff00ff; }
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+      .browser-container {
+        padding: 0.5rem;
       }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [isCommenting]);
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      setIsLoggedIn(true);
-      alert('Welcome to FanZap! 🎉');
+      
+      .header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transform: none;
+      }
+      
+      .header-title {
+        font-size: 1.4rem;
+        letter-spacing: 1px;
+      }
+      
+      .search-section {
+        transform: none;
+        padding: 1rem;
+      }
+      
+      .search-controls {
+        grid-template-columns: 1fr;
+      }
+      
+      .league-selector {
+        transform: none;
+        padding: 1rem;
+      }
+      
+      .region-tabs {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .region-btn {
+        width: 100%;
+        max-width: 200px;
+        transform: none;
+      }
+      
+      .competition-tabs {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .tab-btn {
+        width: 100%;
+        max-width: 200px;
+        transform: none;
+      }
+      
+      .time-filter {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .time-btn {
+        width: 100%;
+        max-width: 150px;
+        transform: none;
+      }
+      
+      .matches-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .match-card {
+        transform: none;
+      }
+      
+      .match-actions {
+        flex-direction: column;
+      }
+      
+      .enter-btn,
+      .favorite-btn {
+        transform: none;
+        width: 100%;
+      }
+      
+      .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .team-selector {
+        transform: none;
+        padding: 1rem;
+      }
+      
+      .footer {
+        transform: none;
+        padding: 1rem;
+        font-size: 0.9rem;
+      }
     }
-  };
 
-  const handleSignup = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      setIsLoggedIn(true);
-      alert('Account created! Welcome to the FanZap community! 🎉');
+    /* Medium mobile devices */
+    @media (max-width: 768px) and (min-width: 481px) {
+      .matches-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-title {
+        font-size: 1.6rem;
+      }
+      
+      .search-controls {
+        grid-template-columns: 1fr;
+      }
+      
+      .competition-tabs {
+        justify-content: center;
+      }
+      
+      .match-card {
+        transform: perspective(400px) rotateY(-1deg) rotateX(2deg);
+      }
     }
-  };
 
-  const renderLandingPage = () => (
-    <div>
-      {/* Hero Section */}
-      <div style={{...styles.header, padding: '3rem', marginBottom: '3rem'}}>
-        <div style={{textAlign: 'center'}}>
-          <h1 style={{...styles.title, fontSize: '3rem', marginBottom: '1rem'}}>FANZAP</h1>
-          <p style={{fontSize: '1.5rem', color: '#000', fontWeight: 'bold', marginBottom: '2rem'}}>
-            THE WORLD'S FIRST FAN-TO-FAN COMMENTARY PLATFORM
-          </p>
-          <p style={{fontSize: '1.2rem', color: '#000', marginBottom: '2rem'}}>
-            Where passion meets profit. Commentate matches. Build your audience. Earn real money.
-          </p>
-          <div style={{display: 'flex', gap: '1rem', justifyContent: 'center'}}>
-            <button style={{...styles.button, ...styles.primaryButton, fontSize: '1.1rem', padding: '1rem 2rem'}}
-                    onClick={() => setShowSignup(true)}>
-              START COMMENTATING
-            </button>
-            <button style={{...styles.button, fontSize: '1.1rem', padding: '1rem 2rem'}}
-                    onClick={() => setShowSignup(false)}>
-              LISTEN LIVE
-            </button>
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .tab-btn,
+      .time-btn,
+      .enter-btn,
+      .favorite-btn,
+      .team-btn,
+      .region-btn,
+      .search-input {
+        min-height: 48px;
+      }
+      
+      /* Reduce 3D effects on touch devices */
+      .match-card:hover,
+      .tab-btn:hover,
+      .region-btn:hover,
+      .enter-btn:hover,
+      .favorite-btn:hover {
+        transform: translateZ(2px);
+      }
+    }
+
+    /* High contrast mode */
+    @media (prefers-contrast: high) {
+      .match-card,
+      .search-section,
+      .team-selector,
+      .league-selector {
+        border-width: 4px;
+        border-color: #ffffff;
+      }
+      
+      .tab-btn,
+      .time-btn,
+      .enter-btn,
+      .favorite-btn,
+      .team-btn,
+      .region-btn {
+        border-width: 3px;
+        border-color: #ffffff;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+      
+      .match-card:hover,
+      .search-section,
+      .header,
+      .team-selector,
+      .league-selector,
+      .footer {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="browser-container">
+    <header class="header">
+      <h1 class="header-title">FANZAP MATCH BROWSER v3.0</h1>
+      <p class="header-subtitle">&gt;&gt; QUANTUM SPORTS DISCOVERY MATRIX ONLINE &lt;&lt;</p>
+    </header>
+
+    <section class="search-section">
+      <h2 class="search-title">◄ NEURAL MATCH SEARCH PROTOCOL ►</h2>
+      <div class="search-controls">
+        <input type="text" class="search-input" placeholder="◄ SEARCH TEAMS OR MATCHES ►" aria-label="Search teams or matches">
+        <input type="text" class="search-input" placeholder="◄ FILTER BY LEAGUE ►" aria-label="Filter by league">
+        <input type="date" class="search-input" aria-label="Select date">
+      </div>
+    </section>
+
+    <section class="team-selector">
+      <h3 class="team-title">◄ FAVORITE TEAMS QUICK ACCESS ►</h3>
+      <div class="team-grid">
+        <button class="team-btn selected" onclick="selectTeam('arsenal')">ARSENAL</button>
+        <button class="team-btn" onclick="selectTeam('chelsea')">CHELSEA</button>
+        <button class="team-btn" onclick="selectTeam('liverpool')">LIVERPOOL</button>
+        <button class="team-btn" onclick="selectTeam('city')">MAN CITY</button>
+        <button class="team-btn" onclick="selectTeam('united')">MAN UTD</button>
+        <button class="team-btn" onclick="selectTeam('spurs')">SPURS</button>
+        <button class="team-btn" onclick="selectTeam('newcastle')">NEWCASTLE</button>
+        <button class="team-btn" onclick="selectTeam('villa')">ASTON VILLA</button>
+      </div>
+    </section>
+
+    <section class="league-selector">
+      <h3 class="league-title">◄ GLOBAL FOOTBALL MATRIX ►</h3>
+      <div class="region-tabs">
+        <button class="region-btn active" onclick="switchRegion('england')">🏴󠁧󠁢󠁥󠁮󠁧󠁿 ENGLAND</button>
+        <button class="region-btn" onclick="switchRegion('spain')">🇪🇸 SPAIN</button>
+        <button class="region-btn" onclick="switchRegion('italy')">🇮🇹 ITALY</button>
+        <button class="region-btn" onclick="switchRegion('germany')">🇩🇪 GERMANY</button>
+        <button class="region-btn" onclick="switchRegion('france')">🇫🇷 FRANCE</button>
+        <button class="region-btn" onclick="switchRegion('europe')">🌍 EUROPE</button>
+        <button class="region-btn" onclick="switchRegion('world')">🌎 WORLD</button>
+      </div>
+    </section>
+
+    <nav class="competition-tabs" id="england-competitions">
+      <button class="tab-btn active" onclick="switchCompetition('premier')">◄ PREMIER LEAGUE ►</button>
+      <button class="tab-btn" onclick="switchCompetition('championship')">◄ CHAMPIONSHIP ►</button>
+      <button class="tab-btn" onclick="switchCompetition('fa-cup')">◄ FA CUP ►</button>
+      <button class="tab-btn" onclick="switchCompetition('league-cup')">◄ LEAGUE CUP ►</button>
+    </nav>
+
+    <nav class="competition-tabs" id="spain-competitions" style="display: none;">
+      <button class="tab-btn" onclick="switchCompetition('la-liga')">◄ LA LIGA ►</button>
+      <button class="tab-btn" onclick="switchCompetition('segunda')">◄ SEGUNDA DIVISIÓN ►</button>
+      <button class="tab-btn" onclick="switchCompetition('copa-del-rey')">◄ COPA DEL REY ►</button>
+      <button class="tab-btn" onclick="switchCompetition('supercopa')">◄ SUPERCOPA ►</button>
+    </nav>
+
+    <nav class="competition-tabs" id="italy-competitions" style="display: none;">
+      <button class="tab-btn" onclick="switchCompetition('serie-a')">◄ SERIE A ►</button>
+      <button class="tab-btn" onclick="switchCompetition('serie-b')">◄ SERIE B ►</button>
+      <button class="tab-btn" onclick="switchCompetition('coppa-italia')">◄ COPPA ITALIA ►</button>
+      <button class="tab-btn" onclick="switchCompetition('supercoppa')">◄ SUPERCOPPA ►</button>
+    </nav>
+
+    <nav class="competition-tabs" id="germany-competitions" style="display: none;">
+      <button class="tab-btn" onclick="switchCompetition('bundesliga')">◄ BUNDESLIGA ►</button>
+      <button class="tab-btn" onclick="switchCompetition('2-bundesliga')">◄ 2. BUNDESLIGA ►</button>
+      <button class="tab-btn" onclick="switchCompetition('dfb-pokal')">◄ DFB-POKAL ►</button>
+      <button class="tab-btn" onclick="switchCompetition('super-cup')">◄ SUPER CUP ►</button>
+    </nav>
+
+    <nav class="competition-tabs" id="france-competitions" style="display: none;">
+      <button class="tab-btn" onclick="switchCompetition('ligue-1')">◄ LIGUE 1 ►</button>
+      <button class="tab-btn" onclick="switchCompetition('ligue-2')">◄ LIGUE 2 ►</button>
+      <button class="tab-btn" onclick="switchCompetition('coupe-de-france')">◄ COUPE DE FRANCE ►</button>
+      <button class="tab-btn" onclick="switchCompetition('trophee-champions')">◄ TROPHÉE DES CHAMPIONS ►</button>
+    </nav>
+
+    <nav class="competition-tabs" id="europe-competitions" style="display: none;">
+      <button class="tab-btn" onclick="switchCompetition('champions')">◄ CHAMPIONS LEAGUE ►</button>
+      <button class="tab-btn" onclick="switchCompetition('europa')">◄ EUROPA LEAGUE ►</button>
+      <button class="tab-btn" onclick="switchCompetition('conference')">◄ CONFERENCE LEAGUE ►</button>
+      <button class="tab-btn" onclick="switchCompetition('nations-league')">◄ NATIONS LEAGUE ►</button>
+    </nav>
+
+    <nav class="competition-tabs" id="world-competitions" style="display: none;">
+      <button class="tab-btn" onclick="switchCompetition('world-cup')">◄ WORLD CUP ►</button>
+      <button class="tab-btn" onclick="switchCompetition('euros')">◄ EUROS ►</button>
+      <button class="tab-btn" onclick="switchCompetition('copa-america')">◄ COPA AMÉRICA ►</button>
+      <button class="tab-btn" onclick="switchCompetition('mls')">◄ MLS ►</button>
+    </nav>
+
+    <section class="matches-section">
+      <div class="time-filter">
+        <button class="time-btn" onclick="filterTime('past')">PAST</button>
+        <button class="time-btn active" onclick="filterTime('live')">LIVE NOW</button>
+        <button class="time-btn" onclick="filterTime('today')">TODAY</button>
+        <button class="time-btn" onclick="filterTime('tomorrow')">TOMORROW</button>
+        <button class="time-btn" onclick="filterTime('week')">THIS WEEK</button>
+      </div>
+
+      <div class="matches-grid" id="england-matches">
+        <div class="match-card live">
+          <div class="match-header">
+            <span>◄ PREMIER LEAGUE ►</span>
+            <div class="match-status live">● LIVE</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ ARSENAL vs CHELSEA ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 15:00 GMT ►</div>
+              <div class="match-score">2 - 1</div>
+            </div>
+            <div class="commentator-count">◄ 12 COMMENTATORS LIVE ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('arsenal-chelsea')">◄ ENTER MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('arsenal-chelsea')" aria-label="Add to favorites">★</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="match-card live">
+          <div class="match-header">
+            <span>◄ PREMIER LEAGUE ►</span>
+            <div class="match-status live">● LIVE</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ MAN CITY vs LIVERPOOL ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 17:30 GMT ►</div>
+              <div class="match-score">0 - 0</div>
+            </div>
+            <div class="commentator-count">◄ 18 COMMENTATORS LIVE ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('city-liverpool')">◄ ENTER MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('city-liverpool')" aria-label="Add to favorites">★</button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Live Stats Bar */}
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '3rem'}}>
-        <div style={{...styles.stat, animation: 'pulse 2s infinite'}}>
-          <Zap size={30} color="#ffff00" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>{liveStats.liveCommentaries}</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>LIVE NOW</span>
-        </div>
-        <div style={styles.stat}>
-          <Users size={30} color="#00ff00" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>{liveStats.activeUsers.toLocaleString()}</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>ACTIVE FANS</span>
-        </div>
-        <div style={styles.stat}>
-          <DollarSign size={30} color="#00ff00" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>£{liveStats.monthlyEarnings.toLocaleString()}</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>EARNED THIS MONTH</span>
-        </div>
-        <div style={styles.stat}>
-          <Trophy size={30} color="#ffff00" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>{liveStats.topCommentator}</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>TOP COMMENTATOR</span>
-        </div>
-      </div>
-
-      {/* Two-column layout */}
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem'}}>
-        {/* For Commentators */}
-        <div style={styles.card}>
-          <h2 style={{color: '#ff00ff', fontSize: '1.8rem', marginBottom: '1.5rem', textAlign: 'center'}}>
-            FOR COMMENTATORS
-          </h2>
-          <div style={{marginBottom: '2rem'}}>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <Mic size={30} color="#00ff00" />
-              <div>
-                <h3 style={{color: '#00ffff', marginBottom: '0.3rem'}}>Go Live Instantly</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>One-click broadcasting for any match</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <DollarSign size={30} color="#00ff00" />
-              <div>
-                <h3 style={{color: '#00ffff', marginBottom: '0.3rem'}}>Earn Real Money</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Tips, subscriptions, and tournament prizes</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <Users size={30} color="#00ff00" />
-              <div>
-                <h3 style={{color: '#00ffff', marginBottom: '0.3rem'}}>Build Your Following</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Grow from amateur to pro commentator</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-              <Trophy size={30} color="#00ff00" />
-              <div>
-                <h3 style={{color: '#00ffff', marginBottom: '0.3rem'}}>Compete & Win</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Join tournaments and FanZap Offs</p>
-              </div>
-            </div>
+      <div class="matches-grid" id="spain-matches" style="display: none;">
+        <div class="match-card live">
+          <div class="match-header">
+            <span>◄ LA LIGA ►</span>
+            <div class="match-status live">● LIVE</div>
           </div>
-          <div style={{background: 'rgba(0,255,0,0.1)', padding: '1rem', marginBottom: '1rem'}}>
-            <p style={{color: '#00ff00', fontSize: '1.1rem', textAlign: 'center', marginBottom: '0.5rem'}}>
-              Top commentators earn £1000+ monthly
-            </p>
-            <p style={{color: '#66ffff', fontSize: '0.9rem', textAlign: 'center'}}>
-              Join 10,000+ creators already on FanZap
-            </p>
+          <div class="match-content">
+            <h3 class="match-teams">▲ REAL MADRID vs BARCELONA ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 21:00 CET ►</div>
+              <div class="match-score">1 - 2</div>
+            </div>
+            <div class="commentator-count">◄ 24 COMMENTATORS LIVE ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('madrid-barca')">◄ ENTER MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('madrid-barca')" aria-label="Add to favorites">★</button>
+            </div>
           </div>
         </div>
 
-        {/* For Listeners */}
-        <div style={styles.card}>
-          <h2 style={{color: '#00ffff', fontSize: '1.8rem', marginBottom: '1.5rem', textAlign: 'center'}}>
-            FOR LISTENERS
-          </h2>
-          <div style={{marginBottom: '2rem'}}>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <Headphones size={30} color="#ff00ff" />
-              <div>
-                <h3 style={{color: '#ffff00', marginBottom: '0.3rem'}}>Real Fan Commentary</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Authentic voices, not corporate pundits</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <Radio size={30} color="#ff00ff" />
-              <div>
-                <h3 style={{color: '#ffff00', marginBottom: '0.3rem'}}>Choose Your Style</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Tactical, comedy, or pure passion</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <MessageCircle size={30} color="#ff00ff" />
-              <div>
-                <h3 style={{color: '#ffff00', marginBottom: '0.3rem'}}>Interactive Experience</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Chat, predict, and win in tip lotteries</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-              <Gift size={30} color="#ff00ff" />
-              <div>
-                <h3 style={{color: '#ffff00', marginBottom: '0.3rem'}}>Support Your Favorites</h3>
-                <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Tip commentators and unlock perks</p>
-              </div>
-            </div>
+        <div class="match-card upcoming">
+          <div class="match-header">
+            <span>◄ LA LIGA ►</span>
+            <div class="match-status upcoming">19:30</div>
           </div>
-          <div style={{background: 'rgba(255,0,255,0.1)', padding: '1rem', marginBottom: '1rem'}}>
-            <p style={{color: '#ff00ff', fontSize: '1.1rem', textAlign: 'center', marginBottom: '0.5rem'}}>
-              Free to listen, Premium from £4.99/mo
-            </p>
-            <p style={{color: '#66ffff', fontSize: '0.9rem', textAlign: 'center'}}>
-              Join 500,000+ fans worldwide
-            </p>
+          <div class="match-content">
+            <h3 class="match-teams">▲ ATLETICO vs SEVILLA ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 19:30 CET ►</div>
+              <div class="match-score">VS</div>
+            </div>
+            <div class="commentator-count">◄ 8 COMMENTATORS READY ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('atletico-sevilla')">◄ PRE-MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('atletico-sevilla')" aria-label="Add to favorites">☆</button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Live Matches Preview */}
-      <div style={{...styles.card, marginBottom: '3rem'}}>
-        <h2 style={{color: '#ffff00', fontSize: '1.8rem', marginBottom: '1.5rem', textAlign: 'center'}}>
-          HAPPENING NOW
-        </h2>
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem'}}>
-          {matches.filter(m => m.status === 'live').map(match => (
-            <div key={match.id} style={{
-              background: 'rgba(255,0,0,0.1)',
-              border: '2px solid #ff0000',
-              padding: '1rem',
-              position: 'relative'
-            }}>
-              <span style={{
-                position: 'absolute',
-                top: '0.5rem',
-                right: '0.5rem',
-                background: '#ff0000',
-                color: '#fff',
-                padding: '0.2rem 0.5rem',
-                fontSize: '0.8rem',
-                fontWeight: 'bold'
-              }}>● LIVE</span>
-              <h3 style={{color: '#ffff00', marginBottom: '0.5rem'}}>
-                {match.homeTeam} vs {match.awayTeam}
-              </h3>
-              <p style={{color: '#00ff00', fontSize: '1.2rem', marginBottom: '0.5rem'}}>{match.score}</p>
-              <p style={{color: '#66ffff', fontSize: '0.9rem'}}>
-                {match.commentators.length} commentators • {match.commentators.reduce((sum, c) => sum + c.listeners, 0)} listeners
-              </p>
+      <div class="matches-grid" id="italy-matches" style="display: none;">
+        <div class="match-card">
+          <div class="match-header">
+            <span>◄ SERIE A ►</span>
+            <div class="match-status">● LIVE</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ JUVENTUS vs AC MILAN ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 20:45 CET ►</div>
+              <div class="match-score">0 - 1</div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* How It Works */}
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem'}}>
-        <div style={{...styles.card, textAlign: 'center'}}>
-          <div style={{fontSize: '2rem', color: '#ff00ff', marginBottom: '1rem'}}>1</div>
-          <Sparkles size={40} color="#ffff00" style={{marginBottom: '1rem'}} />
-          <h3 style={{color: '#00ffff', marginBottom: '0.5rem'}}>SIGN UP FREE</h3>
-          <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Create your account in seconds</p>
-        </div>
-        <div style={{...styles.card, textAlign: 'center'}}>
-          <div style={{fontSize: '2rem', color: '#ff00ff', marginBottom: '1rem'}}>2</div>
-          <Radio size={40} color="#ffff00" style={{marginBottom: '1rem'}} />
-          <h3 style={{color: '#00ffff', marginBottom: '0.5rem'}}>CHOOSE YOUR MODE</h3>
-          <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Listen to matches or start commentating</p>
-        </div>
-        <div style={{...styles.card, textAlign: 'center'}}>
-          <div style={{fontSize: '2rem', color: '#ff00ff', marginBottom: '1rem'}}>3</div>
-          <Zap size={40} color="#ffff00" style={{marginBottom: '1rem'}} />
-          <h3 style={{color: '#00ffff', marginBottom: '0.5rem'}}>GO LIVE</h3>
-          <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Join the action instantly</p>
-        </div>
-        <div style={{...styles.card, textAlign: 'center'}}>
-          <div style={{fontSize: '2rem', color: '#ff00ff', marginBottom: '1rem'}}>4</div>
-          <Trophy size={40} color="#ffff00" style={{marginBottom: '1rem'}} />
-          <h3 style={{color: '#00ffff', marginBottom: '0.5rem'}}>EARN & WIN</h3>
-          <p style={{color: '#66ffff', fontSize: '0.9rem'}}>Get tips, subs, and prizes</p>
-        </div>
-      </div>
-
-      {/* Testimonials */}
-      <div style={styles.card}>
-        <h2 style={{color: '#ffff00', fontSize: '1.8rem', marginBottom: '1.5rem', textAlign: 'center'}}>
-          WHAT FANS ARE SAYING
-        </h2>
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
-          <div style={{background: 'rgba(0,0,0,0.3)', padding: '1.5rem'}}>
-            <p style={{color: '#00ffff', fontStyle: 'italic', marginBottom: '1rem'}}>
-              "Quit my job to commentate full-time on FanZap. Best decision ever! Making £2k+ monthly doing what I love."
-            </p>
-            <p style={{color: '#ff66ff', fontWeight: 'bold'}}>- ANGRY_GOONER_87</p>
+            <div class="commentator-count">◄ 16 COMMENTATORS LIVE ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('juventus-milan')">◄ ENTER MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('juventus-milan')" aria-label="Add to favorites">★</button>
+            </div>
           </div>
-          <div style={{background: 'rgba(0,0,0,0.3)', padding: '1.5rem'}}>
-            <p style={{color: '#00ffff', fontStyle: 'italic', marginBottom: '1rem'}}>
-              "Finally, commentary that gets it! No more biased TV pundits. Real fans who share my passion."
-            </p>
-            <p style={{color: '#ff66ff', fontWeight: 'bold'}}>- Chelsea_Blue_Forever</p>
+        </div>
+
+        <div class="match-card">
+          <div class="match-header">
+            <span>◄ SERIE A ►</span>
+            <div class="match-status">18:00</div>
           </div>
-          <div style={{background: 'rgba(0,0,0,0.3)', padding: '1.5rem'}}>
-            <p style={{color: '#00ffff', fontStyle: 'italic', marginBottom: '1rem'}}>
-              "Won £50 in the tip lottery last week! Love supporting my favorite commentators while watching matches."
-            </p>
-            <p style={{color: '#ff66ff', fontWeight: 'bold'}}>- RedDevil_Manchester</p>
+          <div class="match-content">
+            <h3 class="match-teams">▲ INTER vs NAPOLI ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 18:00 CET ►</div>
+              <div class="match-score">VS</div>
+            </div>
+            <div class="commentator-count">◄ 11 COMMENTATORS READY ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('inter-napoli')">◄ PRE-MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('inter-napoli')" aria-label="Add to favorites">☆</button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Sign Up / Login Modal */}
-      {(showSignup !== null) && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          zIndex: 1000
-        }}>
-          <div style={{...styles.card, maxWidth: '400px', width: '100%'}}>
-            <h2 style={{color: '#ffff00', marginBottom: '1.5rem', textAlign: 'center'}}>
-              {showSignup ? 'JOIN FANZAP' : 'WELCOME BACK'}
-            </h2>
-            <form onSubmit={showSignup ? handleSignup : handleLogin}>
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={styles.input}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={styles.input}
-                required
-              />
-              <button type="submit" style={{...styles.button, ...styles.primaryButton, width: '100%', marginBottom: '1rem'}}>
-                {showSignup ? 'CREATE ACCOUNT' : 'LOG IN'}
-              </button>
-            </form>
-            <p style={{textAlign: 'center', marginBottom: '1rem'}}>
-              {showSignup ? 'Already have an account?' : "Don't have an account?"}
-              <button 
-                onClick={() => setShowSignup(!showSignup)}
-                style={{background: 'none', border: 'none', color: '#00ffff', textDecoration: 'underline', cursor: 'pointer', marginLeft: '0.5rem'}}
-              >
-                {showSignup ? 'Log in' : 'Sign up'}
-              </button>
-            </p>
-            <button 
-              onClick={() => {setShowSignup(null); setEmail(''); setPassword('');}}
-              style={{...styles.button, width: '100%'}}
-            >
-              CANCEL
-            </button>
+      <div class="matches-grid" id="germany-matches" style="display: none;">
+        <div class="match-card">
+          <div class="match-header">
+            <span>◄ BUNDESLIGA ►</span>
+            <div class="match-status">15:30</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ BAYERN vs DORTMUND ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 15:30 CET ►</div>
+              <div class="match-score">VS</div>
+            </div>
+            <div class="commentator-count">◄ 14 COMMENTATORS READY ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('bayern-dortmund')">◄ PRE-MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('bayern-dortmund')" aria-label="Add to favorites">☆</button>
+            </div>
           </div>
         </div>
-      )}
+      </div>
+
+      <div class="matches-grid" id="france-matches" style="display: none;">
+        <div class="match-card">
+          <div class="match-header">
+            <span>◄ LIGUE 1 ►</span>
+            <div class="match-status">21:00</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ PSG vs MARSEILLE ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 21:00 CET ►</div>
+              <div class="match-score">VS</div>
+            </div>
+            <div class="commentator-count">◄ 9 COMMENTATORS READY ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('psg-marseille')">◄ PRE-MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('psg-marseille')" aria-label="Add to favorites">☆</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="matches-grid" id="europe-matches" style="display: none;">
+        <div class="match-card">
+          <div class="match-header">
+            <span>◄ CHAMPIONS LEAGUE ►</span>
+            <div class="match-status">20:00</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ REAL MADRID vs PSG ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 20:00 GMT ►</div>
+              <div class="match-score">VS</div>
+            </div>
+            <div class="commentator-count">◄ 22 COMMENTATORS READY ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('madrid-psg')">◄ PRE-MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('madrid-psg')" aria-label="Add to favorites">☆</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="matches-grid" id="world-matches" style="display: none;">
+        <div class="match-card">
+          <div class="match-header">
+            <span>◄ MLS ►</span>
+            <div class="match-status">02:30</div>
+          </div>
+          <div class="match-content">
+            <h3 class="match-teams">▲ LA GALAXY vs NYC FC ▲</h3>
+            <div class="match-details">
+              <div class="match-time">◄ 02:30 GMT ►</div>
+              <div class="match-score">VS</div>
+            </div>
+            <div class="commentator-count">◄ 3 COMMENTATORS READY ►</div>
+            <div class="match-actions">
+              <button class="enter-btn" onclick="enterMatch('galaxy-nyc')">◄ PRE-MATCH ►</button>
+              <button class="favorite-btn" onclick="favoriteMatch('galaxy-nyc')" aria-label="Add to favorites">☆</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ascii-divider">
+      ◄▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲►
     </div>
-  );
 
-  const sendMessage = () => {
-    if (messageInput.trim()) {
-      setMessages(prev => [...prev, {
-        user: userProfile.name,
-        text: messageInput,
-        time: new Date(),
-        isPremium: isSubscribed
-      }]);
-      setMessageInput('');
-    }
-  };
+    <footer class="footer">
+      <p>◄ FANZAP HYPER-MATCH BROWSER | DISCOVERY VERSION 3.0.0 ►</p>
+      <p>◄ CONNECTED TO GLOBAL SPORTS MATRIX | UPTIME: 99.8% ►</p>
+      <p style="margin-top: 0.5rem;">▲ INFINITE MATCHES. INFINITE VOICES. ▲</p>
+    </footer>
+  </div>
 
-  const sendTip = (amount) => {
-    if (selectedCommentator) {
-      alert(`💰 Sent £${amount} tip to ${selectedCommentator.name}!`);
-    }
-  };
+  <script>
+    let currentPrimaryTab = 'live';
 
-  const toggleSubscription = () => {
-    setIsSubscribed(!isSubscribed);
-    alert(isSubscribed ? 'Subscription cancelled' : '🎉 Premium activated! No ads, exclusive features unlocked!');
-  };
-
-  const renderHome = () => (
-    <div>
-      <div style={styles.header}>
-        <h1 style={styles.title}>FANZAP v3.0</h1>
-        <p style={{color: '#000', fontWeight: 'bold'}}>QUANTUM SPORTS COMMENTARY MATRIX</p>
-        <button style={{...styles.button, position: 'absolute', right: '1rem', top: '1rem'}} 
-                onClick={() => {setIsLoggedIn(false); setCurrentView('home');}}>
-          LOGOUT
-        </button>
-      </div>
-
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem'}}>
-        <div style={{...styles.card, cursor: 'pointer'}} onClick={() => {setUserRole('listener'); setCurrentView('matches');}}>
-          <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-            <Radio size={40} color="#00ffff" />
-            <h2 style={{color: '#00ffff', fontSize: '1.5rem'}}>LISTENER MODE</h2>
-          </div>
-          <p style={{color: '#ff66ff', marginBottom: '1rem'}}>Join live commentary streams</p>
-          <ul style={{listStyle: 'none', color: '#66ffff'}}>
-            <li>✓ Choose from multiple commentators</li>
-            <li>✓ Interactive chat & predictions</li>
-            <li>✓ Tip your favorite voices</li>
-            <li>✓ Win in tip lotteries</li>
-          </ul>
-        </div>
-
-        <div style={{...styles.card, cursor: 'pointer'}} onClick={() => {setUserRole('commentator'); setCurrentView('dashboard');}}>
-          <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-            <Mic size={40} color="#ff00ff" />
-            <h2 style={{color: '#ff00ff', fontSize: '1.5rem'}}>COMMENTATOR MODE</h2>
-          </div>
-          <p style={{color: '#ffff00', marginBottom: '1rem'}}>Broadcast your passion</p>
-          <ul style={{listStyle: 'none', color: '#66ffff'}}>
-            <li>✓ Go live for any match</li>
-            <li>✓ Build your audience</li>
-            <li>✓ Earn from tips & subscriptions</li>
-            <li>✓ Join tournaments</li>
-          </ul>
-        </div>
-      </div>
-
-      <div style={styles.card}>
-        <h3 style={{color: '#ffff00', marginBottom: '1rem', fontSize: '1.3rem'}}>YOUR PROFILE</h3>
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem'}}>
-          <div style={styles.stat}>
-            <User size={30} color="#ff66ff" />
-            <span style={{color: '#00ffff', fontSize: '1.2rem', marginTop: '0.5rem'}}>{userProfile.name}</span>
-            <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>{userProfile.team} Fan</span>
-          </div>
-          <div style={styles.stat}>
-            <Trophy size={30} color="#ffff00" />
-            <span style={{color: '#00ffff', fontSize: '1.2rem', marginTop: '0.5rem'}}>{userProfile.level}</span>
-            <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>Level</span>
-          </div>
-          <div style={styles.stat}>
-            <Mic size={30} color="#00ff00" />
-            <span style={{color: '#00ffff', fontSize: '1.2rem', marginTop: '0.5rem'}}>{userProfile.commentaryCount}</span>
-            <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>Commentaries</span>
-          </div>
-          <div style={styles.stat}>
-            <Radio size={30} color="#ff00ff" />
-            <span style={{color: '#00ffff', fontSize: '1.2rem', marginTop: '0.5rem'}}>{userProfile.listenCount}</span>
-            <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>Matches Heard</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderListenerView = () => {
-    if (selectedMatch && selectedCommentator) {
-      return renderListeningRoom();
+    function showAllLive() {
+      switchPrimaryTab('live');
+      alert('🔴 DISPLAYING ALL LIVE MATCHES\n\nShowing matches from all regions and competitions\nClick any match to join the commentary!');
     }
 
-    return (
-      <div>
-        <div style={styles.header}>
-          <h1 style={styles.title}>LIVE MATCHES</h1>
-          <button style={{...styles.button, position: 'absolute', right: '1rem', top: '1rem'}} 
-                  onClick={() => setCurrentView('home')}>
-            ← BACK
-          </button>
-        </div>
-
-        {matches.map(match => (
-          <div key={match.id} style={{...styles.card, marginBottom: '1.5rem'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
-              <h3 style={{color: '#ffff00', fontSize: '1.4rem'}}>
-                {match.homeTeam} vs {match.awayTeam}
-              </h3>
-              {match.status === 'live' && (
-                <span style={{background: '#ff0000', color: '#fff', padding: '0.3rem 0.8rem', 
-                             border: '2px solid #ffff00', fontWeight: 'bold', animation: 'pulse 1.5s infinite'}}>
-                  ● LIVE
-                </span>
-              )}
-            </div>
-            
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem'}}>
-              <span style={{color: '#ff66ff'}}>{match.competition}</span>
-              <span style={{color: '#00ff00', textAlign: 'right', fontSize: '1.2rem'}}>{match.score}</span>
-            </div>
-
-            {match.commentators.length > 0 && (
-              <div>
-                <h4 style={{color: '#00ffff', marginBottom: '1rem'}}>AVAILABLE COMMENTATORS:</h4>
-                {match.commentators.map(comm => (
-                  <div key={comm.id} style={{
-                    background: 'linear-gradient(90deg, #2a2a2a, #1a1a1a)',
-                    border: '2px solid #666',
-                    padding: '1rem',
-                    marginBottom: '0.5rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s'
-                  }} onClick={() => {
-                    setSelectedMatch(match);
-                    setSelectedCommentator(comm);
-                  }}>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                      <div>
-                        <h5 style={{color: '#00ffff', marginBottom: '0.3rem'}}>{comm.name}</h5>
-                        <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>{comm.style}</span>
-                      </div>
-                      <div style={{textAlign: 'right'}}>
-                        <div style={{color: '#ffff00'}}>★ {comm.rating}</div>
-                        <div style={{color: '#66ffff', fontSize: '0.9rem'}}>{comm.listeners} listening</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {match.status === 'upcoming' && (
-              <div style={{color: '#ff66ff', textAlign: 'center', padding: '2rem'}}>
-                Match starts at {match.time}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderListeningRoom = () => (
-    <div>
-      <div style={styles.header}>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div>
-            <h2 style={{...styles.title, fontSize: '1.5rem'}}>
-              {selectedMatch.homeTeam} vs {selectedMatch.awayTeam}
-            </h2>
-            <p style={{color: '#000', fontWeight: 'bold'}}>
-              Listening to: {selectedCommentator.name}
-            </p>
-          </div>
-          <button style={{...styles.button}} onClick={() => {
-            setSelectedMatch(null);
-            setSelectedCommentator(null);
-          }}>
-            ← EXIT
-          </button>
-        </div>
-      </div>
-
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem'}}>
-        <div>
-          {/* Audio Player */}
-          <div style={{...styles.card, marginBottom: '1rem'}}>
-            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem'}}>
-              <Volume2 size={30} color="#00ffff" />
-              <input type="range" min="0" max="100" value={volume} 
-                     onChange={(e) => setVolume(e.target.value)}
-                     style={{flex: 1, height: '8px'}} />
-              <span style={{color: '#00ffff'}}>{volume}%</span>
-            </div>
-            <div style={{display: 'flex', gap: '1rem'}}>
-              <button style={{...styles.button, flex: 1}}>
-                <Play size={20} /> PLAY
-              </button>
-              <button style={{...styles.button, ...styles.primaryButton}} 
-                      onClick={() => sendTip(2)}>
-                <Gift size={20} /> TIP £2
-              </button>
-              <button style={{...styles.button, ...styles.primaryButton}} 
-                      onClick={() => sendTip(5)}>
-                <Gift size={20} /> TIP £5
-              </button>
-            </div>
-          </div>
-
-          {/* Chat */}
-          <div style={styles.card}>
-            <h3 style={{color: '#ffff00', marginBottom: '1rem'}}>LIVE CHAT</h3>
-            <div style={{
-              height: '300px',
-              overflowY: 'auto',
-              background: 'rgba(0,0,0,0.3)',
-              padding: '1rem',
-              marginBottom: '1rem'
-            }}>
-              {messages.map((msg, i) => (
-                <div key={i} style={{marginBottom: '0.5rem'}}>
-                  <span style={{color: msg.isPremium ? '#ffff00' : '#00ffff'}}>
-                    {msg.isPremium && '★ '}{msg.user}:
-                  </span>
-                  <span style={{color: '#fff', marginLeft: '0.5rem'}}>{msg.text}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{display: 'flex', gap: '0.5rem'}}>
-              <input 
-                type="text" 
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder={isSubscribed ? "Send message..." : "Subscribe for unlimited chat"}
-                style={{
-                  flex: 1,
-                  background: 'rgba(0,0,0,0.5)',
-                  border: '2px solid #00ffff',
-                  color: '#00ffff',
-                  padding: '0.5rem',
-                  fontFamily: 'inherit'
-                }}
-              />
-              <button style={{...styles.button}} onClick={sendMessage}>
-                <Send size={20} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div>
-          <div style={{...styles.card, marginBottom: '1rem'}}>
-            <h4 style={{color: '#ff00ff', marginBottom: '1rem'}}>COMMENTATOR STATS</h4>
-            <div style={{marginBottom: '0.5rem'}}>
-              <span style={{color: '#66ffff'}}>Rating:</span>
-              <span style={{color: '#ffff00', float: 'right'}}>★ {selectedCommentator.rating}</span>
-            </div>
-            <div style={{marginBottom: '0.5rem'}}>
-              <span style={{color: '#66ffff'}}>Listeners:</span>
-              <span style={{color: '#00ffff', float: 'right'}}>{selectedCommentator.listeners}</span>
-            </div>
-            <div style={{marginBottom: '1rem'}}>
-              <span style={{color: '#66ffff'}}>Tips Today:</span>
-              <span style={{color: '#00ff00', float: 'right'}}>£{selectedCommentator.tips}</span>
-            </div>
-            <button style={{...styles.button, ...styles.primaryButton, width: '100%'}}
-                    onClick={toggleSubscription}>
-              {isSubscribed ? '✓ SUBSCRIBED' : '+ SUBSCRIBE £4.99/mo'}
-            </button>
-          </div>
-
-          <div style={styles.card}>
-            <h4 style={{color: '#ff00ff', marginBottom: '1rem'}}>TIP LOTTERY</h4>
-            <div style={{
-              background: 'linear-gradient(145deg, #ff6600, #ff3300)',
-              padding: '1rem',
-              marginBottom: '1rem',
-              textAlign: 'center'
-            }}>
-              <div style={{fontSize: '1.5rem', color: '#fff', fontWeight: 'bold'}}>£245.75</div>
-              <div style={{color: '#ffff00', fontSize: '0.9rem'}}>CURRENT POOL</div>
-            </div>
-            <p style={{color: '#66ffff', fontSize: '0.9rem', marginBottom: '1rem'}}>
-              Tip to enter! 5 lucky fans will share the pool at full-time
-            </p>
-            <div style={{color: '#00ffff', fontSize: '0.8rem'}}>
-              Next draw: End of match
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderCommentatorDashboard = () => (
-    <div>
-      <div style={styles.header}>
-        <h1 style={styles.title}>COMMENTATOR CONSOLE</h1>
-        <button style={{...styles.button, position: 'absolute', right: '1rem', top: '1rem'}} 
-                onClick={() => setCurrentView('home')}>
-          ← BACK
-        </button>
-      </div>
-
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem'}}>
-        <div style={styles.stat}>
-          <DollarSign size={30} color="#00ff00" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>£{earnings.toFixed(2)}</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>EARNINGS</span>
-        </div>
-        <div style={styles.stat}>
-          <Users size={30} color="#ff00ff" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>{listeners}</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>LISTENERS</span>
-        </div>
-        <div style={styles.stat}>
-          <Star size={30} color="#ffff00" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>4.8</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>RATING</span>
-        </div>
-        <div style={styles.stat}>
-          <Trophy size={30} color="#00ffff" />
-          <span style={{color: '#00ffff', fontSize: '1.8rem', marginTop: '0.5rem'}}>23</span>
-          <span style={{color: '#ff66ff', fontSize: '0.9rem'}}>BROADCASTS</span>
-        </div>
-      </div>
-
-      <div style={{...styles.card, background: 'linear-gradient(145deg, #ff4444, #cc0000)', 
-                   border: '6px solid #ffff00', textAlign: 'center', padding: '3rem'}}>
-        <h2 style={{color: '#fff', fontSize: '1.8rem', marginBottom: '1.5rem',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'}}>
-          ▼▲▼ READY TO BROADCAST? ▼▲▼
-        </h2>
-        <button style={{
-          ...styles.button,
-          ...styles.dangerButton,
-          fontSize: '1.3rem',
-          padding: '1.5rem 4rem',
-          border: '4px solid #ffff00',
-          boxShadow: '0 10px 20px rgba(0, 0, 0, 0.8)',
-          transform: 'perspective(500px) rotateX(5deg)'
-        }} onClick={() => {
-          setIsCommenting(!isCommenting);
-          setUserProfile(prev => ({...prev, commentaryCount: prev.commentaryCount + 1}));
-        }}>
-          {isCommenting ? <><MicOff size={24} /> END COMMENTARY</> : <><Mic size={24} /> GO LIVE NOW</>}
-        </button>
-        <p style={{marginTop: '1.5rem', fontSize: '1.1rem', color: '#ffff00', fontWeight: 'bold'}}>
-          ◄ {selectedMatch ? `${selectedMatch.homeTeam} vs ${selectedMatch.awayTeam}` : 'SELECT A MATCH'} ►
-        </p>
-      </div>
-
-      {isCommenting && (
-        <div style={styles.card}>
-          <h3 style={{color: '#ffff00', marginBottom: '1rem'}}>LIVE TIPS</h3>
-          <div style={{maxHeight: '200px', overflowY: 'auto'}}>
-            {tips.map((tip, i) => (
-              <div key={i} style={{
-                padding: '0.5rem',
-                marginBottom: '0.5rem',
-                background: 'rgba(0,255,0,0.1)',
-                border: '1px solid #00ff00'
-              }}>
-                <span style={{color: '#00ff00'}}>£{tip.amount} received!</span>
-                <span style={{color: '#66ffff', float: 'right'}}>
-                  {tip.time.toLocaleTimeString()}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '2rem'}}>
-        <div style={styles.card}>
-          <h3 style={{color: '#ff00ff', marginBottom: '1rem'}}>UPCOMING MATCHES</h3>
-          {matches.map(match => (
-            <div key={match.id} style={{
-              padding: '0.8rem',
-              marginBottom: '0.5rem',
-              background: 'rgba(0,0,0,0.3)',
-              border: '1px solid #666',
-              cursor: 'pointer'
-            }} onClick={() => setSelectedMatch(match)}>
-              <div style={{color: '#00ffff', marginBottom: '0.3rem'}}>
-                {match.homeTeam} vs {match.awayTeam}
-              </div>
-              <div style={{color: '#ff66ff', fontSize: '0.9rem'}}>{match.time} - {match.competition}</div>
-            </div>
-          ))}
-        </div>
-
-        <div style={styles.card}>
-          <h3 style={{color: '#ff00ff', marginBottom: '1rem'}}>QUICK ACTIONS</h3>
-          <button style={{...styles.button, width: '100%', marginBottom: '0.5rem'}}>
-            <BarChart3 size={20} /> VIEW ANALYTICS
-          </button>
-          <button style={{...styles.button, width: '100%', marginBottom: '0.5rem'}}>
-            <Settings size={20} /> STREAM SETTINGS
-          </button>
-          <button style={{...styles.button, width: '100%', marginBottom: '0.5rem'}}>
-            <Calendar size={20} /> SCHEDULE
-          </button>
-          <button style={{...styles.button, width: '100%'}}>
-            <Award size={20} /> TOURNAMENTS
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const currentViewComponent = () => {
-    if (!isLoggedIn) {
-      return renderLandingPage();
+    function switchPrimaryTab(tab) {
+      currentPrimaryTab = tab;
+      
+      // Update tab buttons
+      document.querySelectorAll('.primary-tab').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event?.target?.classList.add('active') || document.querySelector(`[onclick="switchPrimaryTab('${tab}')"]`).classList.add('active');
+      
+      // Hide all content panels
+      document.querySelectorAll('.content-panel').forEach(panel => {
+        panel.style.display = 'none';
+      });
+      
+      // Show selected content
+      const contentId = tab + '-content';
+      const content = document.getElementById(contentId);
+      if (content) {
+        content.style.display = 'block';
+      }
+      
+      let message = '';
+      switch(tab) {
+        case 'live':
+          message = '🔴 LIVE MATCHES LOADED\n\nShowing all currently live matches across all leagues\nReal-time scores updating!';
+          break;
+        case 'today':
+          message = '📅 TODAY\'S MATCHES\n\nShowing all matches scheduled for today\nIncludes live, upcoming, and completed matches';
+          break;
+        case 'upcoming':
+          message = '🔮 UPCOMING MATCHES\n\nShowing future matches you can set reminders for\nPre-match commentary available!';
+          break;
+        case 'my-teams':
+          message = '⭐ YOUR TEAMS\n\nCustomized view of your followed teams\nSelect teams to see their upcoming fixtures';
+          break;
+        case 'browse':
+          message = '🌍 BROWSE ALL\n\nClassic browse mode by region and competition\nExplore football from around the world!';
+          break;
+      }
+      
+      if (event) { // Only show alert if triggered by user action
+        alert(message);
+      }
     }
-    
-    switch(currentView) {
-      case 'home':
-        return renderHome();
-      case 'matches':
-        return renderListenerView();
-      case 'dashboard':
-        return renderCommentatorDashboard();
-      default:
-        return renderHome();
+
+    function toggleTeam(team) {
+      const btn = event.target;
+      btn.classList.toggle('selected');
+      
+      const isSelected = btn.classList.contains('selected');
+      alert(isSelected ? 
+        `⭐ FOLLOWING ${team.toUpperCase()}\n\nAdded to your teams list\nYou'll see their matches in My Teams tab` :
+        `❌ UNFOLLOWED ${team.toUpperCase()}\n\nRemoved from your teams list`
+      );
     }
-  };
 
-  return (
-    <div style={styles.container}>
-      <style>
-        {`
-          @keyframes backgroundPulse {
-            0%, 100% { filter: hue-rotate(0deg); }
-            50% { filter: hue-rotate(20deg); }
-          }
-          @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-          }
-          button:hover {
-            transform: perspective(300px) rotateX(0deg) translateZ(8px) !important;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8) !important;
-          }
-          input[type="range"] {
-            -webkit-appearance: none;
-            background: #333;
-            outline: none;
-            border: 2px solid #00ffff;
-          }
-          input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(145deg, #00ffff, #0099cc);
-            border: 2px solid #ffff00;
-            cursor: pointer;
-          }
-          ::-webkit-scrollbar {
-            width: 8px;
-          }
-          ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.3);
-          }
-          ::-webkit-scrollbar-thumb {
-            background: #00ffff;
-            border-radius: 4px;
-          }
-        `}
-      </style>
-      {currentViewComponent()}
-    </div>
-  );
-};
+    function switchRegion(region) {
+      // Update region buttons in browse mode
+      const browseContent = document.getElementById('browse-content');
+      if (browseContent) {
+        browseContent.querySelectorAll('.region-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+      
+      let regionName = '';
+      switch(region) {
+        case 'spain': regionName = 'SPANISH'; break;
+        case 'italy': regionName = 'ITALIAN'; break;
+        case 'germany': regionName = 'GERMAN'; break;
+        case 'france': regionName = 'FRENCH'; break;
+        case 'europe': regionName = 'EUROPEAN'; break;
+        case 'world': regionName = 'WORLD'; break;
+        default: regionName = 'ENGLISH'; break;
+      }
+      
+      alert(`🌍 BROWSING ${regionName} FOOTBALL\n\nShowing competitions and matches from this region\nUse competition tabs to filter further`);
+    }
 
-export default FanZapApp;
+    function switchCompetition(comp) {
+      // Update competition tabs in browse mode
+      const browseContent = document.getElementById('browse-content');
+      if (browseContent) {
+        browseContent.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+      
+      let compName = '';
+      switch(comp) {
+        case 'la-liga': compName = 'LA LIGA'; break;
+        case 'serie-a': compName = 'SERIE A'; break;
+        case 'bundesliga': compName = 'BUNDESLIGA'; break;
+        case 'ligue-1': compName = 'LIGUE 1'; break;
+        case 'champions': compName = 'CHAMPIONS LEAGUE'; break;
+        case 'copa-del-rey': compName = 'COPA DEL REY'; break;
+        case 'coppa-italia': compName = 'COPPA ITALIA'; break;
+        case 'dfb-pokal': compName = 'DFB-POKAL'; break;
+        default: compName = comp.toUpperCase().replace('-', ' '); break;
+      }
+      
+      alert(`🏆 FILTERING BY ${compName}\n\nShowing matches from this competition only\nUse time filters for further refinement`);
+    }
+
+    function filterTime(time) {
+      // Update time filter buttons in browse mode
+      const browseContent = document.getElementById('browse-content');
+      if (browseContent) {
+        browseContent.querySelectorAll('.time-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+      
+      alert(`⏰ TIME FILTER: ${time.toUpperCase()}\n\nShowing matches for selected time period\nCombine with region/competition filters for precise results`);
+    }
+
+    function enterMatch(matchId) {
+      alert(`🎯 ENTERING MATCH\n\nMatch: ${matchId.toUpperCase()}\nLoading live commentary interface...\nConnecting to available commentators...`);
+    }
+
+    function favoriteMatch(matchId) {
+      const btn = event.target;
+      const isFavorited = btn.textContent === '★';
+      
+      if (isFavorited) {
+        btn.textContent = '☆';
+        alert(`💔 REMOVED FROM FAVORITES\n\nMatch: ${matchId.toUpperCase()}\nNo longer in your favorites list`);
+      } else {
+        btn.textContent = '★';
+        alert(`💖 ADDED TO FAVORITES\n\nMatch: ${matchId.toUpperCase()}\nSaved to your favorites list for quick access`);
+      }
+    }
+
+    // Quick search functionality
+    document.querySelector('.quick-search').addEventListener('input', function(e) {
+      if (e.target.value.length > 2) {
+        console.log(`Global search: ${e.target.value}`);
+        // Would implement live search filtering here
+      }
+    });
+
+    // Initialize with live tab active
+    window.addEventListener('load', function() {
+      switchPrimaryTab('live');
+    });
+
+    // Simulate real-time match updates
+    setInterval(() => {
+      const liveScores = document.querySelectorAll('.match-card .match-score');
+      liveScores.forEach(score => {
+        if (score.textContent !== 'VS' && Math.random() < 0.1) {
+          const currentScore = score.textContent.split(' - ');
+          if (currentScore.length === 2) {
+            const home = parseInt(currentScore[0]);
+            const away = parseInt(currentScore[1]);
+            if (Math.random() < 0.5) {
+              score.textContent = `${home + 1} - ${away}`;
+            } else {
+              score.textContent = `${home} - ${away + 1}`;
+            }
+          }
+        }
+      });
+    }, 15000);
+
+    // Random card highlighting
+    setInterval(() => {
+      const cards = document.querySelectorAll('.match-card');
+      const randomCard = cards[Math.floor(Math.random() * cards.length)];
+      randomCard.style.filter = 'brightness(1.2) saturate(1.2)';
+      setTimeout(() => {
+        randomCard.style.filter = '';
+      }, 1000);
+    }, 8000);
+
+    // Search functionality
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+      if (e.target.value.length > 2) {
+        console.log(`Searching for: ${e.target.value}`);
+      }
+    });
+
+    // Keyboard navigation enhancement
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        document.body.classList.add('keyboard-nav');
+      }
+    });
+
+    document.addEventListener('mousedown', function(e) {
+      document.body.classList.remove('keyboard-nav');
+    });
+  </script>
+</body>
+</html>
